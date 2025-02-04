@@ -9,14 +9,13 @@ function numberGuessGame() {
     var attempts = 0
     var guess = null
     
-
     while(guess !== winNumber) {
         var input = prompt('Which one is the secret number?');
         if(input === null) {
             alert('Leaving the game');
             return;
         } 
-    }
+    
     var guess = parseInt(input);
     attempts++;
 
@@ -27,6 +26,7 @@ function numberGuessGame() {
     } else if(guess > winNumber) {
         alert("Too high, try again");
     } else {
-        alert("Congrats! You solved the game in ${attempts} attempts.")
+        alert(`Congrats! You solved the game in ${attempts} attempts.`)
+    }
     }
 }
