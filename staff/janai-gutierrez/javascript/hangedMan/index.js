@@ -11,20 +11,20 @@ var alphabetUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 guessedWordToString()                                    // podria colocarse aqui directamente la funcion?????????
 
 for ( i = 0; i < word.length; i++) {                           //nos genera la palabra en guiones y/o espacios
-    if(word[i] === '') {
-        guessedWordArray[guessedWordArray.lenght] === ''
+    if(word[i] === ' ') {
+        guessedWordArray[guessedWordArray.length] === ' '
     } else { 
         guessedWordArray[guessedWordArray.length] === '-'
     }
 }
 
 function validateInputLetter(letter) {                        //nos comprueba que el input sea una sola letra
-    if (letter.lenght !== 1 || letter == '') {
+    if (letter.length !== 1 || letter == '') {
         alert('Just letters sir')
         return
     }
 
-    for (i = 0; i < alphabet.lenght; i++) {                    //nos devuelve siempre la letra minúscula del input
+    for (i = 0; i < alphabet.length; i++) {                    //nos devuelve siempre la letra minúscula del input
         if(letter === alphabet[i] || letter === alphabetUpper[i]) {
             return(alphabet[i]);
         }
@@ -33,7 +33,7 @@ function validateInputLetter(letter) {                        //nos comprueba qu
 }
 function checkLetterIncluded(letter) {                        
     isLetterInWord = false
-    for( i = 0; i < word; i++) {
+    for( i = 0; i < word.length; i++) {
         if (letter === word[i]) {
             isLetterInWord = true
             guessedWordArray[i] = letter
@@ -56,7 +56,7 @@ function guessedWordToString() {                             //nos pasa el array
 
 alert('Welcome to Hangman the Game')
 
-while (guessedWord !== word && lifes !== 0) {
+while (guessedWord !== word && lives !== 0) {
     var guessedLetter = prompt(`Thats what you found out: \n${guessedWord} \nYou have ${lives} lifes left `)
     if (guessedLetter === null) {
         lives = 0
@@ -70,7 +70,7 @@ while (guessedWord !== word && lifes !== 0) {
     }
 }
 
-if (lifes === 0) {
+if (lives === 0) {
     alert('You lost, try again?')
 }
 
