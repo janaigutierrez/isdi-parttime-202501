@@ -19,7 +19,7 @@ for ( i = 0; i < word.length; i++) {                           //nos genera la p
 }
 
 function validateInputLetter(letter) {                        //nos comprueba que el input sea una sola letra
-    if (letter.length !== 1 || letter == '') {
+    if (letter.length !== 1 || letter === '') {
         alert('Just letters sir')
         return
     }
