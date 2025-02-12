@@ -7,9 +7,9 @@ var guessedWord = hiddenWord(word.length);
 //declared functions:
 
 //checks if a letter is in a word
+
 function letterInWord(letter, word) {
-    letter = word[i]
-    for(i = 0; i < word.length; i++) {
+        for(var i = 0; i < word.length; i++) {
         if(word[i] === letter) {
             return true;
         }
@@ -21,11 +21,10 @@ return false;
 
 function hiddenWord(length) {
     var hidden = '';
-    for (i = 0; i < length; i++) {
-        if(word[i] === letter) {
-            hidden += '_';
+    for (var i = 0; i < length; i++) {
+                   hidden += '-';
         }
-    }
+    
     return hidden;
 }
 
@@ -33,7 +32,7 @@ function hiddenWord(length) {
 
 function revealLetter(letter, word, guessedWord) {
     var newGuessedWord = '';
-    for(i = 0; i < word.length; i++) {
+    for(var i = 0; i < word.length; i++) {
         if (word[i] === letter) {
             newGuessedWord += letter;
         } else {
@@ -49,7 +48,7 @@ function toLowerCase(letter) {
     var upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     var lowerCase = 'abcdefghijklmnopqrstuvwxyz'
 
-    for(i = 0; i < upperCase.length; i++) {
+    for(var i = 0; i < upperCase.length; i++) {
         if(letter === upperCase[i]) {
             return lowerCase[i];
         }
@@ -67,8 +66,9 @@ while (guessedWord !== word && lives > 0) {
         alert('Leaving the game');
         break;
     }
-    if (guessedLetter = '' || guessedLetter.length > 1) {
+    if (guessedLetter === '' || guessedLetter.length > 1) {
         alert('Just letter please')
+        continue;
     }
 
     guessedLetter = toLowerCase(guessedLetter); //this turns guessedLetter into lower case
