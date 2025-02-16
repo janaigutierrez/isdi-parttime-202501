@@ -65,7 +65,7 @@ var letterFormContainer;
 //body area
 body.style.display = 'flex';
 body.style.flexDirection = 'column';
-body.style.gap = '2rem2';
+body.style.gap = '2rem';
 
 //title in body area
 var gameTitle = document.createElement('h1');
@@ -76,6 +76,7 @@ body.appendChild(gameTitle);
 
 
 function renderInterface() {
+    
     wordContainer = document.createElement('div');
     wordContainer.style.width = '100%';
     wordContainer.style.display = 'flex';
@@ -112,13 +113,13 @@ function renderInterface() {
     livesContainer.style.justifyContent = 'center';
 
     for (var i = 0; i < lives; i++) {
-        var lifeIcon = document.createElement('div');
+        var liveIcon = document.createElement('div');
         liveIcon.style.width = '1rem';
         liveIcon.style.height = '1rem';
         liveIcon.style.borderRadius = '50%';
         liveIcon.style.backgroundColor = 'red'
 
-        livesContainer.appendChild(lifeIcon)
+        livesContainer.appendChild(liveIcon)
     }
 
     letterFormContainer = document.createElement('form');
@@ -144,16 +145,16 @@ function renderInterface() {
     letterFormContainer.appendChild(submitButton);
 
     body.appendChild(wordContainer)
-    body.appendChild(lifesContainer)
+    body.appendChild(livesContainer)
     body.appendChild(letterFormContainer)
 }
 
 function cleanInterface() {
     body.removeChild(wordContainer);
-    body.removeChild(lifesContainer)
+    body.removeChild(livesContainer)
     body.removeChild(letterFormContainer)
     wordContainer = undefined;
-    lifesContainer = undefined;
+    livesContainer = undefined;
     letterFormContainer = undefined;
 }
 
@@ -165,11 +166,13 @@ addEventListener('submit', function (event) {
     event.preventDefault();
     var letterValue = event.target.letter.value;
     playGame(letterValue)
-    //event.stopImmediatePropagation() --> sirve para no llamar al mismo tipo de evento varias veces
+    
 })
 
 
 //main game code
+
+
 
 while (guessedWord !== word && lives > 0) {
     var guessedLetter = prompt(`That is what you find out: \n${guessedWord} \nYou have ${lives} lives left`);
@@ -197,9 +200,9 @@ while (guessedWord !== word && lives > 0) {
 
 //results
 
-
 if (guessedWord === word) {
     alert(`You won, well done! \nThe word was ${word}`);
 } else {
     alert(`You lost... \nThe word was ${word}`);
 }
+renderInterface();
