@@ -4,30 +4,23 @@ function compareChoices(_choice) { //Creamos función para comparar la elección
     var cpuChoices = choices[Math.floor(Math.random() * choices.length)] //Declaramos la variable de elección de la Cpu, con factor de aletoriedad//
     if (_choice === cpuChoices) { //Comparamos todas las posibilidades de juego//
         alert('Empate!')
-                //funcion render again
     } else if (_choice === 'Piedra' && cpuChoices === 'Tijera') {
         alert('Ganas!')
-                //funcion render again
 
     } else if (_choice === 'Piedra' && cpuChoices === 'Papel') {
         alert('Pierdes!')
-                //funcion render again
 
     } else if (_choice === 'Papel' && cpuChoices === 'Piedra') {
         alert('Ganas!')
-                //funcion render again
 
     } else if (_choice === 'Papel' && cpuChoices === 'Tijera') {
         alert('Pierdes!')
-                //funcion render again
 
     } else if (_choice === 'Tijera' && cpuChoices === 'Papel') {
         alert('Ganas!')
-                //funcion render again
 
     } else if (_choice === 'Tijera' && cpuChoices === 'Piedra') {
         alert('Pierdes!')
-                //funcion render again
 
     }
 }
@@ -47,6 +40,7 @@ document.head.appendChild(link) //he creado una typo nueva
 var gameTitle = document.createElement('h1'); //Creamos título del juego//
 gameTitle.textContent = 'Piedra, Papel o Tijera'; //Damos un nombre al título del juego//
 gameTitle.style.textAlign = 'center'; //Le damos estilos//
+gameTitle.style.position = 'absolute';
 gameTitle.style.fontFamily = "Miniver"; //aplico la typo nueva
 gameTitle.style.fontSize = '40px';
 gameTitle.style.letterSpacing = "2px";
@@ -56,9 +50,10 @@ gameTitle.style.textShadow = '10px 10px 20px rgba(0, 0, 0, 0.5)';
 
 
 var gameTitleBox = document.createElement('div');
-gameTitleBox.style.width = '350px';
-gameTitleBox.style.height = '150px';
+gameTitleBox.style.width = '420px';
+gameTitleBox.style.height = '100px';
 gameTitleBox.style.backgroundColor = 'beige';
+gameTitleBox.style.position = 'relative';
 gameTitleBox.style.border = '1px solid black';
 gameTitleBox.style.padding = '10px'; //defino el espacio del texto respecto al borde de la caja
 gameTitleBox.style.textAlign = 'center';
@@ -106,25 +101,27 @@ backgroundImage.style.filter = 'blur(2px)'; //le he añadido blur para que contr
 body.appendChild(backgroundImage); //añadimos la imagen de fondo al body
 
 function renderUserChoice(_choice) { //La función renderiza en pantalla la selección hecha por el usuario//
+    userChoiceBox.innerHTML = ''; //borra contenido anterior
     var userChoice = document.createElement('div') //Se crea el mensaje//
     userChoice.textContent = `Has elegido: ${_choice}` //Se añade lo que queremos que diga el mensaje//
     userChoice.style.fontSize = '25px'; //Añadimos estilos//
     userChoice.style.height = '100px'; //Añadimos estilos//
     userChoice.style.width = '300px'; //Añadimos estilos//
-    userChoice.style.position = 'absolute' //Añadimos estilos//
+    userChoice.style.position = 'relative' //Añadimos estilos//
     userChoice.style.left = '200px'; //Añadimos estilos//
     userChoice.style.top = '200px'; //Añadimos estilos//
 
-    body.appendChild(userChoice) //Añadimos al body el mensaje creado//
+    userChoiceBox.appendChild(userChoice) //Añadimos al body el mensaje creado//
 }
 
 function renderCpuChoice(_cpuChoice) { //La función renderiza en pantalla la selección hecha por la CPU//
+    cpuChoiceBox.innerHTML = ''; //borra contenido anterior
     var cpuChoice = document.createElement('div') //Se crea el mensaje//
     cpuChoice.textContent = `La CPU ha elegido: ${_cpuChoice}` //Se añade lo que queremos que diga el mensaje//
     cpuChoice.style.fontSize = '25px'; //Añadimos estilos//
     cpuChoice.style.height = '100px'; //Añadimos estilos//
     cpuChoice.style.width = '300px'; //Añadimos estilos//
-    cpuChoice.style.position = 'absolute' //Añadimos estilos//
+    cpuChoice.style.position = 'relative' //Añadimos estilos//
     cpuChoice.style.left = '1500px'; //Añadimos estilos//
     cpuChoice.style.top = '200px'; //Añadimos estilos//
     cpuChoice.style.color = 'black';
@@ -132,6 +129,7 @@ function renderCpuChoice(_cpuChoice) { //La función renderiza en pantalla la se
 
     cpuChoiceBox.appendChild(cpuChoice) //Añadimos al body el mensaje creado//
 }
+
 var userChoiceBox = document.createElement('div');
 userChoiceBox.style.width = '350px';
 userChoiceBox.style.height = '50px';
