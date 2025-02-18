@@ -24,8 +24,6 @@ function compareChoices(_choice) { //Creamos función para comparar la elección
 
     }
 }
-
-
 var body = document.body; //Creamos el body//
 body.style.display = 'flex'; //Le damos estilos//
 body.style.flexDirection = 'column'; //Más estilos//
@@ -59,7 +57,7 @@ gameTitleBox.style.padding = '10px'; //defino el espacio del texto respecto al b
 gameTitleBox.style.textAlign = 'center';
 gameTitleBox.style.marginTop = '10px';
 gameTitleBox.style.boxShadow = '10px 10px 20px rgba(0, 0, 0, 0.5)'; //unas sombritas para la caja del titulo
-
+gameTitleBox.style.borderRadius = '20px';
 gameTitleBox.appendChild(gameTitle); //Añadimos el título del juego al div de la caja del titulo
 body.appendChild(gameTitleBox); //añadimos caja con titulo al body
 
@@ -68,7 +66,7 @@ tijeraimg.src = 'https://www.pokemon.com/static-assets/content-assets/cms2/img/p
 tijeraimg.style.position = 'absolute'; //Añadimos estilos//
 tijeraimg.style.marginTop = '450px'; //Añadimos estilos//
 tijeraimg.style.marginRight = '-1200px'; //Añadimos estilos//
-
+tijeraimg.id = 'Tijera'
 body.appendChild(tijeraimg) //Añadimos al body la imagen tijera//
 
 var piedraimg = document.createElement('img') //Se añade imagen para piedra//
@@ -113,7 +111,6 @@ function renderUserChoice(_choice) { //La función renderiza en pantalla la sele
 
     userChoiceBox.appendChild(userChoice) //Añadimos al body el mensaje creado//
 }
-
 function renderCpuChoice(_cpuChoice) { //La función renderiza en pantalla la selección hecha por la CPU//
     cpuChoiceBox.innerHTML = ''; //borra contenido anterior
     var cpuChoice = document.createElement('div') //Se crea el mensaje//
@@ -129,7 +126,6 @@ function renderCpuChoice(_cpuChoice) { //La función renderiza en pantalla la se
 
     cpuChoiceBox.appendChild(cpuChoice) //Añadimos al body el mensaje creado//
 }
-
 var userChoiceBox = document.createElement('div');
 userChoiceBox.style.width = '350px';
 userChoiceBox.style.height = '50px';
@@ -161,8 +157,6 @@ cpuChoiceBox.style.top = '180px';
 body.appendChild(cpuChoiceBox);
 body.appendChild(userChoiceBox);
 
-//CREO QUE LA HE LIADO PORQUE NO ME APARECEN LOS MENSAJES DE CPU HA ELEGIDO 
-
 var buttonContainer = document.createElement('div') //Creamos contenedor de botones para selección del jugador//
 
 function choiceButtonContainer() { //La función genera el contenedor de botones y las posibles elecciones del jugador. Esto variará si cambiamos los elementos del array choices//
@@ -180,7 +174,6 @@ function choiceButtonContainer() { //La función genera el contenedor de botones
     body.appendChild(buttonContainer) //Añadimos el contenedor de botones al body//
 
 }
-
 function generateChoiceButton(_choice) { //La función genera el botón de selección del jugador//
     var button = document.createElement('button'); //Creamos el botón de selección//
     button.textContent = _choice; //Indicamos que el texto que incluirá serán las elecciones englobadas en el array choices//
@@ -188,13 +181,13 @@ function generateChoiceButton(_choice) { //La función genera el botón de selec
     button.style.height = '50px'; //Damos un altura determinada al botón//
     button.style.width = '600px'; //Damos una anchura determinada al botón//
     button.style.borderColor = 'limegreen' //Damos un color al borde del botón//
-
+    
     button.addEventListener('click', function () { //El addEventListener permite ejecutar algo mientras se produzca algo//
         compareChoices(_choice) //En este caso, cuando se hace click sobre el botón de selección, se ejecuta la función de comparar la eleccción del jugador y la cpu//
         renderUserChoice(_choice) //En este caso, cuando se hace click sobre el botón de selección, se ejecuta la función de renderizado de la selección del jugador//
         renderCpuChoice(_choice) //En este caso, cuando se hace click sobre el botón de selección, se ejecuta la función de renderizado de la selección de la CPU//
     })
+
     buttonContainer.appendChild(button); //Añadimos el botón al contenedor de botones//
 }
-
 choiceButtonContainer() //Se ejecuta la función para generar el contenedor de botones y las posibles elecciones del jugador.
