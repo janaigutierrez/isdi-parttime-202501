@@ -92,7 +92,6 @@ backgroundImageDiv.style.height = '100%';
 backgroundImageDiv.style.position = 'absolute';
 backgroundImageDiv.style.zIndex = '-1';
 
-
 var backgroundImage = document.createElement('img');
 backgroundImage.src = 'backgroundImg.jpg';
 backgroundImage.style.height = '100%';
