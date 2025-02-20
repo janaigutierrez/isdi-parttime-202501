@@ -108,6 +108,7 @@ function renderUserChoice(_choice) { //La función renderiza en pantalla la sele
 
     userChoiceBox.appendChild(renderUserChoice) //Añadimos al body el mensaje creado//
 }
+
 function renderCpuChoice(_cpuChoice) { //La función renderiza en pantalla la selección hecha por la CPU (no funciona)//
     cpuChoiceBox.innerHTML = ''; //borra contenido anterior//
     var renderCpuChoice = document.createElement('div') //Se crea el mensaje//
@@ -227,8 +228,10 @@ function choiceButtonContainer() { //La función genera el contenedor de botones
     for (var i = 0; i < choices.length; i++) { //El for itera sobre los elementos del array choices//
         generateChoiceButton(choices[i]) //Y a continuación ejecuta la función para generar los botones de selección en pantalla//
     }
+    
     body.appendChild(buttonContainer) //Añadimos el contenedor de botones al body//
 }
+
 function generateChoiceButton(_choice) { //La función genera el botón de selección del jugador//
     var button = document.createElement('button'); //Creamos el botón de selección//
     button.textContent = _choice; //Indicamos que el texto que incluirá serán las elecciones englobadas en el array choices//
@@ -245,23 +248,32 @@ function generateChoiceButton(_choice) { //La función genera el botón de selec
         compareChoices(_choice) //En este caso, cuando se hace click sobre el botón de selección, se ejecuta la función de comparar la eleccción del jugador y la cpu//
         renderUserChoice(_choice) //En este caso, cuando se hace click sobre el botón de selección, se ejecuta la función de renderizado de la selección del jugador//
         renderCpuChoice(cpuChoice) //En este caso, cuando se hace click sobre el botón de selección, se ejecuta la función de renderizado de la selección de la CPU//
-    })
+    });
+    var imageToAnimate;
+    if (_choice === 'Piedra') {
+        imageToAnimate = piedraimg;
+    } else if (_choice === 'Papel') {
+        imageToAnimate = papelimg;
+    } else if (_choice === 'Tijera') {
+        imageToAnimate = tijeraimg;
+    };
+
+    addJumpEffect(imageToAnimate);
+    
     buttonContainer.appendChild(button); //Añadimos el botón al contenedor de botones//
 }
 choiceButtonContainer() //Se ejecuta la función para generar el contenedor de botones y las posibles elecciones del jugador.
 
-function jump () {
-    buttonContainer.addEventListener('mouseenter', function() {
+function addJumpEffect(element) {
+    element.addEventListener('mouseenter', function() {
         tijeraimg.classList.add('jump');
         piedraimg.classList.add('jump');
         papelimg.classList.add('jump');
-});
-}
+    });
 
-function jumpStop () {
-    buttonContainer.addEventListener('mouseleave', function () {
+    element.addEventListener('mouseleave', function () {
         tijeraimg.classList.remove('jump');
         piedraimg.classList.remove('jump');
         papelimg.classList.remove('jump');
-});
+    });
 }
