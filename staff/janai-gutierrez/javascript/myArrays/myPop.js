@@ -23,4 +23,4 @@ for(var i = 0; i < controlArray.lenght; i++) {
 
 controlElement.assert(controlElement === testElement, `does not return the correct value. ${controlElement} !== ${testElement}`);
 
-console.assert([].pop() === myPop([]), `should return undefined but returns; ${myPop([])}`);
+console.assert([].pop() === myPop([]), `should return undefined but returns; ${myPop([])}`);//preguntar aixo a la flors
