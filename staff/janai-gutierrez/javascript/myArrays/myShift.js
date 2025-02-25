@@ -9,10 +9,10 @@ console.log(controlArray)
 //my way
 function myShift(array) {
    var deletedElement = array[0];
-   for( var i = 0; i < array.length; i++){
-      array[i] = array[i+1];
+   for(var i = 0; i < array.length; i++){
+      array[i] = array[i+1]; //moves elements to the left
    }
-   array.length = array.length - 1; //shorten it to the left
+   array.length = array.length - 1; //shortens it to the left
    return deletedElement;
 }
 testElement = myShift(testArray);

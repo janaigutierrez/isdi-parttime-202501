@@ -98,6 +98,7 @@ backgroundImage.style.height = '100%';
 backgroundImage.style.width = '100%';
 backgroundImage.style.filter = 'blur 2px';
 backgroundImage.style.filter = 'saturate 50%';
+backgroundImage.style.filter = 'blur(3px)';
 
 backgroundImageDiv.appendChild(backgroundImage);
 body.appendChild(backgroundImageDiv);
@@ -161,6 +162,8 @@ function renderWordContainer() {
     wordContainer.style.flexDirection = 'row';
     wordContainer.style.gap = '0.5rem';
     wordContainer.style.justifyContent = 'center';
+    wordContainer.style.border = '2px';
+
     
 
     for (var i = 0; i < guessedWordArray.length; i++) {
@@ -195,12 +198,12 @@ function renderLifesContainer() {
             var lifeIcon = document.createElement('span');
             lifeIcon.textContent = 'favorite'
             lifeIcon.className = 'material-symbols-outlined';
-            lifeIcon.style.color = 'red'
+            lifeIcon.style.color = 'white'
 
             lifesContainer.appendChild(lifeIcon)
         } else {
             var lifeIcon = document.createElement('span');
-            lifeIcon.textContent = 'favorite'
+            lifeIcon.textContent = 'heart-broken'
             lifeIcon.className = 'material-symbols-outlined';
             lifeIcon.style.color = 'lightgrey'
 
