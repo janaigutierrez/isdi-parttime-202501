@@ -7,6 +7,10 @@
     top: 65%;
     left: 50%;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /*no se mes maneres d'intentar centrarho */
 }
 
 .title {
