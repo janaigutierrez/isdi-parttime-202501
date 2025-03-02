@@ -1,6 +1,8 @@
 var body = document.body;
 var currentView
 
+//diferentes vistas de la app
+
 function createRegisterPage() {
     var registerContainer = createContainer('');
     var registerTitle = createTextContainer('h1', 'Register', '');
@@ -20,7 +22,7 @@ function createHomePage() {
     var homeContainer = createContainer('');
     var loggedUserId = JSON.parse(sessionStorage.getItem('id'));
     
-    data.findUserById(loggedUserId);
+    var userLogged = data.findUserById(loggedUserId);
 
     if (!userLogged) {
         alert('Login or Register first')
@@ -28,7 +30,7 @@ function createHomePage() {
     }
     var loggedUserUsername = userLogged.username
     var welcomeText = createTextContainer('h1', `Welcome, \n${loggedUserUsername}`, '');
-    var logoutButton = createButton('Logout', '', function() { sessionStorage.removeItem('id'); navigateToLogin(homeContainer)});
+    var logoutButton = createButton('Logout', 'button', function() { sessionStorage.removeItem('id'); navigateToLogin(homeContainer)});
 
     appendChildren(homeContainer, welcomeText, logoutButton)
     return homeContainer;
@@ -80,5 +82,4 @@ function renderLanding() {
 function renderHomePage() {
     var homePage = createHomePage();
     body.appendChild(homePage);
-}
-sessionStorage.id ? renderHomePage() : renderLanding();
+};

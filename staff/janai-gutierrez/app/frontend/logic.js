@@ -15,7 +15,7 @@ function loginUser(loginData) {
 
 
 function registerUser(registerData) {
-    if(!registerData['email'] && !registerData['password'] && !registerData['confirmation-password']) {
+        if(!registerData['email'] && !registerData['password'] && !registerData['confirmation-password']) {
         alert('Register data incomplete')
         return;
 

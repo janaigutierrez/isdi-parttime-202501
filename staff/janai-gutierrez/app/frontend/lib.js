@@ -1,6 +1,7 @@
 //EL ARCHIVO LIB CONTIENE LAS FUNCIONES QUE PERMITEN CREAR ELEMENTOS PARA EL DOM
 
 // funcion para añadir multiples hijos
+
 function appendChildren() {
     var parent = arguments[0];
     for (var i = 1; i < arguments.length; i++) {
