@@ -9,7 +9,12 @@ function loginUser(loginData) {
         return;
     }
 
-    sessionStorage.id = userLoginCheckout.id
+    if(loginData['rememberMe']) {
+        localStorage.id = userLoginCheckout.id
+    } else {
+        sessionStorage.id = userLoginCheckout.id
+    }
+    
     navigateToHome(currentView);
 };
 
@@ -26,13 +31,10 @@ function registerUser(registerData) {
         }
 
         var usersJson = localStorage.getItem('users');
-
         var users; 
-        if(!usersJson) {
-            users = []
-        } else {
-            users = JSON.parse(usersJson)
-        };
+        usersJson ? users = JSON.parse(usersJson) : users = [];
+
+       
 
         var doesUserExist = data.findUserByEmail(registerData['email'])
         if (doesUserExist) {
@@ -41,9 +43,9 @@ function registerUser(registerData) {
         }
 
         var username = registerData['email'].split('@')[0];
-        var userCreated = { email: registerData['email'], password: registerData['password'], username, id: Date.now()}
+        var userCreated = {email: registerData['email'], password: registerData['password'], username, id: Date.now()}
 
-        users.push(userCreated)
+        users.push(userCreated);
 
         localStorage.users = JSON.stringify(users);
 

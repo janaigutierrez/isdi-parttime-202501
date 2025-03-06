@@ -10,14 +10,12 @@ function appendChildren() {
     return parent;
 };
 
-
 function createTextContainer(tag, text, style) {
     var element = document.createElement(tag);
     element.textContent = text;
     element.className = style;
     return element;
 };
-
 
 function createButton(text, style, callback) {
     var button = document.createElement('button');
@@ -33,8 +31,6 @@ function createContainer(style) {
     return container;
 };
 
-
-
 function createForm(inputsArray, submitButtonText, callback) {
     var formContainer = document.createElement('form');
     formContainer.className = 'form';
@@ -48,8 +44,15 @@ function createForm(inputsArray, submitButtonText, callback) {
         inputElement.id = input.inputId;
         inputElement.placeholder = input.inputPlaceholder;
         inputElement.required = input.isRequired;
- 
-        appendChildren(formContainer, label, inputElement);
+        if (input.inputType === 'checkbox') {
+            inputElement.value = input.inputValue;
+            inputElement.required = input.isRequired;
+            appendChildren(label, inputElement)
+            appendChildren(formContainer, inputElement, label)
+        } else {
+            inputElement.placeholder = input.inputPlaceholder
+            appendChildren(formContainer, label, inputElement)
+        }
     }
 
     var submitButton = document.createElement('input');
@@ -65,18 +68,23 @@ function createForm(inputsArray, submitButtonText, callback) {
         var formData = {};
 
         for(var i = 0; i < inputsArray.length; i++) {
+
             var fieldName = inputsArray[i].inputId;
             var value = form[inputsArray[i].inputId].value;
+            if (inputsArray[i].inputType === 'checkbox') {
+                value = form[inputsArray[i].inputId].checked
+            } else {
+                value = form[inputsArray[i].inputId].value
+            }
 
-            formData[fieldName] = value;
 
+            formData[fieldName] = value; //formData = {'email': 'patata@mail.com'}
         }
 
-        callback(formData);
-
+        callback(formData)
     })
 
     return formContainer;
 
-};
+}
 
