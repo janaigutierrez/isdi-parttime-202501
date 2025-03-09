@@ -1,8 +1,3 @@
-//encontrar usuario
-//crear usuario
-//guardar id en el sessionStorage
-//eliminarlo
-
 var data = {
     findUserById: function(id){ //definimos la funcion para poder acceder a ella
         var usersJson = localStorage.users //nos traemos los users de la base de datos del local Storage

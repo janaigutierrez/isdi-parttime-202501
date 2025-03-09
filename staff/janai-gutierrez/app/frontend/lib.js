@@ -1,7 +1,6 @@
 //EL ARCHIVO LIB CONTIENE LAS FUNCIONES QUE PERMITEN CREAR ELEMENTOS PARA EL DOM
 
 // funcion para añadir multiples hijos
-
 function appendChildren() {
     var parent = arguments[0];
     for (var i = 1; i < arguments.length; i++) {
@@ -9,14 +8,14 @@ function appendChildren() {
     }
     return parent;
 };
-
+//funcio per crear contenidors de text
 function createTextContainer(tag, text, style) {
     var element = document.createElement(tag);
     element.textContent = text;
     element.className = style;
     return element;
 };
-
+//funció per crear botons
 function createButton(text, style, callback) {
     var button = document.createElement('button');
     button.className = style;
@@ -24,13 +23,26 @@ function createButton(text, style, callback) {
     button.addEventListener('click', callback) //Se activa la función que hemos pasado como parametro al hacer click
     return button;
 };
-
+//funció per crear contenidors
 function createContainer(style) {
     var container = document.createElement('div');
     container.className = style;
     return container;
 };
+//crea el logo (té dos estats segons la pantalla on el renderitzo amb true o false)
+function createLogo(isLanding = false) {
+    var logo = document.createElement('img');
+    logo.src = 'sources/logo.png';
+    logo.alt = 'App logo';
 
+    if(isLanding) {
+        logo.className = 'logo-large';
+    } else {
+        logo.className = 'logo-small';
+    }
+    return logo;
+};
+//funció per crear formularis
 function createForm(inputsArray, submitButtonText, callback) {
     var formContainer = document.createElement('form');
     formContainer.className = 'form';
