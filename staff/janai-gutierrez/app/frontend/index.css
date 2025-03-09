@@ -108,6 +108,7 @@
     padding: 2rem;
     max-width: 400px; /* Evita que sigui massa ample */
     width: 90%; /* S'adapta a la pantalla petita */
+    border: 10px black; 
     
 }
 
