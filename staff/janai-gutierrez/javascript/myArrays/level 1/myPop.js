@@ -1,4 +1,4 @@
-//Array.pop() - deletes the last index of the array
+    //Array.pop() - deletes the last index of the array
 
 var controlArray = ['blue', 'yellow', 'black', 'white'];
 var testArray = ['blue', 'yellow', 'black', 'white'];
