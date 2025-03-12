@@ -103,43 +103,10 @@ backgroundImage.style.filter = 'blur(3px)';
 backgroundImageDiv.appendChild(backgroundImage);
 body.appendChild(backgroundImageDiv);
 
-body.style.display = 'flex';
-body.style.flexDirection = 'column';
-body.style.alignItems = 'center'
-body.style.gap = '2rem';
 
-var gameTitle = document.createElement('h1');
-gameTitle.textContent = 'THE HANGMAN GAME';
-gameTitle.style.textAlign = 'center';
-gameTitle.style.fontSize = '100px';
+createTitle('THE HANGMAN GAME', 'maintitle', 'h1')
 
 
-body.appendChild(gameTitle);
-
-function renderLetterForm() {
-    letterFormContainer = document.createElement('form');
-    letterFormContainer.style.display = 'flex';
-    letterFormContainer.style.flexDirection = 'row';
-    letterFormContainer.style.width = '100%';
-    letterFormContainer.style.gap = '0.5rem';
-    letterFormContainer.style.justifyContent = 'center';
-
-    var letterInput = document.createElement('input');
-    letterInput.type = 'text';
-    letterInput.minLength = 1;
-    letterInput.maxLength = 1;
-    letterInput.required = true;
-    letterInput.id = 'letter';
-    letterInput.style.width = '2rem'
-
-    var submitButton = document.createElement('input');
-    submitButton.type = 'submit';
-
-    letterFormContainer.appendChild(letterInput);
-    letterFormContainer.appendChild(submitButton);
-
-    body.appendChild(letterFormContainer)
-}
 function renderPlayAgainButton() {
     playAgainButton = document.createElement('button');
     playAgainButton.textContent = 'Play Again';
