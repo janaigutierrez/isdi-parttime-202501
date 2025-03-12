@@ -101,61 +101,26 @@ function createForm(inputsArray, submitButtonText, callback) {
 }
 //funcio per guardar posts
 function savePost(content) {
-    var posts = JSON.parse(localStorage.getItem('posts')) || [];
-    var postData = { content: content, date: Date.now() };
-    posts.push(postData);
-    localStorage.setItem('posts', JSON.stringify(posts));
-}
-
+    var posts = JSON.parse(localStorage.getItem('posts')) || []; //obtenim posts anteriors
+    posts.push(content); //afegim el nou post
+    localStorage.setItem('posts', JSON.stringify(posts)); //desem a local storage
+};
 //funcio per carregar posts
 function loadPosts() {
-    var postsContainer = document.createElement('div');
-    postsContainer.className = 'posted';
+    var postsContainer = createContainer('posted'); // Crear el contenidor principal
     var posts = JSON.parse(localStorage.getItem('posts')) || [];
 
-    for (var i = 0; i < posts.length; i++) {
-        var postElement = createPost(posts[i]);
-        postsContainer.appendChild(postElement);
-    }
+    posts.forEach(content => {
+        var postElement = createPost(content); // Crear el post i obtenir l'element HTML
+        postsContainer.appendChild(postElement); // Afegir-lo al contenidor
+    });
 
-    return postsContainer;
-}
-
-//funcio per crear posts
-function createPost(postData) {
-    var post = document.createElement('div');
-    post.className = 'post';
-
-    // Creem la imatge de la foto de perfil (assegura't que el fitxer existeix)
-    var profilePic = document.createElement('img');
-    profilePic.className = 'profilePicture';
-    profilePic.src = 'sources/logoUser.png';
-    profilePic.alt = 'Profile Picture';
-
-    // Definim el contingut i la data del post
-    var content = '';
-    var postDate;
-    if (typeof postData === 'object' && postData !== null) {
-        content = postData.content || '';
-        postDate = postData.date ? new Date(postData.date) : new Date();
-    } else {
-        content = postData;
-        postDate = new Date();
-    }
-
-    // Element per al text del post
-    var postText = document.createElement('p');
-    postText.textContent = content;
-
-    // Element per a la data del post
-    var dateElement = document.createElement('span');
-    dateElement.className = 'post-date';
-    dateElement.textContent = postDate.toLocaleString();
-
-    // Afegim tots els elements al post
-    post.appendChild(profilePic);
-    post.appendChild(postText);
-    post.appendChild(dateElement);
-
-    return post;
+    document.body.appendChild(postsContainer); // Afegir el contenidor al body
 };
+//funcio per crear posts
+function createPost(content) {
+    var post = document.createElement('div');
+    post.classList.add('post');
+    post.textContent = content; // Afegir el contingut al post
+    return post; // Retornar l'element perquè pugui ser afegit a `postsContainer`
+}

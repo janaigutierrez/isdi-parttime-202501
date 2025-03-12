@@ -32,17 +32,9 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 30px;
     top: 50px;
+    position: relative;
     text-align: center;
-    justify-content: center;
 
-}
-.homeWelcomeText {
-    align-items: center; /* Centrat verticalment */
-    text-align: center;
-    margin: 0; /* Elimina marges no desitjats */
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    margin-top: 40px;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .background {
@@ -82,18 +74,20 @@
 }
 
 .logout{
-    color: rgb(255, 255, 255);
+    top: 25px;
+    right: 10px;
+    position: absolute;
+    color: beige;
+    background-color: rgb(170, 39, 39);
     cursor: pointer;
-    border: transparent;
-    background-color: rgb(175, 57, 57);
-    text-align: center;
-    font-size: 16px;
-    top: 100px;
-    left: 20px;
-    padding: 10px;
-    width: 150px;
-    z-index: 100;
+    border-radius: 50px;    
+    font-size: 20px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    
+}
+
+.input {
+    overflow: hidden;
 }
 
 .form {
@@ -105,7 +99,7 @@
     text-align: left;
     gap: 8px;
     position: fixed; /* Fixem el formulari a la pantalla */
-    top: 30%; /* El centrem verticalment */
+    top: 50%; /* El centrem verticalment */
     left: 50%; /* El centrem horitzontalment */
     transform: translate(-50%, -50%); /* Corregeix el desplaçament */
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
@@ -114,7 +108,7 @@
     padding: 2rem;
     max-width: 400px; /* Evita que sigui massa ample */
     width: 90%; /* S'adapta a la pantalla petita */
-    border: 0.5px solid black; 
+    border: 10px black; 
     
 }
 
@@ -164,13 +158,11 @@ input[type="submit"] {
     background-color: #28a745;
     color: white;
     cursor: pointer;
-    padding-left: 5px;
 }
 
 input[type="submit"]:hover {
     background-color: #218838;
 }
-
 
 .logo-small {
     position: absolute;
@@ -213,89 +205,27 @@ input[type="submit"]:hover {
 }
 
 .joinButton {
-    display: block;
-    margin: 20px auto 0; /* Deixa espai respecte al logo */
-    padding: 15px 30px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    background-color: #3498db; /* Blau brillant */
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    position: relative;
-    overflow: hidden;
-}
+    align-items: center;
+    justify-content: center;
 
-/* Efecte d'animació al passar el cursor */
-.joinButton:hover {
-    background-color: #2980b9;
-    transform: scale(1.1); /* Fa créixer lleugerament el botó */
 }
-
-/* Animació d'entrada suau */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.joinButton {
-    animation: fadeInUp 1s ease-out;
-}
-
-/* Efecte d'ona al fer clic */
-.joinButton:active {
-    transform: scale(0.9);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
 
 .gotobutton {
-    display: block;
-    width: fit-content;
-    margin: 20px auto 0; /* Espai respecte al formulari */
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: bold;
+    right: 10px;
+    top: 0px;
+}
+
+.homeWelcomeText {
+    background-color: transparent;
+    color: beige;
     text-align: center;
-    color: #3498db;
-    background-color: white;
-    border: 2px solid #3498db;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    position: relative;
-    overflow: hidden;
-    top: 50%;
+    margin-top: 5rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 40px;
+    text-shadow: 10px 8px 10px black;
+    word-spacing: 8px;
+    letter-spacing: 1px;
 }
-
-/* Efecte en passar el ratolí */
-.gotobutton:hover {
-    background-color: #3498db;
-    color: white;
-    transform: scale(1.05);
-}
-
-/* Efecte de clic */
-.gotobutton:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* Assegurar-se que els formularis tenen espai per al botó */
-
-
-
 
 .header-menu {
     position: absolute;
@@ -307,7 +237,6 @@ input[type="submit"]:hover {
     padding: 10px;
     width: 150px;
     z-index: 100;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .menu-item {
@@ -323,46 +252,4 @@ input[type="submit"]:hover {
 
 .menu-item:hover {
     background: #8d3d3d;
-}
-.postForm {
-    position: absolute;
-    top: 20%; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    max-width: 500px;
-    padding: 15px;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-.posted {
-    position: fixed;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;  /* Augmentem l’amplada */
-    max-height: 400px; /* Augmentem l’alçada */
-    text-align: left;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 15px;
-    border-radius: 10px;
-    overflow-y: auto; /* Permet fer scroll només si és necessari */
-    overflow-x: hidden;
-    background-color: rgba(146, 146, 132, 0.411);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.post {
-    padding: 10px;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
-}
-
-.profilePicture {
-    width: 40px;  /* Ajusta segons el que prefereixis */
-    height: 40px;
-    border-radius: 50%; /* Fa que sigui rodona */
-    margin-right: 10px; /* Espai entre la imatge i el text */
-    vertical-align: middle;
 }
