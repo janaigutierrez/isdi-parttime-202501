@@ -1,262 +1,196 @@
-var words = ['peperoni', 'basilico', 'pomodoro', 'mozarella', 'pecorino'];
-var word = words[Math.floor(Math.random() * words.length)];
-var guessedWordArray = generateGuessedWordArray(word) 
-var guessedWord = '' 
-var lifes = 5;
+// ------------------------------
+// Variables globals del joc
+// ------------------------------
+var words = ["peperoni", "alfabrega", "tomàquet", "mozzarella", "formatge", "prosciuto"];
+var word = "";
+var guessedWordArray = [];
 var playedLetters = [];
-var alphabet = 'abcdefghijklmnopqrstuvwxyz'
-var alphabetUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-guessedWordToString();
+var lifes = 5;
 
-function validateInputLetter(letter) {
-    if (letter.length !== 1 || letter === ' ' || !isNaN(letter)) {
-        alert('make sure you put a single letter')
-        return;
+// Referències als elements del DOM
+var wordContainer, livesContainer, playedLettersContainer;
+var guessForm, letterInput, resultMessage, playAgainBtn;
+
+// ------------------------------
+// Inicialització del joc
+// ------------------------------
+function initGame() {
+  word = chooseRandomWord(words);            // funció de lib.js
+  guessedWordArray = createHiddenArrayFromWord(word); // idem
+  playedLetters = [];
+  lifes = 5;
+
+  // Primer netegem tot el body (per si reiniciem)
+  document.body.innerHTML = "";
+
+  // Creem la interfície bàsica
+  createLayout();
+
+  // Pintem l'estat inicial (paraula, vides, etc.)
+  render();
+}
+
+// ------------------------------
+// Creació de la interfície
+// ------------------------------
+function createLayout() {
+  // Títol
+  var h1 = document.createElement("h1");
+  h1.textContent = "Hangman Game";
+  document.body.appendChild(h1);
+
+  // Contenidor de la paraula
+  wordContainer = document.createElement("div");
+  wordContainer.className = "word-container";
+  document.body.appendChild(wordContainer);
+
+  // Contenidor de vides
+  livesContainer = document.createElement("div");
+  livesContainer.className = "lives-container";
+  document.body.appendChild(livesContainer);
+
+  // Lletres jugades
+  playedLettersContainer = document.createElement("div");
+  playedLettersContainer.className = "played-letters";
+  document.body.appendChild(playedLettersContainer);
+
+  // Formulari per introduir lletres
+  guessForm = document.createElement("form");
+  document.body.appendChild(guessForm);
+
+  letterInput = document.createElement("input");
+  letterInput.type = "text";
+  letterInput.maxLength = 1;
+  letterInput.required = true;
+  guessForm.appendChild(letterInput);
+
+  var submitBtn = document.createElement("input");
+  submitBtn.type = "submit";
+  submitBtn.value = "Prova";
+  guessForm.appendChild(submitBtn);
+
+  // Missatge final (guanyat / perdut)
+  resultMessage = document.createElement("div");
+  resultMessage.id = "resultMessage";
+  resultMessage.className = "hidden";
+  document.body.appendChild(resultMessage);
+
+  // Botó per tornar a jugar
+  playAgainBtn = document.createElement("button");
+  playAgainBtn.textContent = "Torna a jugar";
+  playAgainBtn.className = "hidden";
+  document.body.appendChild(playAgainBtn);
+
+  // Esdeveniments
+  guessForm.addEventListener("submit", onGuessSubmit);
+  playAgainBtn.addEventListener("click", onPlayAgain);
+}
+
+// ------------------------------
+// Renderitzar l'estat del joc
+// ------------------------------
+function render() {
+  // Pintar la paraula
+  wordContainer.innerHTML = "";
+  for (var i = 0; i < guessedWordArray.length; i++) {
+    var box = document.createElement("div");
+    box.className = "letter-box";
+    if (guessedWordArray[i] !== "-") {
+      box.classList.add("correct");
+      box.textContent = guessedWordArray[i].toUpperCase();
     }
-     for (var i = 0; i < alphabet.length; i++) {
-        if (letter === alphabet[i] || letter === alphabetUpper[i]) { 
-            
-            for (var j = 0; j < playedLetters.length; j++) { 
-                if (playedLetters[j] === alphabet[i]) {
-                    alert('you already tried this');
-                    return alphabet[i]
-                }
-            }
-            playedLetters[playedLetters.length] = alphabet[i] 
-            return alphabet[i]
-        }
-    }
+    wordContainer.appendChild(box);
+  }
+
+  // Pintar vides
+// ...
+livesContainer.innerHTML = ""; // buidar abans
+for (var i = 0; i < 5; i++) {
+  var lifeIcon = document.createElement("span");
+  lifeIcon.className = "life-icon";
+  // Si i < lifes => vida activa
+  if (i < lifes) {
+    lifeIcon.textContent = "♥";
+  } else {
+    // vida perduda, fem que caigui
+    lifeIcon.textContent = "♥";
+    lifeIcon.classList.add("lost-life");
+  }
+  livesContainer.appendChild(lifeIcon);
+}
+
+  // Lletres ja jugades
+  playedLettersContainer.innerHTML = "";
+  if (playedLetters.length > 0) {
+    playedLettersContainer.textContent = "Lletres provades: " + playedLetters.join(", ");  // mètode array
+  }
+}
+
+// ------------------------------
+// Quan l'usuari prem "Prova"
+// ------------------------------
+function onGuessSubmit(e) {
+  e.preventDefault();
+  var letter = letterInput.value;
+  letterInput.value = ""; // buidem el camp
+
+  // Comprova si és una lletra vàlida (funció de lib.js)
+  if (!isSingleLetter(letter)) {
+    alert("Introdueix una sola lletra (A-Z).");
     return;
+  }
+  // Comprova si ja l'havíem jugat
+  if (playedLetters.indexOf(letter.toLowerCase()) !== -1) {
+    alert("Ja has provat aquesta lletra!");
+    return;
+  }
+  playedLetters.push(letter.toLowerCase());
+
+  // Actualitza guessedWordArray
+  var found = updateGuessedWordArray(word, guessedWordArray, letter);
+  if (!found) {
+    lifes--;
+  }
+
+  // Torna a pintar
+  render();
+
+  // Comprova si s'ha acabat el joc
+  checkEndGame();
 }
-function checkLetterIncluded(letter) { a
-    var isLetterInWord = false 
-    for (var i = 0; i < word.length; i++) { 
-        if (letter === word[i]) {
-            isLetterInWord = true 
-            guessedWordArray[i] = letter
-        }
-    }
-    if (isLetterInWord === false) { 
-        lifes--
-    } else {
-        guessedWordToString() 
-    }
+
+// ------------------------------
+// Comprova si hem guanyat o perdut
+// ------------------------------
+function checkEndGame() {
+  // Si hem encertat totes les lletres
+  if (guessedWordArray.join("") === word) {
+    resultMessage.textContent = "Enhorabona! Has encertat la paraula: " + word.toUpperCase();
+    endGame();
+  } 
+  else if (lifes <= 0) {
+    resultMessage.textContent = "Has perdut! La paraula era: " + word.toUpperCase();
+    endGame();
+  }
 }
-function generateGuessedWordArray(_word) { 
-    var tempArr = []
-    for (var i = 0; i < _word.length; i++) { 
-        if (_word[i] === ' ') {
-            tempArr[tempArr.length] = ' '
-        } else {
-            tempArr[tempArr.length] = '-'
-        }
-    }
-    return tempArr;
+
+// ------------------------------
+// Quan el joc acaba (guany o derrota)
+// ------------------------------
+function endGame() {
+  resultMessage.classList.remove("hidden");
+  guessForm.classList.add("hidden");
+  playAgainBtn.classList.remove("hidden");
 }
-function guessedWordToString() { 
-    guessedWord = ''
-    for (var i = 0; i < guessedWordArray.length; i++) {
-        guessedWord += guessedWordArray[i]
-    }
+
+// ------------------------------
+// Quan premem "Torna a jugar"
+// ------------------------------
+function onPlayAgain() {
+  initGame();
 }
-function playGame(letter) {
-    if (lifes <= 0) {
-        alert('you can not play anymore, you are dead')
-        return;
-    }
-    var validatedLetter = validateInputLetter(letter)
-    if (validatedLetter !== undefined) {
-        checkLetterIncluded(validatedLetter)
-        cleanInterface();
-        renderInterface();
-    }
-}
-function resetGame() {
-    word = words[Math.floor(Math.random() * words.length)];
-    guessedWordArray = generateGuessedWordArray(word);
-    guessedWordToString();
-    lifes = 5;
-    playedLetters = [];
-}
-var body = document.body;
-var wordContainer;
-var lifesContainer;
-var letterFormContainer;
-var playAgainButton;
-var userFeedbackContainer;
-var playedLettersContainer;
 
-var backgroundImageDiv = document.createElement('div');
-backgroundImageDiv.style.width = '100%';
-backgroundImageDiv.style.height = '100%';
-backgroundImageDiv.style.position = 'absolute';
-backgroundImageDiv.style.zIndex = '-1';
-
-var backgroundImage = document.createElement('img');
-backgroundImage.src = 'backgroundImg.jpg';
-backgroundImage.style.height = '100%';
-backgroundImage.style.width = '100%';
-backgroundImage.style.filter = 'blur 2px';
-backgroundImage.style.filter = 'saturate 50%';
-backgroundImage.style.filter = 'blur(3px)';
-
-backgroundImageDiv.appendChild(backgroundImage);
-body.appendChild(backgroundImageDiv);
-
-
-createTitle('THE HANGMAN GAME', 'maintitle', 'h1')
-
-
-function renderPlayAgainButton() {
-    playAgainButton = document.createElement('button');
-    playAgainButton.textContent = 'Play Again';
-    playAgainButton.style.width = '7rem';
-
-    body.appendChild(playAgainButton);
-    playAgainButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        resetGame();
-        alert('reseting game')
-        cleanInterface();
-        renderInterface();
-    })
-}
-function renderWordContainer() {
-    wordContainer = document.createElement('div');
-    wordContainer.style.width = '100%';
-    wordContainer.style.height = '100px';
-    wordContainer.style.display = 'flex';
-    wordContainer.style.flexDirection = 'row';
-    wordContainer.style.gap = '0.5rem';
-    wordContainer.style.justifyContent = 'center';
-    wordContainer.style.border = '2px';
-
-    
-
-    for (var i = 0; i < guessedWordArray.length; i++) {
-        var letterSquare = document.createElement('div');
-        letterSquare.style.height = "4rem";
-        letterSquare.style.width = "4rem";
-        letterSquare.style.border = "2px dashed slategray"
-        letterSquare.style.display = "flex";
-        letterSquare.style.justifyContent = "center"
-        letterSquare.style.alignItems = "center"
-        if (guessedWordArray[i] !== '-') {
-            var letterContainer = document.createElement('b');
-            letterContainer.textContent = guessedWordArray[i].toUpperCase();
-            letterSquare.style.border = "2px solid green"
-            letterSquare.style.backgroundColor = "limegreen"
-            letterSquare.appendChild(letterContainer)
-        }
-        wordContainer.appendChild(letterSquare)
-    }
-    body.appendChild(wordContainer)
-}
-function renderLifesContainer() {
-    lifesContainer = document.createElement('div');
-    lifesContainer.style.width = '100%';
-    lifesContainer.style.display = 'flex';
-    lifesContainer.style.flexDirection = 'row';
-    lifesContainer.style.gap = '1rem';
-    lifesContainer.style.justifyContent = 'center';
-
-    for (var i = 0; i < 5; i++) {
-        if (i < lifes) {
-            var lifeIcon = document.createElement('span');
-            lifeIcon.textContent = 'favorite'
-            lifeIcon.className = 'material-symbols-outlined';
-            lifeIcon.style.color = 'white'
-
-            lifesContainer.appendChild(lifeIcon)
-        } else {
-            var lifeIcon = document.createElement('span');
-            lifeIcon.textContent = 'heart-broken'
-            lifeIcon.className = 'material-symbols-outlined';
-            lifeIcon.style.color = 'lightgrey'
-
-            lifesContainer.appendChild(lifeIcon)
-        }
-    }
-    body.appendChild(lifesContainer)
-}
-function renderUserFeedback() {
-    if (lifes <= 0) {
-        userFeedbackContainer = document.createElement('div')
-        var loseMsg = document.createElement('h2');
-        loseMsg.textContent = `Oh! You're out of lifes!`;
-        loseMsg.style.color = 'red';
-        loseMsg.style.textAlign = 'center'
-        userFeedbackContainer.appendChild(loseMsg);
-    } else { 
-        userFeedbackContainer = document.createElement('div')
-        var winMsg = document.createElement('h2');
-        winMsg.textContent = `Congratulations! You guessed the world!`;
-        winMsg.style.color = 'green';
-        winMsg.style.textAlign = 'center'
-        userFeedbackContainer.appendChild(winMsg);
-    }
-    body.appendChild(userFeedbackContainer)
-}
-function renderPlayedLettersContainer() {
-    playedLettersContainer = document.createElement('div');
-    playedLettersContainer.style.display = 'flex';
-    playedLettersContainer.style.flexDirection = 'column'
-
-    var playedLettersTitle = document.createElement('h2');
-    playedLettersTitle.textContent = 'You already tried:';
-
-    playedLettersContainer.appendChild(playedLettersTitle);
-
-    var letterSquaresContainer = document.createElement('div');
-    letterSquaresContainer.style.display = 'flex';
-    letterSquaresContainer.style.flexWrap = 'wrap';
-    letterSquaresContainer.style.gap = '0.5rem';
-
-    for (var i = 0; i < playedLetters.length; i++) {
-        var letterContainer = document.createElement('b');
-        letterContainer.style.height = "2rem";
-        letterContainer.style.width = "2rem";
-        letterContainer.style.border = "2px solid slategray"
-        letterContainer.style.display = "flex";
-        letterContainer.style.justifyContent = "center"
-        letterContainer.style.alignItems = "center"
-        letterContainer.style.backgroundColor = "lightgray"
-        letterContainer.style.textAlign = 'center';
-        letterContainer.textContent = playedLetters[i].toUpperCase()
-        letterSquaresContainer.appendChild(letterContainer)
-    }
-    playedLettersContainer.appendChild(letterSquaresContainer)
-    body.appendChild(playedLettersContainer)
-}
-function renderInterface() {
-    renderWordContainer();
-    renderLifesContainer();
-    if (lifes <= 0 || guessedWord === word) {
-        renderUserFeedback();
-        renderPlayAgainButton();
-    } else { 
-        renderLetterForm();
-    }
-
-    if (playedLetters.length > 0) renderPlayedLettersContainer();
-}
-function cleanInterface() {
-    body.removeChild(wordContainer);
-    body.removeChild(lifesContainer);
-    if (letterFormContainer) body.removeChild(letterFormContainer);
-    if (playAgainButton) body.removeChild(playAgainButton);
-    if (userFeedbackContainer) body.removeChild(userFeedbackContainer);
-    if (playedLettersContainer) body.removeChild(playedLettersContainer);
-    wordContainer = undefined;
-    lifesContainer = undefined;
-    letterFormContainer = undefined;
-    playAgainButton = undefined;
-    userFeedbackContainer = undefined;
-    playedLettersContainer = undefined;
-}
-renderInterface()
-addEventListener('submit', function (event) {
-    event.preventDefault();
-    var letterValue = event.target.letter.value;
-    playGame(letterValue)
-})
+// ------------------------------
+// Comencem el joc en carregar la pàgina
+// ------------------------------
+initGame();

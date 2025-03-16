@@ -1,12 +1,174 @@
-.body {
+/* --- FONS I DISPOSICIÓ GLOBAL --- */
+body {
+    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
-    margin-top: 0px;
-}
-
-.maintitle {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  
+    /* Fons relacionat amb la temàtica (pizza). 
+       Ajusta la ruta si la imatge està a /images/pizzaBackground.jpg */
+    background: url("background1.jpg") no-repeat center center;
+    background-size: cover;
+    ;
+  
+    /* Si vols enfosquir una mica la imatge:
+       background-color: rgba(0,0,0,0.4);
+       background-blend-mode: darken; 
+    */
+  }
+  
+  /* --- TÍTOL --- */
+  h1 {
+    margin-top: 30px;
+    font-size: 3rem;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+  }
+  
+  /* --- PARAULA A ENDEVINAR --- */
+  .word-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap; /* per si la paraula és molt llarga */
+  }
+  
+  .letter-box {
+    width: 3rem;
+    height: 3rem;
+    border: 2px dashed #ccc;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    background-color: rgba(255,255,255,0.4);
+    color: #333;
+    border-radius: 5px;
+    /* Efecte de transició suau si canvies propietats */
+    transition: transform 0.3s ease;
+  }
+  
+  /* Quan una lletra es descobreix (correcta), fem un pop */
+  .letter-box.correct {
+    border: 2px solid #2ecc71;
+    background: #a6f3c6;
+    animation: popIn 0.3s ease-in;
+  }
+  
+  /* Animació "pop" per a lletres endevinades */
+  @keyframes popIn {
+    0% {
+      transform: scale(0.1);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* --- VIDES --- */
+  .lives-container {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  /* Cor o icona de vida */
+  .life-icon {
+    font-size: 2rem; /* cor més gran */
+    cursor: default;
+    transition: transform 0.2s ease;
+  }
+  
+  /* Opcional: efecte hover si vols que s'engrandeixi en passar el cursor */
+  .life-icon:hover {
+    transform: scale(1.3);
+  }
+  
+  /* Els cors que estan "perduts" es precipiten */
+  .lost-life {
+    animation: lostLifeFall 1s forwards;
+  }
+  
+  /* Animació de caiguda */
+  @keyframes lostLifeFall {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(50px) rotate(60deg) scale(1.2);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(200px) rotate(120deg) scale(0.2);
+      opacity: 0;
+    }
+  }
+  
+  /* --- LLETRES JA JUGADES --- */
+  .played-letters {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #eee;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  }
+  
+  /* --- FORMULARI --- */
+  form {
+    margin: 10px 0;
+  }
+  
+  input[type="text"] {
+    width: 2rem;
     text-align: center;
-    font-size: 100px;
-}
+    font-size: 1.2rem;
+    padding: 4px;
+    border-radius: 4px;
+  }
+  
+  /* --- BOTONS --- */
+  button,
+  input[type="submit"] {
+    margin-left: 5px;
+    font-size: 1rem;
+    padding: 6px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #ff9800;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+  }
+  
+  button:hover,
+  input[type="submit"]:hover {
+    background-color: #e67e00;
+  }
+  
+  /* --- MISSATGE FINAL --- */
+  #resultMessage {
+    font-size: 1.4rem;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+    margin: 15px 0;
+    text-align: center;
+    max-width: 80%;
+  }
+  
+  /* --- CLASSE PER AMAGAR ELEMENTS --- */
+  .hidden {
+    display: none;
+  }
+  
