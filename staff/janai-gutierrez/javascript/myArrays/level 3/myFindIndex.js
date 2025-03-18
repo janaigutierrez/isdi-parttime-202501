@@ -1,4 +1,4 @@
-//returns the index of the first ekement in the array that satisfies the provided testing function
+//FillIndex - returns the index of the first ekement in the array that satisfies the provided testing function
 
 var testArray = [4, 13, 8, 55, 200, 22];
 var controlArray = [4, 13, 8, 55, 200, 22];
