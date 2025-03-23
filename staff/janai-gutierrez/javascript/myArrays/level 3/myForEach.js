@@ -1,13 +1,23 @@
-    //forEach - executes a provided function once for each array element
+//El método forEach permite aplicar un callback sobre cada elemento de un array.//
 
-    const array = ['a', 'b', 'c'];
-    array.forEach((element) => console.log(element)); 
-    //expected output: 'a';
-    //expected output: 'b';
-    //expected output: 'c';
+let names = ['Juan', 'Diana', 'Sonia', 'Marta'] 
+let testNames = ['Juan', 'Diana', 'Sonia', 'Marta'] 
 
-    function myForEach(array) {
-        for(var i = 0; i < array.length; i++) {
-            console.log(i);
-        }
+const myForEach = (array, callback) => { 
+    for (let i = 0; i < array.length; i++) { 
+        callback(array[i], i, array) 
     }
+}
+
+const controlResult1 = testNames.forEach((name, index, array) => { 
+    console.log(`Name: ${name}, Index: ${index}, Array: ${array}`)
+})
+const controlResult2 = myForEach(names, (name, index, array) => { 
+    console.log(`Name: ${name}, Index: ${index}, Array: ${array}`)
+})
+
+console.assert(controlResult1 === controlResult2, 'Error: los controles no coinciden')
+
+for (let i = 0; i < controlResult1.length; i++) { 
+    console.assert(controlResult1[i] === controlResult2[i], `la posición ${i} es diferente en ambos arrays. ${testNames[i]} !== ${names[i]}`); 
+}

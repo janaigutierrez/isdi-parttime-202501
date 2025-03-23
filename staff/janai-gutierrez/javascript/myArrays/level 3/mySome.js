@@ -1,17 +1,27 @@
-    //Some - tests wether at least one element in the array passes the test implemented by the provided function returns a boolean
+// some - instances tests wether at least one element in the array passes the test implemented
 
-    const array = [1, 2, 3, 4, 5];
+let names = ['Juan', 'Diana', 'Sonia', 'Marta'] 
+let testNames = ['Juan', 'Diana', 'Sonia', 'Marta'] 
 
-    const even = (element) => element % 2 === 0;
-    console.log(array.some(even));
-    //expected output: true;
-
-    function mySome(array) {
-        for(var i = 0; i < array.length; i++) {
-            if(i % 2 === 0){
-                return true;
-            } else {
-                return false;
-            }
+const mySome = (array, callback) => { 
+    for (let i = 0; i < array.length; i++) { 
+        if (callback(array[i], i, array)) { 
+            return true;
         }
-    };
+    }
+    return false;
+}
+
+const controlResult1 = testNames.some((name) => { 
+    return name.startsWith('S')
+})
+const controlResult2 = mySome(names, (name) => { 
+    return name.startsWith('S')
+})
+
+
+console.assert(controlResult1 === controlResult2, 'Error: los controles no coinciden')
+
+for (let i = 0; i < controlResult1.length; i++) { 
+    console.assert(controlResult1[i] === controlResult2[i], `la posición ${i} es diferente en ambos arrays. ${testNames[i]} !== ${names[i]}`); 
+}
