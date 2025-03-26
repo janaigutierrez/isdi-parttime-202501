@@ -9,7 +9,7 @@ const landing = {
         landingContainer.id = 'landing'
         const contentContainer = createContainer('landing__content')
         const landingTitle = createTextContainer('h1', 'NEST APP', 'landing__title');
-        const landingSubtitle = createTextContainer('h2', '', 'landing__subtitle');
+        const landingSubtitle = createTextContainer('h2', 'Your social app', 'landing__subtitle');
 
         header.mount(landingContainer, 'landing')
 

@@ -32,14 +32,7 @@ const validator = {
         if (username.length === 0 || username.length > 20) {
             throw new RangeError('Username number of characters is not valid')
         }
-        /*
-        let forbiddenWords = ['curva', 'cabrón', 'hdp', 'insecte']
-        for (let i = 0; i < forbiddenWords.length; i++) {
-            if (username.includes(forbiddenWords[i])) {
-                throw new Error('sin insultos!')
-            }
-        }
-        */
+       
     },
     id: (id) => {
         if (typeof id !== 'number') {

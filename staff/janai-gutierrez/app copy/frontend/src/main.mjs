@@ -1,4 +1,4 @@
-import pages from './pages/index.js'
+import pages from './pages/index.mjs'
 
 const { home, landing } = pages;
 

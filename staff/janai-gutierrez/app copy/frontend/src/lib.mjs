@@ -102,7 +102,7 @@ const createForm = (inputsArray, submitButtonText, callback) => { //inputsArray 
 
 const createLogo = (size) => {
     const logo = createContainer('logo')
-    logo.innerHTML = logo
+    logo.innerHTML = patita
 
     logo.style.width = size;
     logo.style.height = size
