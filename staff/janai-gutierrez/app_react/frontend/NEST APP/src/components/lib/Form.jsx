@@ -1,4 +1,4 @@
-import '/Form.css'
+import './Form.css'
 
 const Form = ({ inputsArray, onSubmitCallback, submitButtonText }) => {
     const handleSubmit = (event) => {

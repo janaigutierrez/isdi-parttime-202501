@@ -8,12 +8,12 @@ const Header = ({ currentView, handleRegisterClick, handleLandingClick, handleAc
     const [username, setUsername] = useState('')
     const [avatar, setAvatar] = useState(undefined)
     const [isUserMenuOpen, setUserMenuOpen] = useState(false)
-    const [isUserLogged, setIsUserLogged] = setState(logics.users.isUserLoggedIn())
+    const [isUserLogged, setIsUserLogged] = useState(logics.users.isUserLoggedIn())
 
     useEffect(() => {
         setIsUserLogged(logics.users.isUserLoggedIn())
         if (currentView === 'home' || currentView === 'account') {
-            const retrievedUsername = logics.users.getLoggedUsername()
+            const retrievedUsername = logics.users.getLoggedUserUsername()
             setUsername(retrievedUsername)
             const retrievedAvatar = logics.users.getLoggedUserAvatar()
             setAvatar(retrievedAvatar)
@@ -39,7 +39,7 @@ const Header = ({ currentView, handleRegisterClick, handleLandingClick, handleAc
             (currentView === 'register' || currentView === 'login') && <Logo onClick={handleLandingClick} size='sm' />
         }
         {
-            isUserLogged && <Logo size='sm' onClick={handleClick} />
+            isUserLogged && <Logo size='sm' onClick={handleHomeClick} />
         }
         {
             (isUserLogged && username.length > 0) && <p>{`Welcome, ${username}`}</p>
