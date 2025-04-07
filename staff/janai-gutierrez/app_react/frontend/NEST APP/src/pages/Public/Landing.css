@@ -1,0 +1,17 @@
+.landing__title {
+    text-align: center;
+}
+
+.landing__subtitle {
+    text-align: center;
+}
+
+.logo {
+    height: 20rem;
+    scroll-behavior: smooth;
+}
+
+.landing {
+    background: url('../../assets/pixel-background.gif') no-repeat center center fixed;
+
+}

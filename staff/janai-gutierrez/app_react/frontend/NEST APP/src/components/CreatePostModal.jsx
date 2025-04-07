@@ -4,7 +4,7 @@ import Form from "./lib/Form"
 
 const CreatePostModal = ({ setRefreshPosts, closeModal }) => {
     const titleInput = { label: 'Add your title', inputType: 'text', inputPlaceholder: 'Title...', inputId: 'title', isRequired: true }
-    const descriptionInput = { label: 'Add your description', inputType: 'text', inputPlaceholder: 'Add text...', inputId: 'desription', isRequired: true }
+    const descriptionInput = { label: 'Add your description', inputType: 'text', inputPlaceholder: 'Add text...', inputId: 'description', isRequired: true }
     const imgInput = { label: 'Add ur image url', inputType: 'url', inputPlaceholder: '.png, .jpg, etc', inputId: 'img', isRequired: false }
 
     const handlePublishPost = (formData) => {

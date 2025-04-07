@@ -1,16 +1,18 @@
 .form .form__submit-button {
     margin: 0;
-    background-color: black;
-    color: white;
+    background-color: rgb(18, 49, 150);
+    color: rgb(255, 255, 255);
     padding: 0.5rem 0.4rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    font-family: "Josefin Sans", sans-serif;
+    font-family: "Tiny5";
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .form .form__submit-button:hover,
 .header__user-button:hover {
-    background-color: #FFAC46;
+    background-color: #004e92;
 }
 
 .form {
@@ -20,7 +22,8 @@
     width: 15rem;
     border: solid 0.09rem #d9d9d9;
     padding: 1rem;
-    border-radius: 0.5rem
+    border-radius: 0.5rem;
+    background-color: rgb(36, 64, 105);
 }
 
 .form__input-text {
@@ -28,6 +31,7 @@
     border: solid 0.09rem #d9d9d9;
     border-radius: 0.4rem;
     margin-bottom: 1rem;
+    background-color: #d9d9d9;
 }
 
 fieldset {
@@ -70,5 +74,5 @@ fieldset label {
     padding: 0.5rem 0.4rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    font-family: "Josefin Sans", sans-serif;
+    font-family: 'Tiny5';
 }

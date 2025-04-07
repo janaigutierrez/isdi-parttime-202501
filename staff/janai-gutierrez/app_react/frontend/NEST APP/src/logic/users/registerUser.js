@@ -2,7 +2,7 @@ import data from "../../data"
 import { ContentError, ExistenceError } from "../../utils/errors"
 import validator from "../../utils/validators"
 
-const registerUser = (registerData) => { 
+const registerUser = (registerData) => { //registerData = {'email': '', 'password': '', 'confirmation-password': ''}
     validator.email(registerData['email'])
     validator.password(registerData['password'])
     validator.password(registerData['confirmation-password'])
@@ -23,7 +23,7 @@ const registerUser = (registerData) => {
 
     data.users.createUser(userCreated)
 
-    sessionStorage.id = userCreated.id 
+    sessionStorage.id = userCreated.id //almacenamos en el sessionStorage el id del usuario que se acaba de registrar y loggear
 }
 
 export default registerUser

@@ -1,15 +1,20 @@
-import getLoggedUserAvatar from "./getLoggedUserAvatar";
-import getLoggedUserUsername from "./getLoggedUserUsername";
+import deleteUserById from "./deleteUserById";
+import getUserAvatarById from "./getUserAvatarById";
+import getUserBioById from "./getUserBioById";
+import getUserIdByUsername from "./getUserIdByUsername";
+import getUserUsernameById from "./getUserUsernameById";
 import isUserLoggedIn from "./isUserLoggedIn";
 import loginUser from "./loginUser";
 import logoutUser from "./logoutUser";
 import registerUser from "./registerUser";
 import updateAvatar from "./updateAvatar";
 import updateBio from "./updateBio";
+import updateEmail from "./updateEmail";
+import updatePassword from "./updatePassword";
 import updateUsername from "./updateUsername";
 
 const users = {
-    getLoggedUserUsername,
+    getUserUsernameById,
     isUserLoggedIn,
     loginUser,
     logoutUser,
@@ -17,7 +22,12 @@ const users = {
     updateAvatar,
     updateBio,
     updateUsername,
-    getLoggedUserAvatar
+    getUserAvatarById,
+    getUserBioById,
+    getUserIdByUsername,
+    updatePassword,
+    updateEmail,
+    deleteUserById
 }
 
 export default users

@@ -3,12 +3,12 @@ import { ExistenceError } from "../../utils/errors";
 import validator from "../../utils/validators";
 import getLoggedUserId from "../helpers/getLoggedUserId";
 
-const getAllPosts = () => {
+const getPostsByAuthor = (authorId) => {
     const loggedUserId = getLoggedUserId()
 
     validator.id(loggedUserId)
 
-    const posts = data.posts.retrievePosts()
+    const posts = data.posts.retrievePostsByAuthorId(authorId)
 
     if (posts.length > 0) posts.sort((item1, item2) => new Date(item2.createdOn) - new Date(item1.createdOn))
 
@@ -30,4 +30,4 @@ const getAllPosts = () => {
     return posts
 }
 
-export default getAllPosts
+export default getPostsByAuthor

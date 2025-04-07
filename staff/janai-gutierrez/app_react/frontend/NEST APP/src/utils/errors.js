@@ -5,23 +5,23 @@ export class FormatError extends Error {
     }
 }
 
-export class AuthEror extends Error {
+export class AuthError extends Error {
     constructor(message) {
         super(message)
-        this.name = AuthEror
+        this.name = 'AuthError'
     }
 }
 
 export class ExistenceError extends Error {
     constructor(message) {
         super(message)
-        this.name = ExistenceError
+        this.name = 'ExistenceError'
     }
 }
 
 export class ContentError extends Error {
     constructor(message) {
         super(message)
-        this.name = ContentError
+        this.name = 'ContentError'
     }
 }
