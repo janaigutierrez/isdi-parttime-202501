@@ -12,6 +12,8 @@ import updateBio from "./updateBio";
 import updateEmail from "./updateEmail";
 import updatePassword from "./updatePassword";
 import updateUsername from "./updateUsername";
+import getRandomBio from "./getRandomBio";
+
 
 const users = {
     getUserUsernameById,
@@ -27,7 +29,8 @@ const users = {
     getUserIdByUsername,
     updatePassword,
     updateEmail,
-    deleteUserById
+    deleteUserById,
+    getRandomBio
 }
 
 export default users

@@ -2,15 +2,15 @@
     font-family: "Tiny5";
     font-weight: 700;
     border-radius: 50%;
-    border: solid 2px #FFAC46;
+    border: solid 2px #3634bd;
     background-color: white;
     overflow: hidden;
 }
 
 .avatar.sm {
-    width: 2rem;
-    height: 1.75rem;
-    padding: .25rem 0.025rem 0 0;
+    width: 3rem;
+    height:3rem;
+    padding-left: .25rem 0.025rem 0 0;
 }
 
 .avatar.md {
@@ -30,8 +30,8 @@
 }
 
 .sm.avatar-with-image {
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     padding: 0;
 }
 
@@ -50,6 +50,7 @@
 
 .avatar-btn {
     cursor: pointer;
+    size: 2rem;
 }
 
 .avatar-with-image {
@@ -60,6 +61,7 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    size: 2rem;
 }
 
 .avatar-with-image:focus {
@@ -73,7 +75,7 @@
 }
 
 .sm .avatar--image {
-    width: rem;
+    size: 2rem;
 }
 
 .md .avatar--image {
@@ -85,5 +87,5 @@
 }
 
 .avatar-btn:hover {
-    background-color: #FFAC46;
+    background-color: #462eaf;
 }

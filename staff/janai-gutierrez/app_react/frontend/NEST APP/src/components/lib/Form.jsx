@@ -1,6 +1,6 @@
 import './Form.css'
 
-const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallback }) => { //inputsArray = [{label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email'}, {label: 'Password....}]
+const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallback }) => { 
     const handleInputChange = (event) => {
         event.preventDefault()
 
@@ -20,10 +20,9 @@ const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallbac
     const handleSubmit = (event) => {
         event.preventDefault()
 
-        const form = event.target; // --> elemento form html al que le hemos dado submit
-        const formData = {}; // {email: esto, password: esto-otro}
+        const form = event.target;
+        const formData = {};
 
-        //iterar todos los inputs que he generado en el formulario, de esos inputs quiero acceder al valor que ha escrito el usuario
         for (let i = 0; i < inputsArray.length; i++) {
             const fieldName = inputsArray[i].inputId;
             let value;
@@ -35,7 +34,7 @@ const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallbac
                 value = form[inputsArray[i].inputId].value
             }
 
-            formData[fieldName] = value; //formData = {'email': 'patata@mail.com'}
+            formData[fieldName] = value; 
         }
 
         try {

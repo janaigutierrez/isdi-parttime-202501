@@ -4,6 +4,7 @@ import logics from "../../logic/index"
 import './MyProfileSettings.css'
 import UserCard from "../../components/UserCard"
 import getLoggedUserId from "../../logic/helpers/getLoggedUserId"
+import Btn from "../../components/lib/Btn"
 
 const MyProfile = ({ updateHeader }) => {
     const [showUsernameForm, setShowUsernameForm] = useState(false)
@@ -61,6 +62,25 @@ const MyProfile = ({ updateHeader }) => {
         }
     }
 
+    const saveRandomBio = (error, newBio) => {
+        if (error) alert(error)
+        else {
+            logics.users.updateBio(newBio)
+            setRefreshUserCard(Date.now())
+        }
+    }
+
+
+    const onRandomBioClick = () => {
+        try {
+            logics.users.getRandomBio(saveRandomBio)
+        } catch (error) {
+            alert('ups, something went wrong')
+            console.error(error)
+        }
+    }
+
+
     return <div className="main-container">
         <UserCard userId={getLoggedUserId()} refreshSelf={refreshUserCard} tempAvatar={tempAvatar} />
         <div className="account__section-title" onClick={() => setShowUsernameForm(!showUsernameForm)}>
@@ -73,11 +93,14 @@ const MyProfile = ({ updateHeader }) => {
             <i className={`bi bi-chevron-compact-${showAvatarForm ? 'up' : 'down'}`}></i>
         </div>
         {showAvatarForm && <Form inputsArray={[avatarObject]} onSubmitCallback={onUpdateAvatar} submitButtonText={"Save new avatar"} onChangeCallback={setTempAvatar} />}
+        <div className="bio-randomizer">
         <div className="account__section-title" onClick={() => setShowBioForm(!showBioForm)}>
             <h2>Change my bio</h2>
             <i className={`bi bi-chevron-compact-${showBioForm ? 'up' : 'down'}`}></i>
         </div>
         {showBioForm && <Form inputsArray={[bioObject]} onSubmitCallback={onUpdateBio} submitButtonText={"Save new bio"} />}
+        {showBioForm && <div className="account__bio"><b>No ideas?</b><p>Become random: <Btn btnContent={'Randomize'} btnCallback={onRandomBioClick} btnClassnames={'account__random-bio-btn'} /></p></div>}
+    </div>
     </div>
 }
 

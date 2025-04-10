@@ -6,4 +6,56 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background-color:rgb(36, 64, 105);
+    border: 1px solid black;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.bio-randomizer {
+    display: flex;
+    flex-direction: column;
+    background-color:rgb(36, 64, 105);
+    border: 1px solid black;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.account__random-bio-btn {
+    top: 0;
+    background-color: #5249d1;
+    border: 2px groove black;
+    border-radius: 5px;
+    left: 50%;
+    cursor: pointer;
+    color: white;
+}
+
+.account__random-bio-btn:hover {
+    background-color: #7874bb;
+    border: 2px groove black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.account__bio {
+    justify-content: center;
+    left: auto;
+}
+
+.settings__section-title {
+    display: flex;
+    flex-direction: column;
+    background-color:rgb(36, 64, 105);
+    border: 1px solid black;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    width: 18rem;
+    border-top: 4rem;
 }
