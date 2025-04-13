@@ -112,15 +112,16 @@
     margin-top: 5px;
 }
 
-.header__celebration-button {
+.celebration-button {
     background-color: transparent;
     border: transparent;
     cursor: pointer;
     size: 2rem;
     padding: 0.25rem;
+    color: white;
 }
 
-.header__celebration-button:hover {
+.celebration-button:hover {
     background-color: #3436a7;
     width: 100%;
 }

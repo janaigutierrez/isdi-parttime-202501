@@ -1,0 +1,36 @@
+import deleteUserById from "./deleteUserById";
+import getUserAvatarById from "./getUserAvatarById";
+import getUserBioById from "./getUserBioById";
+import getUserIdByUsername from "./getUserIdByUsername";
+import getUserUsernameById from "./getUserUsernameById";
+import isUserLoggedIn from "./isUserLoggedIn";
+import loginUser from "./loginUser";
+import logoutUser from "./logoutUser";
+import registerUser from "./registerUser";
+import updateAvatar from "./updateAvatar";
+import updateBio from "./updateBio";
+import updateEmail from "./updateEmail";
+import updatePassword from "./updatePassword";
+import updateUsername from "./updateUsername";
+import getRandomBio from "./getRandomBio";
+
+
+const users = {
+    getUserUsernameById,
+    isUserLoggedIn,
+    loginUser,
+    logoutUser,
+    registerUser,
+    updateAvatar,
+    updateBio,
+    updateUsername,
+    getUserAvatarById,
+    getUserBioById,
+    getUserIdByUsername,
+    updatePassword,
+    updateEmail,
+    deleteUserById,
+    getRandomBio
+}
+
+export default users

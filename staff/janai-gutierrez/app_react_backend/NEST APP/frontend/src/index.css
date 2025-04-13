@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Tiny5&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#root {
+    margin: 0;
+    padding: 0 0.25rem;
+    font-family: 'Tiny5';
+    font-size: medium;
+
+}
+
+.landing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    background-size: cover;
+    height: 100vh;
+        
+}
+
+.login,
+.register,
+.home,
+.account {
+    background: url('./assets/pixel-background.gif') no-repeat center center fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    background-size: cover;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 5rem;
+}
+
+
+
+button,
+input {
+    font-family: 'Tiny5';
+    font-size: medium;
+    color: grey;
+    
+}
+
+
+@media (min-width: 720px) {}
+
+
+@media (min-width: 1024px) {}

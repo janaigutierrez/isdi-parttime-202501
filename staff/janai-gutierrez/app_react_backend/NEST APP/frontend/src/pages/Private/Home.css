@@ -1,0 +1,101 @@
+.home__new-post-button {
+    position: fixed;
+    height: 3rem;
+    width: 3rem;
+    bottom: 2rem;
+    right: 2rem;
+    cursor: pointer;
+    background-color: rgb(99, 121, 218);
+    border: 1px solid #014b88;
+    border-radius: 50%;
+    font-size: 40px;
+    color: white;
+    padding-left: 10px;
+    
+}
+
+.home__new-post-button:hover {
+    background-color: #6246ff;
+}
+
+.home__create-post-dialog {
+    background-color:  rgba(99, 121, 218, 0.87);
+    padding: 1rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #014b88;
+}
+
+.home__close-form-button {
+    border: none;
+    background: none;
+    font-family: "Tiny5";
+    align-self: flex-end;
+    font-size: 25px;
+    color: black;
+}
+
+.home__close-form-button:hover {
+    cursor: pointer;
+    color: #6246ff
+}
+
+.form__submit-button {
+  background-color: #6246ff;
+  color: #fff;
+  border: 2px solid #014b88;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  font-family: 'Press Start 2P', cursive;
+  border-radius: 4px;
+  box-shadow: 0 6px 0 #014b88;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.form__submit-button:hover {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 #014b88;
+}
+
+dialog {
+    background: none;
+    border: none;
+}
+
+::backdrop {
+    background-color: rgba(74, 48, 3, 0.53);
+}
+
+.home {
+    height: 100vh;
+}
+
+.post-card {
+    background-color: rgb(36, 64, 105);
+    color: white;
+    margin-top: 3rem;
+}
+
+.account {
+    height: 100vh;
+}
+
+.header__user-menu {
+    background-color: rgba(59, 48, 107, 0.897);
+    color: white;
+    height: 10rem;
+    border: #014b88;
+    top: 3rem;
+}
+
+.header__user-menu--button {
+    height: 3rem;
+    border: 1px #014b88;
+    color: white;
+    border-bottom: 2px groove #014b88;
+
+}
+
