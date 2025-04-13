@@ -6,6 +6,8 @@ import './Header.css'
 import getLoggedUserId from "../logic/helpers/getLoggedUserId"
 import UserAvatar from "./UserAvatar"
 import { useLocation, useNavigate } from "react-router"
+import CelebrationButton from './lib/ConfettiBtn.jsx'
+
 
 const Header = ({ refreshHeader, logout, isUserLogged }) => {
     const location = useLocation();
@@ -78,6 +80,7 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
                 <Btn btnContent={'Settings'} btnClassnames={'header__user-menu--button'} btnCallback={() => onMenuRouteClick('/settings')} />
                 <Btn btnContent={'My Posts'} btnClassnames={'header__user-menu--button'} btnCallback={() => onMenuRouteClick('/my-posts')} />
                 <Btn btnContent={'Logout'} btnClassnames={'header__user-menu--button'} btnCallback={onLogoutClick} />
+                <CelebrationButton className='celebration-button'>Celebra!</CelebrationButton>
             </aside>
         }
 

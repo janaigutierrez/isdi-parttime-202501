@@ -37,7 +37,7 @@
     font-family: 'Tiny5';
     font-weight: 700;
     border-radius: 50%;
-    border: solid 2px #FFAC46;
+    border: solid 2px #472c92;
     background-color: white;
     width: 2rem;
     height: 1.75rem;
@@ -112,3 +112,12 @@
     margin-top: 5px;
 }
 
+.celebration-button {
+    margin: 0;
+    background-color: rgb(58, 40, 160);
+    color: white;
+    padding: 0.5rem 0.4rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: 'Tiny5';
+}
