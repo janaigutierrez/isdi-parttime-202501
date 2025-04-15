@@ -1,4 +1,4 @@
-import { FormatError } from "./errors"
+import { FormatError } from "./errors.js"
 
 const validator = {
     email: (email) => {
