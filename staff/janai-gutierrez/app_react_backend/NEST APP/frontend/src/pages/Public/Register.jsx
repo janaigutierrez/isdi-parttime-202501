@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import Form from "../../components/lib/Form";
 import logics from "../../logic";
+import { errors } from "common";
 
 const Register = ({ setRefreshHeader }) => {
     const objectEmail = { label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email', isRequired: true };
@@ -10,14 +11,26 @@ const Register = ({ setRefreshHeader }) => {
 
     const onRegisterUser = (formData) => {
         try {
-            logics.users.registerUser(formData)
-            setRefreshHeader(Date.now())
-            navigate('/')
-        } catch (error) {
-            alert('check your form data, something went wrong')
-            console.error(error)
-        }
+            logics.users.registerUser(formData, (error) => {
+                if (error) alert(error)
+                else {
+                    logics.users.loginUser(formData, (error) => {
+                        if (error) alert(error)
+                        setRefreshHeader(Date.now())
+                        navigate('/')
+                    })
+                }
+            })
 
+        } catch (error) {
+            if (error instanceof errors.FormatError) {
+                setSecurityErrors((error.message).split(','))
+            } else {
+                alert('check your form data, something went wrong')
+                console.error(error)
+            }
+
+        }
     }
 
     return <div className="main-container">

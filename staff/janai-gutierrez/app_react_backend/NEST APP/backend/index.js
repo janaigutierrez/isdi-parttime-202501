@@ -1,13 +1,19 @@
 import express from 'express';
 import { data } from './data/index.js';
 import { json } from 'express';
-import { errors } from 'common';
+import validators from 'common';
+import { FormatError } from 'common/errors.js';
+import cors from 'cors'
 
 const api = express()
 
 const jsonBodyParser = json()
 
 const port = 4321
+
+cors()
+
+api.use(cors())
 
 // middleware per processar JSON 
 api.use(express.json());
@@ -20,39 +26,106 @@ api.get('/api', (req, res) => {
 api.post('/user', jsonBodyParser, (req, res) => {
     const { email, password } = req.body
 
-    const username = email.split('@')[0]
+    try {
+        validators.email(email)
+        validators.password(password)
 
-    const saveUser = (error) => {
+        const username = email.split('@')[0]
 
+        data.users.findUserByEmail(email, (error, user) => {
+            if (error) res.status(500).send(error.message)
+            else if (user) res.status(409).send('Duplicity error.')
+            else {
+                data.users.createUser({ email, password, username }, (error, user) => {
+                    if (error) res.status(500).send(error.message)
+                    else if (user) res.status(201).send()
+                    else {
+                        res.status(500).send('something went wrong')
+                    }
+                })
+            }
+
+        })
+
+    } catch (error) {
+        if (error instanceof TypeError || error instanceof RangeError || error instanceof FormatError) {
+            res.status(400).send(error.message)
+        } else {
+            res.status(500).send(error.message)
+        }
     }
 
-    /* try {
-        const findUser = data.users.findUserByEmail(email, console.error)
-
-        if(findUser) {
-            throw new errors.DuplicityError('user already exists')
-            
-    } */
-
-    data.users.createUser({email, password, username}, (error, user) => {
-        if (error) res.status(500).send(error.message)
-            if (user) res.status(201).send()
-                res.status(500).send('something went wrong')
-    })
     res.status(201).send()
 
-    /* } catch (error) {
-        if(error instanceof ExistenceError)
-            res.status(409).send('user already exists')
-        res.status(500).send()
-    } */
-
-    
 })
 
-api.put('/users', (req, res) => {
+/* api.put('/users', (req, res) => {
     res.status(200)
     res.send('HelloPutUsers!')
+})
+*/
+
+api.post('/users/auth', jsonBodyParser, (req, res) => {
+    const { email, password } = req.body
+
+    try {
+        validators.email(email)
+        validators.password(password)
+
+        data.users.findUserByEmail(email, (error, user) => {
+            if (error) res.status(500).send(error.message)
+            else if (!user) res.status(404).send('user not found')
+            else {
+                if (user.password !== password) res.status(401).send('invalid credentials')
+                else {
+                    res.status(200).send(user.id)
+                }
+            }
+        })
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+})
+
+api.get('/users(username', (req, res) => {
+    const authHeader = req.headers.authorization
+
+    const id = Number(authHeader.split(" ")[1])
+
+    try {
+        validators.id(id)
+        data.users.findUserById(id, (error, user) => {
+            if (error) res.status(500).send(error.message)
+            else if (!user) res.status / (404).send('user not found')
+            else res.status(200).send(user.username)
+        })
+
+    } catch (error) {
+        res.status(500).send(error.message)
+
+    }
+})
+
+api.get('u/users/avatar', (res, res) => {
+    const authHeader = req.headers.authorization
+
+    const id = Number(authHeader.split(" ")[1])
+
+    try {
+        validator.id(id)
+        data.users.findUserById(id, (error, user) => {
+            if (error) res.status(500).send(error.message)
+            else if (!user) res.status / (404).send('user not found')
+            else res.status(200).send(user.avatar)
+        })
+
+    } catch (error) {
+        if (error instanceof TypeError || error instanceof RangeError || error instanceof FormatError) {
+            res.status(400).send(error.message)
+        } else {
+            res.status(500).send(error.message)
+        }
+    }
 })
 
 api.listen(port, () => {

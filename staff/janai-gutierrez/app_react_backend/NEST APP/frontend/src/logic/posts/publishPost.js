@@ -1,5 +1,5 @@
 import data from "../../data";
-import validator from "../../utils/validators"
+import validator from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId";
 
 const publishPost = (postData) => {

@@ -11,9 +11,14 @@ const Login = ({ setRefreshHeader }) => {
 
     const onLoginUser = (formData) => {
         try {
-            logics.users.loginUser(formData)
-            setRefreshHeader(Date.now())
-            navigate('/')
+            logics.users.loginUser(formData, (error) => {
+                if (error) alert(error)
+                else {
+                    setRefreshHeader(Date.now())
+                    navigate('/')
+                }
+            })
+
         } catch (error) {
             alert('something went wrong, check your credentials')
             console.error(error)

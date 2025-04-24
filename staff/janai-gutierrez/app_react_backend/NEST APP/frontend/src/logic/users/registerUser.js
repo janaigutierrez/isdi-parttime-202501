@@ -1,18 +1,35 @@
 import data from "../../data"
-import { ContentError, ExistenceError } from "../../utils/errors"
-import validator from "../../utils/validators"
+import { ContentError, ExistenceError } from "common/errors"
+import validator from "common"
 
-const registerUser = (registerData) => { //registerData = {'email': '', 'password': '', 'confirmation-password': ''}
+const registerUser = (registerData, callback) => { //registerData = {'email': '', 'password': '', 'confirmation-password': ''}
     validator.email(registerData['email'])
     validator.password(registerData['password'])
     validator.password(registerData['confirmation-password'])
-    const username = registerData['email'].split('@')[0]
-    validator.username(username)
-
 
     if (registerData['password'] !== registerData['confirmation-password']) {
         throw new ContentError('password and confirmation password are not the same')
     }
+
+    const xhr = new XMLHttpRequest()
+
+    xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/users`, true)
+
+    const user = { email: registerData.email, password: registerData.password }
+
+    xhr.setRequestHeader('Content-Type', 'application/json')
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 201) {
+                callback(null)
+            } else {
+                callback(xhr.response)
+            }
+        }
+    }
+
+    xhr.send(JSON.stringify(user))
 
     const doesUserExist = data.users.findUserByEmail(registerData['email'])
     if (doesUserExist) {
