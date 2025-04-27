@@ -7,7 +7,7 @@ import getLoggedUserId from "../logic/helpers/getLoggedUserId.js"
 import UserAvatar from "./UserAvatar.jsx"
 import { useLocation, useNavigate } from "react-router"
 import CelebrationButton from './lib/ConfettiBtn.jsx'
-
+import { ExistenceError } from "common/errors.js"
 
 const Header = ({ refreshHeader, logout, isUserLogged }) => {
     const location = useLocation();
@@ -29,10 +29,21 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
 
         if (logics.users.isUserLoggedIn()) {
             setJustifyItems('between')
-            const retrivedUsername = logics.users.getUserUsernameById(getLoggedUserId())
-            setUsername(retrivedUsername)
-            const retrivedAvatar = logics.users.getUserAvatarById(getLoggedUserId())
-            setAvatar(retrivedAvatar)
+
+            try {
+                const retrivedUsername = logics.users.getUserUsernameById(getLoggedUserId() || '')
+                setUsername(retrivedUsername)
+                const retrivedAvatar = logics.users.getUserAvatarById(getLoggedUserId())
+                setAvatar(retrivedAvatar)
+
+            } catch (error) {
+                if (error instanceof ExistenceError) {
+                    logout()
+                } else {
+                    console.error(error)
+                }
+            }
+
         } else {
             if (pathname === '/login' || pathname === '/register') {
                 setJustifyItems('start')
@@ -59,8 +70,9 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
             ((path === '/register' || path === '/login' || justifyItems === 'not-found') || isUserLogged) && <Logo onClick={handleLogoClick} size="sm" />
         }
         {
-            (isUserLogged && username.length > 0) && <p className="header__welcome-text">{`Welcome, ${username}`}</p>
-
+            isUserLogged && username?.length > 0 && (
+                <p className="header__welcome-text">{`Welcome, ${username}`}</p>
+            )
         }
         {
             !isUserLogged && (path === '/' || justifyItems === 'not-found') && <Btn btnClassnames={"header__join-button"} btnContent={"Join in!"} btnCallback={() => navigate('/register')} />

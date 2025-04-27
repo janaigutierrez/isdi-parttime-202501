@@ -23,7 +23,7 @@ api.get('/api', (req, res) => {
     res.send('Hello World')
 })
 
-api.post('/user', jsonBodyParser, (req, res) => {
+api.post('/users', jsonBodyParser, (req, res) => {
     const { email, password } = req.body
 
     try {
@@ -87,7 +87,7 @@ api.post('/users/auth', jsonBodyParser, (req, res) => {
     }
 })
 
-api.get('/users(username', (req, res) => {
+api.get('/users/username', (req, res) => {
     const authHeader = req.headers.authorization
 
     const id = Number(authHeader.split(" ")[1])
@@ -96,23 +96,26 @@ api.get('/users(username', (req, res) => {
         validators.id(id)
         data.users.findUserById(id, (error, user) => {
             if (error) res.status(500).send(error.message)
-            else if (!user) res.status / (404).send('user not found')
+            else if (!user) res.status(404).send('user not found')
             else res.status(200).send(user.username)
         })
 
     } catch (error) {
-        res.status(500).send(error.message)
-
+        if (error instanceof TypeError || error instanceof RangeError || error instanceof FormatError) {
+            res.status(400).send({ name: error.name, message: error.message })
+        } else {
+            res.status(500).send({ name: 'ServerError', message: error.message })
+        }
     }
 })
 
-api.get('u/users/avatar', (res, res) => {
+api.get('/users/avatar', (req, res) => {
     const authHeader = req.headers.authorization
 
     const id = Number(authHeader.split(" ")[1])
 
     try {
-        validator.id(id)
+        validators.id(id)
         data.users.findUserById(id, (error, user) => {
             if (error) res.status(500).send(error.message)
             else if (!user) res.status / (404).send('user not found')

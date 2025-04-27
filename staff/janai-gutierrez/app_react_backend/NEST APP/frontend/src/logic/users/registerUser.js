@@ -13,6 +13,8 @@ const registerUser = (registerData, callback) => { //registerData = {'email': ''
 
     const xhr = new XMLHttpRequest()
 
+    console.log(import.meta.env.VITE_NEST_APP)
+
     xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/users`, true)
 
     const user = { email: registerData.email, password: registerData.password }
@@ -36,7 +38,7 @@ const registerUser = (registerData, callback) => { //registerData = {'email': ''
         throw new ExistenceError('something went wrong, try again with new credentials')
     }
 
-    const userCreated = { email: registerData['email'], password: registerData['password'], username, id: Date.now() }
+    const userCreated = { email: registerData['email'], password: registerData['password'], id: Date.now() }
 
     data.users.createUser(userCreated)
 

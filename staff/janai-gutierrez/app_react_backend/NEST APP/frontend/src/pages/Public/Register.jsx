@@ -9,29 +9,32 @@ const Register = ({ setRefreshHeader }) => {
     const objectConfirmPassword = { label: 'Confirm password', inputType: 'password', inputPlaceholder: '·········', inputId: 'confirmation-password', isRequired: true }
     const navigate = useNavigate()
 
-    const onRegisterUser = (formData) => {
+    const onRegisterUser = (formData, onSuccess) => {
         try {
             logics.users.registerUser(formData, (error) => {
                 if (error) alert(error)
                 else {
+                    onSuccess()
                     logics.users.loginUser(formData, (error) => {
-                        if (error) alert(error)
-                        setRefreshHeader(Date.now())
-                        navigate('/')
+                        if (error) {
+                            alert(error)
+
+                        } else {
+                            setRefreshHeader(Date.now())
+                            navigate('/')
+                        }
+
                     })
                 }
             })
 
         } catch (error) {
-            if (error instanceof errors.FormatError) {
-                setSecurityErrors((error.message).split(','))
-            } else {
-                alert('check your form data, something went wrong')
-                console.error(error)
-            }
-
+            alert('check your form data, something went wrong')
+            console.error(error)
         }
+
     }
+
 
     return <div className="main-container">
         <h1>Register</h1>
@@ -41,7 +44,7 @@ const Register = ({ setRefreshHeader }) => {
             <span className="register__login--button"><Link to="/login">Go to login!</Link></span>
         </div>
     </div>
-
 }
+
 
 export default Register

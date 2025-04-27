@@ -1,6 +1,6 @@
 import './Form.css'
 
-const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallback }) => { 
+const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallback }) => {
     const handleInputChange = (event) => {
         event.preventDefault()
 
@@ -34,12 +34,12 @@ const Form = ({ inputsArray, onSubmitCallback, submitButtonText, onChangeCallbac
                 value = form[inputsArray[i].inputId].value
             }
 
-            formData[fieldName] = value; 
+            formData[fieldName] = value;
         }
 
         try {
-            onSubmitCallback(formData)
-            form.reset()
+            onSubmitCallback(formData, () => form.reset())
+
         } catch (error) {
             console.error(error)
             if (error.name === 'FormatError' || error.name === 'RangeError' || error.name === 'TypeError') {
