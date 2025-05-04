@@ -1,6 +1,5 @@
 import data from "../../data";
-import { ExistenceError } from "common/errors";
-import validator from "common";
+import { errors, validator } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId";
 
 const getAllPosts = () => {
@@ -56,9 +55,9 @@ const getAllPosts = () => {
                         callback(parseError)
                     }
                 } else if (xhr.status === 404) {
-                    useCallback(new ExistenceError('No posts found'))
+                    console.error(new ExistenceError('No posts found'))
                 } else {
-                    useCallback(new Error(`Error fetching posts: ${xhr.status} ${xhr.statusText}`))
+                    console.error(new Error(`Error fetching posts: ${xhr.status} ${xhr.statusText}`))
                 }
             }
         }

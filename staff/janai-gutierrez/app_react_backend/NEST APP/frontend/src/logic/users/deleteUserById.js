@@ -1,6 +1,5 @@
 import data from "../../data"
-import { AuthError, ExistenceError } from "common/errors"
-import validator from "common"
+import { errors, validator } from "common"
 
 const deleteUserById = (id, password) => {
     validator.id(id)
@@ -17,7 +16,16 @@ const deleteUserById = (id, password) => {
         data.posts.deletePostById(post.id)
     });
 
-    //TODO: Delete likes gived by the user
+    const allPosts = data.posts.retrievePosts()
+
+    allPosts.forEach(post => {
+        const likeIndex = post.likes.indexOf(id)
+        if (likeIndex !== -1) {
+            const newPost = postnewPost.likes.splice(likeIndex, 1)
+
+            data.posts.updatePostById(post.id, newPost)
+        }
+    })
 
     data.users.deleteUserById(id)
 }

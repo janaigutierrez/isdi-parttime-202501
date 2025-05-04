@@ -1,6 +1,5 @@
 import data from "../../data";
-import { ExistenceError } from "common/errors";
-import validator from "common";
+import { errors, validator } from "common"
 
 const getUserUsernameById = (id) => {
     validator.id(id)

@@ -1,6 +1,5 @@
 import data from "../../data"
-import { ContentError, ExistenceError } from "common/errors"
-import validator from "common"
+import { errors, validator } from "common"
 
 const registerUser = (registerData, callback) => { //registerData = {'email': '', 'password': '', 'confirmation-password': ''}
     validator.email(registerData['email'])

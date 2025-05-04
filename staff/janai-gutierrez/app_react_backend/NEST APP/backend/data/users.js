@@ -1,4 +1,6 @@
 import fs from 'fs';
+import { errors } from 'common'
+
 
 const users = {
     createUser: (user, callback) => {
@@ -20,12 +22,16 @@ const users = {
         })
     },
     findUserByEmail: (email, callback) => {
+
         fs.readFile('./data/users.json', (error, data) => {
             if (error) callback(error)
             else {
                 let users = JSON.parse(data);
-                if (!users) users = []
+                // testing
+                console.log('Users array:', users)
+                console.log('Looking for email:', email)
 
+                if (!users) users = []
                 const userFound = users.find(user => user.email === email)
 
                 callback(null, userFound)
@@ -38,15 +44,23 @@ const users = {
             if (error) callback(error)
             else {
                 let users = JSON.parse(data);
-                if (!users) users = []
+                if (!users) callback(new errors.ExistenceError('user not found'))
+                else {
+                    const userIndex = users.findIndex(user => user.id === id)
+                    if (userIndex === -1) {
+                        callback(new errors.ExistenceError('user not found'))
+                    } else {
+                        users[userIndex] = newUserData
 
-                const userFound = users.find(user => user.id === id)
-
-                callback(null, userFound)
+                        const usersJson = JSON.stringify(users)
+                        fs.writeFile('./data/users.json', usersJson, (error) => {
+                            if (error) callback(error)
+                            else callback(null, users[userIndex])
+                        })
+                    }
+                }
             }
-
         })
     }
 }
-
 export default users

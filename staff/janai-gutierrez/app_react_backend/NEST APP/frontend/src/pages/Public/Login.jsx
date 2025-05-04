@@ -3,17 +3,19 @@ import Form from "../../components/lib/Form"
 import logics from "../../logic"
 import "./LoginRegister.css"
 
+
 const Login = ({ setRefreshHeader }) => {
     const objectEmail = { label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email', isRequired: true }
     const objectPassword = { label: 'Password', inputType: 'password', inputPlaceholder: '·········', inputId: 'password', isRequired: true }
     const objectRemember = { label: 'Remember me', inputType: 'checkbox', inputValue: 'remember', inputId: 'remember', isRequired: false }
     const navigate = useNavigate()
 
-    const onLoginUser = (formData) => {
+    const onLoginUser = (formData, onSuccess) => {
         try {
             logics.users.loginUser(formData, (error) => {
                 if (error) alert(error)
                 else {
+                    onSuccess()
                     setRefreshHeader(Date.now())
                     navigate('/')
                 }

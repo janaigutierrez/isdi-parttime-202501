@@ -1,12 +1,21 @@
-const getLoggedUserId = () => {
-    let loggedUserId;
-    if (localStorage.id) {
-        loggedUserId = JSON.parse(localStorage.getItem('id'));
-    } else {
-        loggedUserId = JSON.parse(sessionStorage.getItem('id')); //comprobar si se ha guardado el id de un usuario loggeado
+export default function getLoggedUserId() {
+    // Try sessionStorage first, then localStorage
+    const raw = sessionStorage.getItem('id') || localStorage.getItem('id');
+
+    // If no ID stored return null
+    if (!raw) return null;
+
+    // Parse JSON in case it's stored with JSON.stringify
+    let parsed;
+    try {
+        parsed = JSON.parse(raw);
+    } catch {
+        parsed = raw;
     }
 
-    return loggedUserId
-}
+    // Convert to number
+    const id = Number(parsed);
 
-export default getLoggedUserId
+    // If conversion fails (NaN), return null
+    return Number.isNaN(id) ? null : id;
+}

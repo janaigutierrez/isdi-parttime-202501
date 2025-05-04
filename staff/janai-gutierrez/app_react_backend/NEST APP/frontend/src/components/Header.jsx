@@ -7,7 +7,7 @@ import getLoggedUserId from "../logic/helpers/getLoggedUserId.js"
 import UserAvatar from "./UserAvatar.jsx"
 import { useLocation, useNavigate } from "react-router"
 import CelebrationButton from './lib/ConfettiBtn.jsx'
-import { ExistenceError } from "common/errors.js"
+import { errors, validator } from "common"
 
 const Header = ({ refreshHeader, logout, isUserLogged }) => {
     const location = useLocation();

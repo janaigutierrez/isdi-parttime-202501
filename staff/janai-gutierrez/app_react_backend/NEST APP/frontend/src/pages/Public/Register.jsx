@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import Form from "../../components/lib/Form";
 import logics from "../../logic";
 import { errors } from "common";
@@ -6,7 +6,7 @@ import { errors } from "common";
 const Register = ({ setRefreshHeader }) => {
     const objectEmail = { label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email', isRequired: true };
     const objectPassword = { label: 'Password', inputType: 'password', inputPlaceholder: '·········', inputId: 'password', isRequired: true }
-    const objectConfirmPassword = { label: 'Confirm password', inputType: 'password', inputPlaceholder: '·········', inputId: 'confirmation-password', isRequired: true }
+    const objectConfirmPassword = { label: 'Confirm password', inputType: 'password', inputPlaceholder: '·········', inputId: 'passwordConfirmation', isRequired: true }
     const navigate = useNavigate()
 
     const onRegisterUser = (formData, onSuccess) => {
@@ -14,14 +14,14 @@ const Register = ({ setRefreshHeader }) => {
             logics.users.registerUser(formData, (error) => {
                 if (error) alert(error)
                 else {
-                    onSuccess()
                     logics.users.loginUser(formData, (error) => {
                         if (error) {
                             alert(error)
 
                         } else {
-                            setRefreshHeader(Date.now())
                             navigate('/')
+                            setRefreshHeader(Date.now())
+                            onSuccess()
                         }
 
                     })

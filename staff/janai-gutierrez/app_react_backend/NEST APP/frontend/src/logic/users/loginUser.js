@@ -1,18 +1,21 @@
-import data from "../../data"
-import { AuthError, ExistenceError } from "common/errors"
-import validator from "common"
+import { errors, validator } from "common"
 
 const loginUser = (loginData, callback) => {
-    validator.password(loginData['password'])
-    validator.email(loginData['email'])
 
+    // validem entrades
+    try {
+        validator.password(loginData['password'])
+        validator.email(loginData['email'])
+    } catch (error) {
+        return callback(error)
+    }
+
+    // creem la request
     const xhr = new XMLHttpRequest()
-
     xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/users/auth`, true)
+    xhr.setRequestHeader('Content-Type', 'application/json')
 
     const user = { email: loginData.email, password: loginData.password }
-
-    xhr.setRequestHeader('Content-Type', 'application/json')
 
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
@@ -22,9 +25,13 @@ const loginUser = (loginData, callback) => {
                 } else {
                     sessionStorage.id = xhr.response
                 }
-                callback(null)
+                return callback(null)
             } else {
-                callback()
+                const response = JSON.parse(xhr.response)
+                if (errors[response.name]) {
+                    return callback(new errors[response.name](response.message))
+                }
+                return callback(new Error(`${response.name}: ${response.message}`))
             }
         }
     }

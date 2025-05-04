@@ -3,7 +3,7 @@ import UserCard from "../../components/UserCard"
 import PostList from "../../components/PostList"
 import logics from "../../logic"
 import { useParams } from "react-router"
-import { ExistenceError } from "common/errors"
+import { errors, validator } from "common"
 import NotFound from "../NotFound"
 
 const UserProfile = () => {
