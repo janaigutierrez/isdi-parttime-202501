@@ -8,6 +8,8 @@ import UserAvatar from "./UserAvatar.jsx"
 import { useLocation, useNavigate } from "react-router"
 import CelebrationButton from './lib/ConfettiBtn.jsx'
 import { errors, validator } from "common"
+const { ExistenceError } = errors
+
 
 const Header = ({ refreshHeader, logout, isUserLogged }) => {
     const location = useLocation();
@@ -27,7 +29,9 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
         const pathname = location.pathname
         setPath(pathname)
 
-        if (logics.users.isUserLoggedIn()) {
+        const userId = getLoggedUserId()
+
+        if (logics.users.isUserLoggedIn() && userId !== null) {
             setJustifyItems('between')
 
             try {

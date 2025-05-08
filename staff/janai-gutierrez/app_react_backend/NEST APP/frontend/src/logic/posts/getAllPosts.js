@@ -1,6 +1,7 @@
 import data from "../../data";
 import { errors, validator } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId";
+const { ExistenceError } = errors
 
 const getAllPosts = () => {
 
@@ -10,15 +11,15 @@ const getAllPosts = () => {
         const loggedUserId = rawId != null ? Number(rawId) : null
 
         // Validate ID if present
-        if (loggedUserId != null) {
-            validator.id(loggedUserId)
-        }
+        if (loggedUserId != null) validator.id(loggedUserId)
+
 
         // Prepare XHR
         const xhr = new XMLHttpRequest()
 
         xhr.open('GET', `${import.meta.env.VITE_NEST_APP}/posts`, true)
         xhr.setRequestHeader('Content-Type', 'application/json')
+
         if (loggedUserId != null) {
             xhr.setRequestHeader('Authorization', `Bearer ${loggedUserId}`)
         }

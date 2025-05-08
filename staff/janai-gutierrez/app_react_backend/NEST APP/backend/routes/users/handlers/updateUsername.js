@@ -1,0 +1,24 @@
+import { validator } from "common"
+import logics from "../../../logics/index.js"
+
+const updateUsername = (req, res, next) => {
+    const id = req.userId
+    const { username } = req.body
+
+    try {
+        validator.id(id)
+        validator.username(username)
+
+        logics.updateUsername(id, username, (error) => {
+            if (error) next(error)
+            else res.status(200).send()
+        })
+
+    } catch (error) {
+        next(error)
+
+
+    }
+}
+
+export default updateUsername

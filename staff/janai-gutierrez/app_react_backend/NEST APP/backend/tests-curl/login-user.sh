@@ -1,3 +1,3 @@
-curl -v -X POST http://localhost:4321/user \
+curl  -X POST http://localhost:4321/users/auth \
     -H "Content-Type: application/json" \
-    -d "{\"email\": \"janai@gmail.com\", \"password\": \"Gutierrez1!\"}"
+    -d "{\"email\": \"janai@gmail.com\", \"password\": \"Gutierrez1!\"}" -v

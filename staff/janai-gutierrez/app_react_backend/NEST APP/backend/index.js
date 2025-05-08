@@ -1,19 +1,14 @@
 import express from 'express';
-import { data } from './data/index.js';
-import { json } from 'express';
-import { errors, validator } from 'common/index.js';
 import cors from 'cors'
+import errorHandler from './middlewares/errorHandler.js';
+import userRouter from './routes/users/index.js';
 
-const api = express()
-
-const jsonBodyParser = json()
 
 const port = 4321
-
+const api = express()
 api.use(cors())
 
 
-// middleware per processar JSON 
 api.use(express.json());
 
 api.get('/api', (req, res) => {
@@ -21,6 +16,16 @@ api.get('/api', (req, res) => {
     res.send('Hello World')
 })
 
+api.use('/users', userRouter)
+
+api.use(errorHandler)
+
+api.listen(port, () => {
+    console.info(`API listening to PORT: ${port}`)
+})
+
+
+/*
 api.post('/users', jsonBodyParser, (req, res) => {
     const { email, password } = req.body
 
@@ -55,16 +60,17 @@ api.post('/users', jsonBodyParser, (req, res) => {
     }
 })
 
-/* api.put('/users', (req, res) => {
+api.put('/users', (req, res) => {
     res.status(200)
     res.send('HelloPutUsers!')
 })
-*/
+
 
 api.post('/users/auth', jsonBodyParser, (req, res) => {
 
     console.log('POST /users/auth called');
     console.log('Request body:', req.body);
+
     const { email, password } = req.body
 
     try {
@@ -75,8 +81,8 @@ api.post('/users/auth', jsonBodyParser, (req, res) => {
 
             if (error) res.status(500).send(error.message)
             if (!user || user.password !== password)
-                return res.status(401).json({ message: 'Invalid email or password' })
-            else return res.status(200).json({ id: user.id })
+                return res.status(401).send({ message: 'Invalid email or password' })
+            else return res.status(200).send({ id: user.id })
         })
     } catch (error) {
         res.status(500).send(error.message)
@@ -89,7 +95,7 @@ api.get('/users/username', (req, res) => {
     const id = Number(authHeader.split(" ")[1])
 
     try {
-        validators.id(id)
+        validator.id(id)
         data.users.findUserById(id, (error, user) => {
             if (error) res.status(500).send(error.message)
             else if (!user) res.status(404).send('user not found')
@@ -126,7 +132,4 @@ api.get('/users/avatar', (req, res) => {
         }
     }
 })
-
-api.listen(port, () => {
-    console.info(`API listening to PORT: ${port}`)
-})
+*/
