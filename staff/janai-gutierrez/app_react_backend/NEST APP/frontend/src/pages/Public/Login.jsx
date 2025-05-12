@@ -10,19 +10,23 @@ const Login = ({ setRefreshHeader }) => {
     const objectRemember = { label: 'Remember me', inputType: 'checkbox', inputValue: 'remember', inputId: 'remember', isRequired: false }
     const navigate = useNavigate()
 
-    const onLoginUser = (formData, onSuccess) => {
+    const onLoginUser = (loginData, onSuccess) => {
+        console.log('🛠 logics.users:', logics.users)
+
         try {
-            logics.users.loginUser(formData, (error) => {
-                if (error) alert(error)
-                else {
+
+            logics.users.loginUser(loginData, (error) => {
+                if (error) {
+                    alert(error)
+                } else {
+
                     onSuccess()
                     setRefreshHeader(Date.now())
                     navigate('/')
                 }
             })
-
         } catch (error) {
-            alert('something went wrong, check your credentials')
+            alert('Something went wrong, check your credentials')
             console.error(error)
         }
     }

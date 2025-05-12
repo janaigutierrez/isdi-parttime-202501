@@ -16,8 +16,6 @@ const updateUsername = (req, res, next) => {
 
     } catch (error) {
         next(error)
-
-
     }
 }
 

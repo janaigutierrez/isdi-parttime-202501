@@ -1,4 +1,4 @@
-import errors from "common/errors.js"
+import { errors } from "common"
 import { data } from "../data/index.js"
 
 const updateUsername = (id, newUsername, callback) => {

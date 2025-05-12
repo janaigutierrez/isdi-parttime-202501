@@ -14,13 +14,14 @@ const Home = () => {
     const formRef = useRef(null)
 
     useEffect(() => {
-        try {
-            const retrivedPosts = logics.posts.getAllPosts()
-            setPosts(retrivedPosts)
-        } catch (error) {
-            alert('ups, something is not working!')
-            console.error(error)
-        }
+        logics.posts.getAllPosts((error, retrievedPosts) => {
+            if (error) {
+                console.error(error)
+                setPosts([])   // netegem per mostrar missatge
+            } else {
+                setPosts(retrievedPosts)
+            }
+        })
     }, [refreshPosts])
 
     const handleOutsideModalClick = (event) => {

@@ -8,21 +8,21 @@ const posts = {
             if (error) callback(error)
             else {
                 let posts = JSON.parse(data);
-                if (!posts) users = []
+                if (!posts) posts = []
                 post.id = Date.now()
-                posts.push(user)
-                const usersJson = JSON.stringify(users)
+                posts.push(post)
+                const postsJson = JSON.stringify(posts)
 
-                fs.writeFile('./data/posts.json', usersJson, (error) => {
+                fs.writeFile('./data/posts.json', postsJson, (error) => {
                     if (error) callback(error)
-                    else callback(null, user)
+                    else callback(null, post)
                 })
             }
 
         })
     },
 
-    findPosts: (callback) => {
+    findPost: (callback) => {
         fs.readFile('./data/posts.json', (error, data) => {
             if (error) callback(error)
             else {
@@ -71,4 +71,4 @@ const posts = {
         })
     }
 }
-export default users
+export default posts

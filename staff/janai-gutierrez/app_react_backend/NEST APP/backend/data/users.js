@@ -50,13 +50,7 @@ const users = {
                     if (userIndex === -1) {
                         callback(new errors.ExistenceError('user not found'))
                     } else {
-                        users[userIndex] = newUserData
-
-                        const usersJson = JSON.stringify(users)
-                        fs.writeFile('./data/users.json', usersJson, (error) => {
-                            if (error) callback(error)
-                            else callback(null, users[userIndex])
-                        })
+                        callback(null, users[userIndex])
                     }
                 }
             }

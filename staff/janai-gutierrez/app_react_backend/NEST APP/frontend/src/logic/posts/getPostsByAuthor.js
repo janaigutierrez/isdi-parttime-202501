@@ -17,7 +17,7 @@ const getPostsByAuthor = (authorId) => {
         posts[i].author = { id: author.id, username: author.username, avatar: author.avatar }
         const date = new Date(posts[i].createdOn)
         posts[i].createdOn = date.toLocaleString()
-        if (!posts[i].likes) posts[i].likes = []; //para manejar posts sin arrays de likes
+        if (!posts[i].likes) posts[i].likes = [];
         if (posts[i].likes.length > 0 && posts[i].likes.includes(loggedUserId)) {
             posts[i].isLiked = true
         } else {

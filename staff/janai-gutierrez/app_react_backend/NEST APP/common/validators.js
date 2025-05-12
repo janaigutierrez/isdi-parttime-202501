@@ -15,7 +15,7 @@ const _validator = {
     },
     password: (password) => {
         if (typeof password !== 'string') {
-            throw new TypeError('Email is not a string')
+            throw new TypeError('Password is not a string')
         }
         if (password.length === 0) {
             throw new RangeError('Password is empty')

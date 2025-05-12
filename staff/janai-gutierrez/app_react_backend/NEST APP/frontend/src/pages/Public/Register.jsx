@@ -11,7 +11,11 @@ const Register = ({ setRefreshHeader }) => {
 
     const onRegisterUser = (formData, onSuccess) => {
         try {
-            logics.users.registerUser(formData, (error) => {
+            const { email, password, passwordConfirmation } = formData
+
+            console.log('Form data sent:', formData)
+
+            logics.users.registerUser(email, password, passwordConfirmation, (error) => {
                 if (error) alert(error)
                 else {
                     logics.users.loginUser(formData, (error) => {
@@ -19,6 +23,8 @@ const Register = ({ setRefreshHeader }) => {
                             alert(error)
 
                         } else {
+                            sessionStorage.setItem('id', JSON.stringify(userId))
+
                             navigate('/')
                             setRefreshHeader(Date.now())
                             onSuccess()
