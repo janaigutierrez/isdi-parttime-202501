@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Form from "../../components/lib/Form";
 import logics from "../../logic";
-import { errors } from "common";
+
 
 const Register = ({ setRefreshHeader }) => {
     const objectEmail = { label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email', isRequired: true };
@@ -13,41 +13,35 @@ const Register = ({ setRefreshHeader }) => {
         try {
             const { email, password, passwordConfirmation } = formData
 
-            console.log('Form data sent:', formData)
-
             logics.users.registerUser(email, password, passwordConfirmation, (error) => {
+
                 if (error) alert(error)
                 else {
-                    logics.users.loginUser(formData, (error) => {
+                    logics.users.loginUser({ email: email, password: password }, (error, userId) => {
                         if (error) {
                             alert(error)
-
                         } else {
-                            sessionStorage.setItem('id', JSON.stringify(userId))
+                            // sessionStorage.setItem('id', JSON.stringify(userId))
 
                             navigate('/')
                             setRefreshHeader(Date.now())
                             onSuccess()
                         }
-
                     })
                 }
             })
-
         } catch (error) {
             alert('check your form data, something went wrong')
             console.error(error)
         }
-
     }
-
 
     return <div className="main-container">
         <h1>Register</h1>
         <Form inputsArray={[objectEmail, objectPassword, objectConfirmPassword]} submitButtonText={'Register'} onSubmitCallback={onRegisterUser} />
         <div className="register__login">
             <span className="register__login--text">Already have an account?</span>
-            <span className="register__login--button"><Link to="/login">Go to login!</Link></span>
+            <span className="register__login--button"><Link to="/login"> Go to login!</Link></span>
         </div>
     </div>
 }

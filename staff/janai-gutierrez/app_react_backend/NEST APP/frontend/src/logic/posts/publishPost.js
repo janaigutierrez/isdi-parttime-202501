@@ -5,6 +5,7 @@ import getLoggedUserId from "../helpers/getLoggedUserId";
 const publishPost = (postInfo, callback) => {
 
     const { title, description, img } = postInfo
+
     validator.text(title, 40, 1, 'Post-Title')
     validator.text(description, 210, 1, 'Post-Description')
 

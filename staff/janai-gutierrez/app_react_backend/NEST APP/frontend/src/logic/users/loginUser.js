@@ -2,7 +2,6 @@ import { errors, validator } from "common"
 
 const loginUser = (loginData, callback) => {
 
-    // validem entrades
     try {
         validator.password(loginData['password'])
         validator.email(loginData['email'])
@@ -10,7 +9,6 @@ const loginUser = (loginData, callback) => {
         return callback(error)
     }
 
-    // creem la request
     const xhr = new XMLHttpRequest()
     xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/users/auth`, true)
     xhr.setRequestHeader('Content-Type', 'application/json')

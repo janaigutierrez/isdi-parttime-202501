@@ -19,8 +19,11 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
     const [justifyItems, setJustifyItems] = useState("")
 
     useEffect(() => {
+
         const path = location.pathname
+
         setJustifyItems(
+
             logics.users.isUserLoggedIn()
                 ? "between"
                 : path === "/login" || path === "/register"
@@ -80,7 +83,7 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
                 ))}
 
             {/* Missatge de benvinguda */}
-            {isUserLogged && username && (
+            {username && isUserLogged && (
                 <p className="header__welcome-text">Welcome, {username}</p>
             )}
 

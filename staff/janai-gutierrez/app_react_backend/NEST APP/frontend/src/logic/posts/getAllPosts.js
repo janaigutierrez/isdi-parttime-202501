@@ -1,5 +1,4 @@
-// frontend/src/logic/posts/getAllPosts.js
-import { validator } from "common"                // o bé import validator from "../../common/validators.js" si fas servir el paquet local
+import { validator } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId.js"
 
 const API = import.meta.env.VITE_NEST_APP
@@ -7,7 +6,6 @@ const API = import.meta.env.VITE_NEST_APP
 export default function getAllPosts(callback) {
     const loggedUserId = getLoggedUserId()
 
-    // Si no hi ha id vàlid, parem aquí
     try {
         validator.id(loggedUserId)
     } catch (error) {

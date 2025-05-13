@@ -4,7 +4,7 @@ import logics from '../../../logics/index.js'
 
 const registerUser = (req, res, next) => {
     const { email, password } = req.body
-
+    console.log("🔍 signup got:", email, "typeof:", typeof email)
     try {
         validator.email(email)
         validator.password(password)

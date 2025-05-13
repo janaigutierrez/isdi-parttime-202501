@@ -1,12 +1,14 @@
 import data from "../../data"
 import { errors, validator } from "common"
 
-const registerUser = (registerData, callback) => { //registerData = {'email': '', 'password': '', 'confirmation-password': ''}
-    validator.email(registerData['email'])
-    validator.password(registerData['password'])
-    validator.password(registerData['confirmation-password'])
+const registerUser = (email, password, confirmationPassword, callback) => {
+    console.log("🔍 signup got:", email, "typeof:", typeof email)
 
-    if (registerData['password'] !== registerData['confirmation-password']) {
+    validator.email(email)
+    validator.password(password)
+    validator.password(confirmationPassword)
+
+    if (password !== confirmationPassword) {
         throw new ContentError('password and confirmation password are not the same')
     }
 
@@ -16,7 +18,7 @@ const registerUser = (registerData, callback) => { //registerData = {'email': ''
 
     xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/users`, true)
 
-    const user = { email: registerData.email, password: registerData.password }
+    const user = { email, password }
 
     xhr.setRequestHeader('Content-Type', 'application/json')
 
@@ -32,12 +34,12 @@ const registerUser = (registerData, callback) => { //registerData = {'email': ''
 
     xhr.send(JSON.stringify(user))
 
-    const doesUserExist = data.users.findUserByEmail(registerData['email'])
+    const doesUserExist = data.users.findUserByEmail(email)
     if (doesUserExist) {
-        throw new ExistenceError('something went wrong, try again with new credentials')
+        throw new errors.ExistenceError('something went wrong, try again with new credentials')
     }
 
-    const userCreated = { email: registerData['email'], password: registerData['password'], id: Date.now() }
+    const userCreated = { email, password, id: Date.now() }
 
     data.users.createUser(userCreated)
 
