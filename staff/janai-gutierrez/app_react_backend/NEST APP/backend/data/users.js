@@ -27,9 +27,6 @@ const users = {
             if (error) callback(error)
             else {
                 let users = JSON.parse(data);
-                // testing
-                console.log('Users array:', users)
-                console.log('Looking for email:', email)
 
                 if (!users) users = []
                 const userFound = users.find(user => user.email === email)

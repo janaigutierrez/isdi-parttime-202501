@@ -5,6 +5,9 @@ import registerUser from "./registerUser.js"
 import updateUsername from "./updateUsername.js"
 import createPost from "./createPost.js"
 import getAllPosts from "./getAllPosts.js"
+import updateBio from "./updateBio.js"
+import getBio from "./getBio.js"
+import updateAvatar from "./updateAvatar.js"
 
 
 export default {
@@ -15,6 +18,7 @@ export default {
     getAvatar,
     createPost,
     getAllPosts,
-
-
+    updateBio,
+    getBio,
+    updateAvatar
 }

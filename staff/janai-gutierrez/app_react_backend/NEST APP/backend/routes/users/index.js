@@ -10,8 +10,11 @@ userRouter.post('/', jsonBodyParser, handlers.registerUser)
 userRouter.post('/auth', jsonBodyParser, handlers.loginUser)
 
 userRouter.get('/username', extractId, handlers.getUsername)
-userRouter.get('/avatar', extractId,)
+userRouter.get('/avatar', extractId, handlers.getAvatar)
+userRouter.get('/bio', extractId, handlers.getBio)
 
 userRouter.patch('/username', jsonBodyParser, extractId, handlers.updateUsername)
+userRouter.patch('/bio', jsonBodyParser, extractId, handlers.updateBio)
+userRouter.patch('/avatar', jsonBodyParser, extractId, handlers.updateAvatar)
 
 export default userRouter

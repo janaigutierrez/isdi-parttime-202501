@@ -5,6 +5,8 @@ import { validator } from 'common'
 const loginUser = (req, res, next) => {
     const { email, password } = req.body
 
+    console.log(`[HANDLER] Login attempt for: ${email}`)
+
     try {
         validator.email(email)
         validator.password(password)

@@ -1,21 +1,28 @@
 import logics from "../logic"
 import Btn from "./lib/Btn"
 import Form from "./lib/Form"
+import { useState } from "react"
 
 const CreatePostModal = ({ setRefreshPosts, closeModal }) => {
+    const [isPublishing, setIsPublishing] = useState(false)
+
+
     const titleInput = { label: 'Add your title', inputType: 'text', inputPlaceholder: 'Title...', inputId: 'title', isRequired: true }
     const descriptionInput = { label: 'Add your description', inputType: 'text', inputPlaceholder: 'Add text...', inputId: 'description', isRequired: true }
     const imgInput = { label: 'Add ur image url', inputType: 'url', inputPlaceholder: '.png, .jpg, etc', inputId: 'img', isRequired: false }
 
     const handlePublishPost = (formData) => {
-        try {
-            logics.posts.publishPost(formData)
-            setRefreshPosts(Date.now())
-            closeModal()
-        } catch (error) {
-            alert('ups, something went wrong :c')
-            console.error(error)
-        }
+        setIsPublishing(true)
+
+        logics.posts.publishPost(formData, (error) => {
+            if (error) {
+                alert('ups, smt went wrong')
+                console.error(error)
+            } else {
+                setRefreshPosts(Date.now())
+                closeModal()
+            }
+        })
     }
 
     return <div className='home__create-post-dialog'>

@@ -1,20 +1,19 @@
-import { errors, validator } from 'common'
+// backend/logics/getBio.js (versión funcional completa)
+import { errors } from 'common'
 import { data } from '../data/index.js'
 
-const updateUsername = (userId, newUsername, callback) => {
-    console.log(`[LOGIC] updateUsername llamado - userId: ${userId}, newUsername: ${newUsername}`)
+const getBio = (userId, callback) => {
+    console.log(`[LOGIC] getBio llamado con userId: ${userId}`)
 
     try {
-        validator.id(userId)
-        validator.username(newUsername)
-
+        // Validar que data.users existe
         if (!data || !data.users) {
             console.error('[LOGIC] Error: data o data.users no está definido')
             callback(new Error('Internal server error'))
             return
         }
 
-
+        // Usar findUserById con callback
         data.users.findUserById(userId, (error, user) => {
             if (error) {
                 console.error('[LOGIC] Error en findUserById:', error)
@@ -28,23 +27,17 @@ const updateUsername = (userId, newUsername, callback) => {
                 return
             }
 
-            user.username = newUsername
+            console.log('[LOGIC] Usuario encontrado:', user)
 
-            data.users.updateUserById(userId, user, (error) => {
-                if (error) {
-                    console.error('[LOGIC] Error actualizando usuario:', error)
-                    callback(error)
-                } else {
-                    console.log(`[LOGIC] Username actualizado: ${newUsername}`)
-                    callback(null)
-                }
-            })
+            // Devolver la bio o cadena vacía si no existe
+            const bio = user.bio || ''
+            console.log(`[LOGIC] Bio: "${bio}"`)
+            callback(null, bio)
         })
-
     } catch (error) {
         console.error('[LOGIC] Error inesperado:', error)
         callback(error)
     }
 }
 
-export default updateUsername
+export default getBio

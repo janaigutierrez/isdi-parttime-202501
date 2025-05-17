@@ -18,32 +18,48 @@ const MyProfile = ({ updateHeader }) => {
     const bioObject = { label: 'Bio', inputType: 'text-area', inputPlaceholder: 'More about me here!', inputId: 'bio', isRequired: true }
 
     const onUpdateUsername = (formData) => {
-        try {
-            logics.users.updateUsername(formData['username'])
-            updateHeader(Date.now())
-            setRefreshUserCard(Date.now())
-            setShowUsernameForm(false)
-        } catch (error) {
-            alert('ups! try again!')
-            console.error(error)
-        }
+
+        logics.users.updateUsername(formData['username'], (error) => {
+            if (error) {
+                alert('ups! try again!')
+                console.error(error)
+            } else {
+                updateHeader(Date.now())
+                setRefreshUserCard(Date.now())
+                setShowUsernameForm(false)
+            }
+        })
     }
+
 
     const onUpdateAvatar = (formData) => {
         try {
             const newAvatar = formData['avatar']
+
+            if (!newAvatar) {
+                alert('Please select an image')
+                return
+            }
+
             const image = new FileReader();
+
             image.onload = () => {
                 const base64 = image.result;
                 setTempAvatar(base64)
+
+                logics.users.updateAvatar(base64, (error) => {
+                    if (error) {
+                        alert('ups! try again!')
+                        console.error(error)
+                    } else {
+                        updateHeader(Date.now())
+                        setRefreshUserCard(Date.now())
+                        setShowAvatarForm(false)
+                    }
+                })
             };
+
             image.readAsDataURL(newAvatar)
-
-            logics.users.updateAvatar(tempAvatar)
-            updateHeader(Date.now())
-            setRefreshUserCard(Date.now())
-            setShowAvatarForm(false)
-
         } catch (error) {
             alert('ups! try again!')
             console.error(error)
@@ -51,22 +67,30 @@ const MyProfile = ({ updateHeader }) => {
     }
 
     const onUpdateBio = (formData) => {
-        try {
-            logics.users.updateBio(formData['bio'])
-            updateHeader(Date.now())
-            setRefreshUserCard(Date.now())
-            setShowBioForm(false)
-        } catch (error) {
-            alert('ups! try again!')
-            console.error(error)
-        }
+        logics.users.updateBio(formData['bio'], (error) => {
+            if (error) {
+                alert('ups! try again!')
+                console.error(error)
+            } else {
+                updateHeader(Date.now())
+                setRefreshUserCard(Date.now())
+                setShowBioForm(false)
+            }
+        })
     }
 
     const saveRandomBio = (error, newBio) => {
         if (error) alert(error)
         else {
-            logics.users.updateBio(newBio)
-            setRefreshUserCard(Date.now())
+            logics.users.updateBio(newBio, (updateError) => {
+                if (updateError) {
+                    alert('Error updating bio')
+                    console.error(updateError)
+                } else {
+                    setRefreshUserCard(Date.now())
+                }
+            })
+
         }
     }
 
@@ -94,13 +118,13 @@ const MyProfile = ({ updateHeader }) => {
         </div>
         {showAvatarForm && <Form inputsArray={[avatarObject]} onSubmitCallback={onUpdateAvatar} submitButtonText={"Save new avatar"} onChangeCallback={setTempAvatar} />}
         <div className="bio-randomizer">
-        <div className="account__section-title" onClick={() => setShowBioForm(!showBioForm)}>
-            <h2>Change my bio</h2>
-            <i className={`bi bi-chevron-compact-${showBioForm ? 'up' : 'down'}`}></i>
+            <div className="account__section-title" onClick={() => setShowBioForm(!showBioForm)}>
+                <h2>Change my bio</h2>
+                <i className={`bi bi-chevron-compact-${showBioForm ? 'up' : 'down'}`}></i>
+            </div>
+            {showBioForm && <Form inputsArray={[bioObject]} onSubmitCallback={onUpdateBio} submitButtonText={"Save new bio"} />}
+            {showBioForm && <div className="account__bio"><b>No ideas?</b><p>Become random: <Btn btnContent={'Randomize'} btnCallback={onRandomBioClick} btnClassnames={'account__random-bio-btn'} /></p></div>}
         </div>
-        {showBioForm && <Form inputsArray={[bioObject]} onSubmitCallback={onUpdateBio} submitButtonText={"Save new bio"} />}
-        {showBioForm && <div className="account__bio"><b>No ideas?</b><p>Become random: <Btn btnContent={'Randomize'} btnCallback={onRandomBioClick} btnClassnames={'account__random-bio-btn'} /></p></div>}
-    </div>
     </div>
 }
 

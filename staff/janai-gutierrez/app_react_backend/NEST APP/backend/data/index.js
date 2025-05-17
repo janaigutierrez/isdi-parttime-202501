@@ -1,10 +1,16 @@
 import users from "./users.js"
 import posts from './posts.js'
 
+
+console.log('[DATA] Importando módulos:')
+console.log('[DATA] users:', typeof users, Object.keys(users))
+console.log('[DATA] posts:', typeof posts, Object.keys(posts))
+
 export const data = {
     users, posts
 }
 
+console.log('[DATA] Exportando data:', Object.keys(data))
 /*
 const object = {test: 'hola'}
 const json = JSON.stringify(object)
