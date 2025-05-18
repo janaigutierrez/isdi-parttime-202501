@@ -8,6 +8,8 @@ import getAllPosts from "./getAllPosts.js"
 import updateBio from "./updateBio.js"
 import getBio from "./getBio.js"
 import updateAvatar from "./updateAvatar.js"
+import updateEmail from "./updateEmail.js"
+import updatePassword from "./updatePassword.js"
 
 
 export default {
@@ -20,5 +22,7 @@ export default {
     getAllPosts,
     updateBio,
     getBio,
-    updateAvatar
+    updateAvatar,
+    updateEmail,
+    updatePassword
 }

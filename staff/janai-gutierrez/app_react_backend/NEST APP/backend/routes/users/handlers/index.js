@@ -6,6 +6,8 @@ import getAvatar from "./getAvatar.js";
 import updateBio from "./updateBio.js";
 import getBio from "./getBio.js";
 import updateAvatar from "./updateAvatar.js";
+import updateEmail from "./updateEmail.js";
+import updatePassword from "./updatePassword.js";
 
 export default {
     registerUser,
@@ -15,5 +17,7 @@ export default {
     getAvatar,
     updateBio,
     getBio,
-    updateAvatar
+    updateAvatar,
+    updateEmail,
+    updatePassword
 }

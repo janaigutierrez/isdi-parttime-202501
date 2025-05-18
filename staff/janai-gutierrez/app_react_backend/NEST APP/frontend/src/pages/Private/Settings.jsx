@@ -23,7 +23,14 @@ const Settings = () => {
         const newEmail = formData.email
 
         try {
-            logics.users.updateEmail(newEmail)
+            logics.users.updateEmail(newEmail, (error) => {
+                if (error) {
+                    alert('ups, try again')
+                    console.error(error)
+                } else {
+                    alert('Email updated succesfully')
+                }
+            })
         } catch (error) {
             alert('ups! try again!')
             console.error(error)
@@ -36,7 +43,16 @@ const Settings = () => {
         const confirmPassword = formData['confirm-password']
 
         try {
-            logics.users.updatePassword(newPassword, confirmPassword, oldPassword)
+            logics.users.updatePassword(newPassword, confirmPassword, oldPassword, (error) => {
+                if (error) {
+                    alert('upds, try again')
+                    console.error(error)
+
+                } else {
+                    alert('Password updated successfully')
+                    setShowNewPasswordForm(false)
+                }
+            })
         } catch (error) {
             alert('ups! try again!')
             console.error(error)
