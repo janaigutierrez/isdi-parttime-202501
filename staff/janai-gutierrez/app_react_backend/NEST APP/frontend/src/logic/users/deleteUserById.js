@@ -1,33 +1,49 @@
 import data from "../../data"
 import { errors, validator } from "common"
 
-const deleteUserById = (id, password) => {
-    validator.id(id)
-    validator.password(password)
+const deleteUserById = (id, password, callback) => {
 
-    const user = data.users.findUserById(id)
+    try {
+        validator.id(id)
+        validator.password(password)
 
-    if (!user) throw new ExistenceError('user not found')
-    if (user.password !== password) throw new AuthError('incorrect password')
+        const xhr = new XMLHttpRequest()
 
-    const userPosts = data.posts.retrievePostsByAuthorId(id)
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                console.log(`[FRONTEND] deleteUserById - status: ${xhr.status}`)
+                if (xhr.status === 200) {
+                    console.log(`[FRONTEND] User deleted successfully`)
+                    callback(null)
+                } else if (xhr.status === 400) {
+                    try {
+                        const response = JSON.parse(xhr.responseText)
+                        if (errors[response.name]) {
+                            callback(new errors[response.name](response.message))
+                        } else {
+                            callback(new Error(response.message || `Error ${xhr.status}`))
+                        }
+                    } catch (error) {
+                        callback(new Error(`Error ${xhr.status}: ${xhr.statusText}}`))
+                    }
+                } else if (xhr.status === 401) {
+                    callback(new errors.AuthError('user not logged in or wrong password'))
+                } else if (xhr.status === 404) {
+                    callback(new errors.ExistenceError('user not found'))
+                } else {
+                    callback(new Error(`Error ${xhr.status}: ${xhr.statusText}`))
+                }
 
-    userPosts.forEach(post => {
-        data.posts.deletePostById(post.id)
-    });
-
-    const allPosts = data.posts.retrievePosts()
-
-    allPosts.forEach(post => {
-        const likeIndex = post.likes.indexOf(id)
-        if (likeIndex !== -1) {
-            const newPost = postnewPost.likes.splice(likeIndex, 1)
-
-            data.posts.updatePostById(post.id, newPost)
+            }
         }
-    })
 
-    data.users.deleteUserById(id)
+        xhr.open('DELETE', `${import.meta.env.VITE_NEST_APP}/users`)
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.setRequestHeader('Authorization', `Bearer ${id}`)
+        xhr.send(JSON.stringify({ password }))
+    } catch (error) {
+        callback(error)
+    }
 }
 
 export default deleteUserById

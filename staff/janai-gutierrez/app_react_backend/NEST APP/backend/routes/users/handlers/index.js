@@ -8,6 +8,7 @@ import getBio from "./getBio.js";
 import updateAvatar from "./updateAvatar.js";
 import updateEmail from "./updateEmail.js";
 import updatePassword from "./updatePassword.js";
+import deleteUserById from "./deleteUserById.js";
 
 export default {
     registerUser,
@@ -19,5 +20,6 @@ export default {
     getBio,
     updateAvatar,
     updateEmail,
-    updatePassword
+    updatePassword,
+    deleteUserById,
 }

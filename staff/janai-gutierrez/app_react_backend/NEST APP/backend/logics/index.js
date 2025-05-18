@@ -10,6 +10,8 @@ import getBio from "./getBio.js"
 import updateAvatar from "./updateAvatar.js"
 import updateEmail from "./updateEmail.js"
 import updatePassword from "./updatePassword.js"
+import deleteUserById from "./deleteUserById.js"
+import toggleLike from "./toggleLike.js"
 
 
 export default {
@@ -24,5 +26,7 @@ export default {
     getBio,
     updateAvatar,
     updateEmail,
-    updatePassword
+    updatePassword,
+    deleteUserById,
+    toggleLike
 }

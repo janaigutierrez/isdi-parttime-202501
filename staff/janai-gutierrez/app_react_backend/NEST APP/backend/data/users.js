@@ -87,6 +87,29 @@ const users = {
                 }
             }
         })
+    },
+    deleteUserById: (userId, callback) => {
+        fs.readFile('./data/users.json', (error, data) => {
+            if (error) callback(error)
+            else {
+                let users = JSON.parse(data)
+                if (!users) users = []
+
+                const userIndex = users.findIndex(user => user.id === userId)
+                if (userIndex === -1) {
+                    callback(new errors.ExistenceError('user not found'))
+                    return
+                }
+
+                users.splice(userIndex, 1)
+
+                const usersJson = JSON.stringify(users)
+                fs.writeFile('./data/users.json', usersJson, (error) => {
+                    if (error) callback(error)
+                    else callback(null)
+                })
+            }
+        })
     }
 }
 export default users

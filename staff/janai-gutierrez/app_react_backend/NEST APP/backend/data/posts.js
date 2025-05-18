@@ -69,6 +69,59 @@ const posts = {
                 }
             }
         })
+    },
+
+    deletePostById: (postId, callback) => {
+        fs.readFile('./data/posts.json', (error, data) => {
+            if (error) callback(error)
+            else {
+                let posts = JSON.parse(data)
+                if (!posts || posts.length === 0) {
+                    callback(new errors.ExistenceError('no posts found'))
+                    return
+                }
+
+                const postIndex = posts.findIndex(post => post.id === postId)
+                if (postIndex === -1) {
+                    callback(new errors.ExistenceError('post not found'))
+                    return
+                }
+
+                posts.splice(postIndex, 1)
+
+                const postsJson = JSON.stringify(posts)
+                fs.writeFile('./data/posts.json', postsJson, (error) => {
+                    if (error) callback(error)
+                    else callback(null)
+                })
+            }
+        })
+    },
+
+    deletePostsByAuthor: (authorId, callback) => {
+        fs.readFile('./data/posts.json', (error, data) => {
+            if (error) callback(error)
+            else {
+                let posts = JSON.parse(data)
+                if (!posts || posts.length === 0) {
+                    callback(null)
+                    return
+                }
+
+                const updatedPosts = posts.filter(post => post.author !== authorId)
+
+                if (updatedPosts.length === posts.length) {
+                    callback(null)
+                    return
+                }
+
+                const postsJson = JSON.stringify(updatedPosts)
+                fs.writeFile('./data/posts.json', postsJson, (error) => {
+                    if (error) callback(error)
+                    else callback(null)
+                })
+            }
+        })
     }
 }
 export default posts

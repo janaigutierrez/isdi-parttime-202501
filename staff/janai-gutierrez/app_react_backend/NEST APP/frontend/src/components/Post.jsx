@@ -10,10 +10,16 @@ const Post = ({ postData, setRefreshPosts, isMyPostsPage }) => {
 
     const handleLikePost = (id) => {
         try {
-            logics.posts.toggleLike(id)
-            setRefreshPosts(Date.now())
+            logics.posts.toggleLike(id, (error) => {
+                if (error) {
+                    alert('ups, something is not working!')
+                    console.error(error)
+                } else {
+                    setRefreshPosts(Date.now())
+                }
+            })
         } catch (error) {
-            alert('ups, something is not working!')
+            alert('ups, something went wrong')
             console.error(error)
         }
     }

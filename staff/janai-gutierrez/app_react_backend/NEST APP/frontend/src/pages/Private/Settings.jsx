@@ -63,13 +63,22 @@ const Settings = () => {
         try {
             const doesUserAgree = confirm("If you delete your account you will delete all your post and everything you ever 'liked'. Continue?")
             if (doesUserAgree) {
-                logics.users.deleteUserById(getLoggedUserId(), formData.password)
-                logics.users.logoutUser()
-                navigate('/register')
+                logics.users.deleteUserById(getLoggedUserId(), formData.password, (error) => {
+                    if (error) {
+                        alert('ups, try again')
+                        console.error(error)
+                    } else {
+                        alert('Account deleted successfully!')
+                        logics.users.logoutUser()
+                        navigate('/register')
+                    }
+                })
+
             }
         } catch (error) {
-            alert(error)
+            alert('ups, try again')
             console.error(error)
+
         }
     }
 
