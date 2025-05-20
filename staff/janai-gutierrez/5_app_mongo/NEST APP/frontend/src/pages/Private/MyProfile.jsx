@@ -1,0 +1,131 @@
+import { useEffect, useState } from "react"
+import Form from "../../components/lib/Form"
+import logics from "../../logic/index"
+import './MyProfileSettings.css'
+import UserCard from "../../components/UserCard"
+import getLoggedUserId from "../../logic/helpers/getLoggedUserId"
+import Btn from "../../components/lib/Btn"
+
+const MyProfile = ({ updateHeader }) => {
+    const [showUsernameForm, setShowUsernameForm] = useState(false)
+    const [showAvatarForm, setShowAvatarForm] = useState(false)
+    const [showBioForm, setShowBioForm] = useState(false)
+    const [refreshUserCard, setRefreshUserCard] = useState(Date.now())
+    const [tempAvatar, setTempAvatar] = useState()
+
+    const usernameObject = { label: 'Username', inputType: 'text', inputPlaceholder: 'myNewUserName', inputId: 'username', isRequired: true }
+    const avatarObject = { label: 'Avatar', inputType: 'file', inputPlaceholder: 'https/new.com/avatar.png', inputId: 'avatar', isRequired: true }
+    const bioObject = { label: 'Bio', inputType: 'text-area', inputPlaceholder: 'More about me here!', inputId: 'bio', isRequired: true }
+
+    const onUpdateUsername = (formData) => {
+
+        logics.users.updateUsername(formData['username'], (error) => {
+            if (error) {
+                alert('ups! try again!')
+                console.error(error)
+            } else {
+                updateHeader(Date.now())
+                setRefreshUserCard(Date.now())
+                setShowUsernameForm(false)
+            }
+        })
+    }
+
+
+    const onUpdateAvatar = (formData) => {
+        try {
+            const newAvatar = formData['avatar']
+
+            if (!newAvatar) {
+                alert('Please select an image')
+                return
+            }
+
+            const image = new FileReader();
+
+            image.onload = () => {
+                const base64 = image.result;
+                setTempAvatar(base64)
+
+                logics.users.updateAvatar(base64, (error) => {
+                    if (error) {
+                        alert('ups! try again!')
+                        console.error(error)
+                    } else {
+                        updateHeader(Date.now())
+                        setRefreshUserCard(Date.now())
+                        setShowAvatarForm(false)
+                    }
+                })
+            };
+
+            image.readAsDataURL(newAvatar)
+        } catch (error) {
+            alert('ups! try again!')
+            console.error(error)
+        }
+    }
+
+    const onUpdateBio = (formData) => {
+        logics.users.updateBio(formData['bio'], (error) => {
+            if (error) {
+                alert('ups! try again!')
+                console.error(error)
+            } else {
+                updateHeader(Date.now())
+                setRefreshUserCard(Date.now())
+                setShowBioForm(false)
+            }
+        })
+    }
+
+    const saveRandomBio = (error, newBio) => {
+        if (error) alert(error)
+        else {
+            logics.users.updateBio(newBio, (updateError) => {
+                if (updateError) {
+                    alert('Error updating bio')
+                    console.error(updateError)
+                } else {
+                    setRefreshUserCard(Date.now())
+                }
+            })
+
+        }
+    }
+
+
+    const onRandomBioClick = () => {
+        try {
+            logics.users.getRandomBio(saveRandomBio)
+        } catch (error) {
+            alert('ups, something went wrong')
+            console.error(error)
+        }
+    }
+
+
+    return <div className="main-container">
+        <UserCard userId={getLoggedUserId()} refreshSelf={refreshUserCard} tempAvatar={tempAvatar} />
+        <div className="account__section-title" onClick={() => setShowUsernameForm(!showUsernameForm)}>
+            <h2>Change my username</h2>
+            <i className={`bi bi-chevron-compact-${showUsernameForm ? 'up' : 'down'}`}></i>
+        </div>
+        {showUsernameForm && <Form inputsArray={[usernameObject]} onSubmitCallback={onUpdateUsername} submitButtonText={"Save new username"} />}
+        <div className="account__section-title" onClick={() => setShowAvatarForm(!showAvatarForm)}>
+            <h2>Change my avatar</h2>
+            <i className={`bi bi-chevron-compact-${showAvatarForm ? 'up' : 'down'}`}></i>
+        </div>
+        {showAvatarForm && <Form inputsArray={[avatarObject]} onSubmitCallback={onUpdateAvatar} submitButtonText={"Save new avatar"} onChangeCallback={setTempAvatar} />}
+        <div className="bio-randomizer">
+            <div className="account__section-title" onClick={() => setShowBioForm(!showBioForm)}>
+                <h2>Change my bio</h2>
+                <i className={`bi bi-chevron-compact-${showBioForm ? 'up' : 'down'}`}></i>
+            </div>
+            {showBioForm && <Form inputsArray={[bioObject]} onSubmitCallback={onUpdateBio} submitButtonText={"Save new bio"} />}
+            {showBioForm && <div className="account__bio"><b>No ideas?</b><p>Become random: <Btn btnContent={'Randomize'} btnCallback={onRandomBioClick} btnClassnames={'account__random-bio-btn'} /></p></div>}
+        </div>
+    </div>
+}
+
+export default MyProfile
