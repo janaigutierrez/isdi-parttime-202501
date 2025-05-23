@@ -1,60 +1,31 @@
-import { errors, validator } from 'common'
+import { errors } from 'common'
 import { data } from '../data/index.js'
 
-const deleteUserById = (userId, password, callback) => {
-    console.log(`[LOGIC] deleteUserById called - userId: ${userId}`)
-
-    try {
-        validator.id(userId)
-        validator.password(password)
-
-        if ((!data) || !data.users) {
-            console.error('[LOGIC] Error: data or data.users is undefined')
-            callback(new Error('Internal server error'))
-            return
-        }
-
-        data.users.findUserById(userId, (error, user) => {
-            if (error) {
-                console.error('[LOGIC] Error in findUserById:', error)
-                callback(error)
-                return
-            }
-
+const deleteUserById = (userId, password) => {
+    return data.users.findOne({ _id: new data.ObjectId(userId) })
+        .catch(error => { throw new errors.ServerError(error.message) })
+        .then((user) => {
             if (!user) {
-                console.error('[LOGIC] User not found')
-                callback(new errors.ExistenceError('user not found'))
-                return
+                throw new errors.ExistenceError('user not found')
             }
 
             if (user.password !== password) {
-                console.error('[LOGIC] Password does not match')
-                callback(new errors.AuthError('wrong password'))
-                return
+                throw new errors.AuthError('wrong password')
             }
 
-            data.posts.deletePostsByAuthor(userId, (error) => {
-                if (error) {
-                    console.error('[LOGIC] Error deleting user posts:', error)
-                    callback(error)
-                    return
-                }
-
-                data.users.deleteUserById(userId, (error) => {
-                    if (error) {
-                        console.error('[LOGIC] Error in deleteUserById:', error)
-                        callback(error)
-                    } else {
-                        console.log(`[LOGIC] User deleted: ${userId}`)
-                        callback(null)
-                    }
+            return data.posts.deleteMany({ author: userId })
+                .catch(error => { throw new errors.ServerError(error.message) })
+                .then(() => {
+                    return data.users.deleteOne({ _id: new data.ObjectId(userId) })
+                        .catch(error => { throw new errors.ServerError(error.message) })
+                        .then((result) => {
+                            if (result.deletedCount === 0) {
+                                throw new errors.ServerError('Failed to delete user')
+                            }
+                            return
+                        })
                 })
-            })
         })
-    } catch (error) {
-        console.error('[LOGIC] Error deleting user:', error)
-        callback(error)
-    }
 }
 
 export default deleteUserById

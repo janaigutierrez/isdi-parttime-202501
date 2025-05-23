@@ -4,7 +4,8 @@ const url = 'mongodb://localhost:27017'
 const dbName = 'nest-app'
 
 export const data = {
-    users: null, posts: null,
+    users: null,
+    posts: null,
     ObjectId,
     connect: () => {
         const mongoClient = new MongoClient(url)

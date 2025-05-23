@@ -1,55 +1,30 @@
-import { errors, validator } from 'common'
+import { errors } from 'common'
 import { data } from '../data/index.js'
 
-const updatePassword = (userId, newPassword, oldPassword, callback) => {
-    console.log(`[LOGIC] updatePassword called - userId: ${userId}`)
-
-    try {
-        validator.id(userId)
-        validator.password(newPassword)
-        validator.password(oldPassword)
-
-        if ((!data) || !data.users) {
-            console.error('[LOGIC] Error: data or data.users is undefined')
-            callback(new Error('Internal server error'))
-            return
-        }
-
-        data.users.findUserById(userId, (error, user) => {
-            if (error) {
-                console.error('[LOGIC] Error in findUserById:', error)
-                callback(error)
-                return
-            }
-
+const updatePassword = (userId, newPassword, oldPassword) => {
+    return data.users.findOne({ _id: new data.ObjectId(userId) })
+        .catch(error => { throw new errors.ServerError(error.message) })
+        .then((user) => {
             if (!user) {
-                console.error('[LOGIC] User not found')
-                callback(new errors.ExistenceError('user not found'))
-                return
+                throw new errors.ExistenceError('user not found')
             }
 
             if (user.password !== oldPassword) {
-                console.error('[LOGIC] Current password does not match')
-                callback(new errors.AuthError('wrong password'))
-                return
+                throw new errors.AuthError('wrong password')
             }
 
-            user.password = newPassword
-
-            data.users.updateUserById(userId, user, (error) => {
-                if (error) {
-                    console.error('[LOGIC] Error in updateUserById:', error)
-                    callback(error)
-                } else {
-                    console.log(`[LOGIC] Password updated for user: ${userId}`)
-                    callback(null)
-                }
-            })
+            return data.users.findOneAndUpdate(
+                { _id: new data.ObjectId(userId) },
+                { $set: { password: newPassword } }
+            )
+                .catch(error => { throw new errors.ServerError(error.message) })
+                .then((result) => {
+                    if (!result) {
+                        throw new errors.ServerError('Failed to update password')
+                    }
+                    return
+                })
         })
-    } catch (error) {
-        console.error('[LOGIC] Error updating password:', error)
-        callback(error)
-    }
 }
 
 export default updatePassword

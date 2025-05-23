@@ -1,46 +1,51 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-const getAllPosts = (userId, callback) => {
-    data.users.findUserById(userId, (error, user) => {
-        if (error) callback(error)
-        else {
-            if (!user) callback(new errors.ExistenceError('user not found'))
-            else {
-                data.posts.findPost((error, posts) => {
-                    if (error) callback(error)
-                    else {
-                        if (posts.length > 0) posts.sort((item1, item2) => new Date(item2.createdOn) - new Date(item1.createdOn))
-
-                        data.users.getAllUsers((error, users) => {
-                            if (error) callback(error)
-                            else {
-                                for (let i = 0; i < posts.length; i++) {
-                                    const author = users.find(user => user.id === posts[i].author)
-                                    if (!author) callback(new errors.ExistenceError('author not found'))
-                                    else {
-                                        posts[i].author = { id: author.id, username: author.username, avatar: author.avatar }
-                                        const date = new Date(posts[i].createdOn)
-                                        posts[i].createdOn = date.toLocaleString()
-                                        if (posts[i].likes.length > 0 && posts[i].likes.includes(userId)) {
-                                            posts[i].isLiked = true
-                                        } else {
-                                            posts[i].isLiked = false
-                                        }
-
-                                    }
-                                }
-
-                                callback(null, posts)
-                            }
-                        })
-
-
-                    }
-                })
+const getAllPosts = (userId) => {
+    return data.users.findOne({ _id: new data.ObjectId(userId) })
+        .catch((error) => {
+            throw new errors.ServerError(error.message)
+        })
+        .then((user) => {
+            if (!user) {
+                throw new errors.ExistenceError('user not found')
             }
-        }
-    })
+
+            return data.posts.find({}).toArray()
+                .catch(error => { throw new errors.ServerError(error.message) })
+        })
+        .then(posts => {
+            if (!posts || posts.length === 0) {
+                return []
+            }
+            posts.sort((post1, post2) => new Date(post2.createdOn) - new Date(post1.createdOn))
+
+            return data.users.find({}).toArray()
+                .then(users => {
+                    return posts.map(post => {
+                        const author = users.find(user => user._id.toString() === post.author.toString())
+
+                        if (!author) {
+                            throw new errors.ExistenceError('author not found')
+                        }
+                        return {
+                            id: post._id.toString(),
+                            title: post.title,
+                            description: post.description,
+                            img: post.img,
+                            author: {
+                                id: author._id.toString(),
+                                username: author.username,
+                                avatar: author.avatar
+                            },
+                            createdOn: new Date(post.createdOn).toLocaleString(),
+                            likes: post.likes || [],
+                            isLiked: post.likes ? post.likes.includes(userId) : false
+                        }
+                    })
+                })
+        })
 }
+
 
 export default getAllPosts

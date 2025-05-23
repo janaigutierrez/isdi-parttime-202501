@@ -7,10 +7,10 @@ const getAllPosts = (req, res, next) => {
     try {
         validator.id(id)
 
-        logic.getAllPosts(id, (error, posts) => {
-            if (error) next(error)
-            else res.status(200).send(JSON.stringify({ posts }))
-        })
+        return logic.getAllPosts(id)
+            .then((posts) => res.status(200).send(JSON.stringify({ posts })))
+            .catch((error) => next(error))
+
     } catch (error) {
         next(error)
     }

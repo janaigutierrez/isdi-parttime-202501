@@ -10,6 +10,7 @@ const getAvatar = (id) => {
             if (!user.avatar || user.avatar === '') {
                 return `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}&background=random`;
             }
+            return user.avatar
         })
 }
 

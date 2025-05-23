@@ -1,7 +1,6 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-
 const updateAvatar = (id, newAvatar) => {
 
     return data.users.findOneAndUpdate({ _id: new data.ObjectId(id) }, { $set: { avatar: newAvatar } })

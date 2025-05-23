@@ -1,7 +1,6 @@
 import { data } from '../data/index.js'
 import { errors } from 'common'
 
-
 const registerUser = (email, password, username) => {
     return data.users.findOne({ email: email })
         .catch(error => { throw new errors.ServerError(error.message) })
