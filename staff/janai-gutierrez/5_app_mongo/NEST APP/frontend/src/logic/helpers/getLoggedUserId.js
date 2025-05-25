@@ -1,5 +1,4 @@
 export default function getLoggedUserId() {
-
     const raw = sessionStorage.getItem('id') || localStorage.getItem('id');
 
     if (!raw) return null;
@@ -12,7 +11,5 @@ export default function getLoggedUserId() {
         parsed = raw;
     }
 
-    const id = Number(parsed);
-
-    return Number.isNaN(id) ? null : id;
+    return typeof parsed === 'string' ? parsed : String(parsed);
 }

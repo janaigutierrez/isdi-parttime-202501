@@ -1,3 +1,4 @@
+// ===== Post.jsx CORREGIDO =====
 import { useNavigate } from "react-router"
 import logics from "../logic"
 import './Post.css'
@@ -10,14 +11,16 @@ const Post = ({ postData, setRefreshPosts, isMyPostsPage }) => {
 
     const handleLikePost = (id) => {
         try {
-            logics.posts.toggleLike(id, (error) => {
-                if (error) {
-                    alert('ups, something is not working!')
-                    console.error(error)
-                } else {
+            // ✅ MIGRADO A PROMISES
+            logics.posts.toggleLike(id)
+                .then(() => {
+                    console.log('✅ Like/Unlike exitoso')
                     setRefreshPosts(Date.now())
-                }
-            })
+                })
+                .catch(error => {
+                    console.error('❌ Error en like:', error)
+                    alert('ups, something is not working!')
+                })
         } catch (error) {
             alert('ups, something went wrong')
             console.error(error)
@@ -28,8 +31,16 @@ const Post = ({ postData, setRefreshPosts, isMyPostsPage }) => {
         try {
             const isUserSure = confirm('you sure you want to delete?')
             if (isUserSure) {
+                // ✅ TAMBIÉN MIGRAR A PROMISE (si es necesario)
                 logics.posts.deletePost(getLoggedUserId(), id)
-                setRefreshPosts(Date.now())
+                    .then(() => {
+                        console.log('✅ Post eliminado')
+                        setRefreshPosts(Date.now())
+                    })
+                    .catch(error => {
+                        console.error('❌ Error eliminando post:', error)
+                        alert('ups, something is not working!')
+                    })
             }
         } catch (error) {
             alert('ups, something is not working!')

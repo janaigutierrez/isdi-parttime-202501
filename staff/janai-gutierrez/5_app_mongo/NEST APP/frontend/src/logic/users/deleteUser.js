@@ -1,28 +1,30 @@
 import { errors, validator } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId"
 
-const updateUsername = (newUsername) => {
-    validator.username(newUsername)
-
-    const userId = getLoggedUserId()
-    if (!userId) {
+const deleteUser = (password) => {
+    const id = getLoggedUserId()
+    if (!id) {
         throw new errors.AuthError('user not logged in')
     }
 
-    return fetch(`${import.meta.env.VITE_NEST_APP}/users/username`, {
-        method: 'PATCH',
+    console.log('🔍 Password a validar:', password)
+    console.log('🔍 Length:', password.length)
+    console.log('🔍 Caracteres:', password.split('').map(c => `'${c}'`).join(', '))
+
+    validator.password(password)
+
+    return fetch(`${import.meta.env.VITE_NEST_APP}/users`, {
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userId}`
+            'Authorization': `Basic ${id}`
         },
-        body: JSON.stringify({ username: newUsername })
+        body: JSON.stringify({ password })
     })
         .catch(error => { throw new errors.ConnectionError(error.message) })
         .then((response) => {
-            console.log(`[FRONTEND] updateUsername - Status: ${response.status}`)
-
             if (response.status === 200) {
-                console.log(`[FRONTEND] Username updated successfully`)
+                console.log(`[FRONTEND] User deleted successfully`)
                 return
             } else {
                 return response.json().then(body => {
@@ -32,4 +34,4 @@ const updateUsername = (newUsername) => {
         })
 }
 
-export default updateUsername
+export default deleteUser

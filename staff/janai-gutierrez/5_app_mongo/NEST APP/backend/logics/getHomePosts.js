@@ -1,15 +1,22 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-const getAllPosts = (userId) => {
+const getHomePosts = (userId) => {
     return data.users.findOne({ _id: new data.ObjectId(userId) })
         .catch((error) => { throw new errors.ServerError(error.message) })
         .then((user) => {
-            if (!user) {
-                throw new errors.ExistenceError('user not found')
-            }
-
+            if (!user) { throw new errors.ExistenceError('user not found') }
             return data.posts.aggregate([
+                {
+                    $addFields: {
+                        "tempId": { $toString: "$author" }
+                    }
+                },
+                {
+                    $match: {
+                        $or: [{ "tempId": userId }, { "tempId": { $in: user.following ? user.following : [] } }]
+                    }
+                },
                 {
                     $lookup: {
                         from: "users",
@@ -28,7 +35,7 @@ const getAllPosts = (userId) => {
                     }
                 },
                 {
-                    $sort: { createdOn: -1 }
+                    $sort: { _id: -1 }
                 },
                 {
                     $project: {
@@ -36,6 +43,7 @@ const getAllPosts = (userId) => {
                         "author.password": 0,
                         "author.email": 0,
                         "author._id": 0,
+                        "tempId": 0,
                         "author.following": 0,
                         "author.followers": 0
                     }
@@ -43,16 +51,20 @@ const getAllPosts = (userId) => {
             ]).toArray()
                 .catch((error) => { throw new errors.ServerError(error.message) })
                 .then(posts => {
-                    return posts.map((post) => {
+
+                    const formatedPosts = posts.map((post) => {
                         const date = new Date(post.createdOn)
-                        return {
-                            ...post,
-                            createdOn: date.toLocaleString(),
-                            isLiked: post.likes && post.likes.includes(userId)
+                        post.createdOn = date.toLocaleString()
+                        if (post.likes.length > 0 && post.likes.includes(userId)) {
+                            post.isLiked = true
+                        } else {
+                            post.isLiked = false
                         }
+                        return post
                     })
+                    return formatedPosts
                 })
         })
 }
 
-export default getAllPosts
+export default getHomePosts

@@ -14,14 +14,20 @@ const Home = () => {
     const formRef = useRef(null)
 
     useEffect(() => {
-        logics.posts.getAllPosts((error, retrievedPosts) => {
-            if (error) {
-                console.error(error)
-                setPosts([])   // netegem per mostrar missatge
-            } else {
-                setPosts(retrievedPosts)
-            }
-        })
+        try {
+            logics.posts.getAllPosts()
+                .then(retrievedPosts => {
+                    console.log('✅ Posts cargados:', retrievedPosts?.length || 0)
+                    setPosts(retrievedPosts)
+                })
+                .catch(error => {
+                    console.error('❌ Error cargando posts:', error)
+                    setPosts([])   // limpiamos para mostrar mensaje
+                })
+        } catch (error) {
+            console.error('❌ Error en useEffect:', error)
+            setPosts([])
+        }
     }, [refreshPosts])
 
     const handleOutsideModalClick = (event) => {

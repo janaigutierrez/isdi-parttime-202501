@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Form from "../../components/lib/Form";
 import logics from "../../logic";
 
-
 const Register = ({ setRefreshHeader }) => {
     const objectEmail = { label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email', isRequired: true };
     const objectPassword = { label: 'Password', inputType: 'password', inputPlaceholder: '·········', inputId: 'password', isRequired: true }
@@ -13,23 +12,22 @@ const Register = ({ setRefreshHeader }) => {
         try {
             const { email, password, passwordConfirmation } = formData
 
-            logics.users.registerUser(email, password, passwordConfirmation, (error) => {
+            logics.users.registerUser(email, password, passwordConfirmation)
+                .then(userId => {
+                    console.log('Registro exitoso, userId:', userId)
+                    console.log('sessionStorage después registro:', sessionStorage.getItem('id'))
 
-                if (error) alert(error)
-                else {
-                    logics.users.loginUser({ email: email, password: password }, (error, userId) => {
-                        if (error) {
-                            alert(error)
-                        } else {
-                            // sessionStorage.setItem('id', JSON.stringify(userId))
+                    setRefreshHeader(Date.now())
+                    onSuccess()
 
-                            navigate('/')
-                            setRefreshHeader(Date.now())
-                            onSuccess()
-                        }
-                    })
-                }
-            })
+                    setTimeout(() => {
+                        navigate('/')
+                    }, 100)
+                })
+                .catch(error => {
+                    alert(error.message)
+                    console.error(error)
+                })
         } catch (error) {
             alert('check your form data, something went wrong')
             console.error(error)
@@ -45,6 +43,5 @@ const Register = ({ setRefreshHeader }) => {
         </div>
     </div>
 }
-
 
 export default Register

@@ -1,32 +1,30 @@
-import data from "../../data";
 import { errors, validator } from "common"
-import getLoggedUserId from "../helpers/getLoggedUserId";
+import getLoggedUserId from "../helpers/getLoggedUserId"
 
 const getPostsByAuthor = (authorId) => {
+    validator.id(authorId)
+
     const loggedUserId = getLoggedUserId()
-
-    validator.id(loggedUserId)
-
-    const posts = data.posts.retrievePostsByAuthorId(authorId)
-
-    if (posts.length > 0) posts.sort((item1, item2) => new Date(item2.createdOn) - new Date(item1.createdOn))
-
-    for (let i = 0; i < posts.length; i++) {
-        const author = data.users.findUserById(posts[i].author)
-        if (!author) throw new ExistenceError('author not found')
-        posts[i].author = { id: author.id, username: author.username, avatar: author.avatar }
-        const date = new Date(posts[i].createdOn)
-        posts[i].createdOn = date.toLocaleString()
-        if (!posts[i].likes) posts[i].likes = [];
-        if (posts[i].likes.length > 0 && posts[i].likes.includes(loggedUserId)) {
-            posts[i].isLiked = true
-        } else {
-            posts[i].isLiked = false
-        }
-
+    if (!loggedUserId) {
+        throw new errors.AuthError('user not logged in')
     }
 
-    return posts
+    return fetch(`${import.meta.env.VITE_NEST_APP}/posts/author/${authorId}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${loggedUserId}`
+        }
+    })
+        .catch(error => { throw new errors.ConnectionError(error.message) })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.json().then(body => body.posts)
+            } else {
+                return response.json().then(body => {
+                    throw new errors[body.name](body.message)
+                })
+            }
+        })
 }
 
 export default getPostsByAuthor

@@ -1,20 +1,23 @@
-import { errors, validator } from "common"
+import { errors } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId"
 
-const getAllPosts = () => {
-    const loggedUserId = getLoggedUserId()
-    validator.id(loggedUserId)
+const getBio = () => {
+    const id = getLoggedUserId()
 
-    return fetch(`${import.meta.env.VITE_NEST_APP}/posts`, {
-        method: "GET",
+    if (!id) {
+        throw new errors.AuthError('user not logged in')
+    }
+
+    return fetch(`${import.meta.env.VITE_NEST_APP}/users/bio`, {
+        method: 'GET',
         headers: {
-            Authorization: `Basic ${loggedUserId}`
-        },
+            'Authorization': `Bearer ${id}`
+        }
     })
         .catch(error => { throw new errors.ConnectionError(error.message) })
         .then((response) => {
             if (response.status === 200) {
-                return response.json().then(body => body.posts)
+                return response.text()  // Bio es texto plano
             } else {
                 return response.json().then(body => {
                     throw new errors[body.name](body.message)
@@ -23,4 +26,4 @@ const getAllPosts = () => {
         })
 }
 
-export default getAllPosts
+export default getBio

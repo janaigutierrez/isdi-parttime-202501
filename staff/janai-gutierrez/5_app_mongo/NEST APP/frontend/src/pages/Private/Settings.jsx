@@ -19,66 +19,71 @@ const Settings = () => {
 
     const passwordObject = { label: 'Enter your password to delete your account', inputType: 'password', inputPlaceholder: '·········', inputId: 'password', isRequired: true }
 
-    const onUpdateEmail = (formData) => {
+    const onUpdateEmail = (formData, onSuccess) => {
         const newEmail = formData.email
 
         try {
-            logics.users.updateEmail(newEmail, (error) => {
-                if (error) {
+            logics.users.updateEmail(newEmail)
+                .then(() => {
+                    console.log('✅ Email actualizado')
+                    alert('Email updated successfully')
+                    onSuccess()
+                })
+                .catch(error => {
+                    console.error('❌ Error actualizando email:', error)
                     alert('ups, try again')
-                    console.error(error)
-                } else {
-                    alert('Email updated succesfully')
-                }
-            })
+                })
         } catch (error) {
+            console.error('❌ Error en updateEmail:', error)
             alert('ups! try again!')
-            console.error(error)
         }
     }
 
-    const onUpdatePassword = (formData) => {
+    const onUpdatePassword = (formData, onSuccess) => {
         const oldPassword = formData['old-password']
         const newPassword = formData['new-password']
         const confirmPassword = formData['confirm-password']
 
         try {
-            logics.users.updatePassword(newPassword, confirmPassword, oldPassword, (error) => {
-                if (error) {
-                    alert('upds, try again')
-                    console.error(error)
-
-                } else {
+            logics.users.updatePassword(newPassword, confirmPassword, oldPassword)
+                .then(() => {
+                    console.log('✅ Password actualizada')
                     alert('Password updated successfully')
                     setShowNewPasswordForm(false)
-                }
-            })
+                    onSuccess()
+                })
+                .catch(error => {
+                    console.error('❌ Error actualizando password:', error)
+                    alert('ups, try again')
+                })
         } catch (error) {
+            console.error('❌ Error en updatePassword:', error)
             alert('ups! try again!')
-            console.error(error)
         }
     }
 
-    const onDeleteAccount = (formData) => {
+    const onDeleteAccount = (formData, onSuccess) => {
+        console.log('🔍 formData completo:', formData)
+        console.log('🔍 formData.password:', formData.password)
         try {
             const doesUserAgree = confirm("If you delete your account you will delete all your post and everything you ever 'liked'. Continue?")
             if (doesUserAgree) {
-                logics.users.deleteUserById(getLoggedUserId(), formData.password, (error) => {
-                    if (error) {
-                        alert('ups, try again')
-                        console.error(error)
-                    } else {
+                logics.users.deleteUser(formData.password)
+                    .then(() => {
+                        console.log('✅ Usuario eliminado')
                         alert('Account deleted successfully!')
                         logics.users.logoutUser()
                         navigate('/register')
-                    }
-                })
-
+                        onSuccess()
+                    })
+                    .catch(error => {
+                        console.error('❌ Error eliminando usuario:', error)
+                        alert('ups, try again')
+                    })
             }
         } catch (error) {
+            console.error('❌ Error en deleteAccount:', error)
             alert('ups, try again')
-            console.error(error)
-
         }
     }
 

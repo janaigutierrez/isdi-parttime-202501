@@ -1,7 +1,6 @@
 import { validator } from 'common'
 import logics from '../../../logics/index.js'
 
-
 const registerUser = (req, res, next) => {
     const { email, password } = req.body
     try {
@@ -13,7 +12,9 @@ const registerUser = (req, res, next) => {
         validator.username(username)
 
         return logics.registerUser(email, password, username)
-            .then(() => res.status(201).send())
+            .then((userId) => {
+                res.status(201).send(userId)
+            })
             .catch(error => next(error))
     } catch (error) {
         next(error)

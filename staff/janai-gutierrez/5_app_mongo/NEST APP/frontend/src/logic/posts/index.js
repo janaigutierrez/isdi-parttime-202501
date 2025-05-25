@@ -1,5 +1,6 @@
 import deletePost from "./deletePost";
 import getAllPosts from "./getAllPosts";
+import getHomePosts from "./getHomePosts";
 import getPostsByAuthor from "./getPostsByAuthor";
 import publishPost from "./publishPost";
 import toggleLike from "./toggleLike";
@@ -10,7 +11,8 @@ const posts = {
     publishPost,
     toggleLike,
     getPostsByAuthor,
-    deletePost
+    deletePost,
+    getHomePosts
 }
 
 export default posts

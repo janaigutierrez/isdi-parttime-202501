@@ -1,24 +1,23 @@
-import { errors, validator } from "common"
-import getLoggedUserId from "../helpers/getLoggedUserId"
+import { errors, validator } from 'common'
+import getLoggedUserId from '../helpers/getLoggedUserId'
 
-const deletePost = (postId) => {
-    validator.id(postId)
+const getUserUsername = () => {
+    const id = getLoggedUserId()
 
-    const userId = getLoggedUserId()
-    if (!userId) {
+    if (!id) {
         throw new errors.AuthError('user not logged in')
     }
 
-    return fetch(`${import.meta.env.VITE_NEST_APP}/posts/${postId}`, {
-        method: 'DELETE',
+    return fetch(`${import.meta.env.VITE_NEST_APP}/users/username`, {
+        method: 'GET',
         headers: {
-            'Authorization': `Bearer ${userId}`
+            'Authorization': `Basic ${id}`
         }
     })
         .catch(error => { throw new errors.ConnectionError(error.message) })
         .then((response) => {
             if (response.status === 200) {
-                return
+                return response.text()  // Username es string
             } else {
                 return response.json().then(body => {
                     throw new errors[body.name](body.message)
@@ -27,4 +26,4 @@ const deletePost = (postId) => {
         })
 }
 
-export default deletePost
+export default getUserUsername

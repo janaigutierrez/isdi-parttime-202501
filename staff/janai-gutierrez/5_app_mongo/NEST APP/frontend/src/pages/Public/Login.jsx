@@ -1,8 +1,8 @@
+// ✅ LOGIN.JSX CORREGIDO
 import { Link, useNavigate } from "react-router"
 import Form from "../../components/lib/Form"
 import logics from "../../logic"
 import "./LoginRegister.css"
-
 
 const Login = ({ setRefreshHeader }) => {
     const objectEmail = { label: 'Email', inputType: 'email', inputPlaceholder: 'my@email.com', inputId: 'email', isRequired: true }
@@ -14,17 +14,16 @@ const Login = ({ setRefreshHeader }) => {
         console.log('🛠 logics.users:', logics.users)
 
         try {
-
-            logics.users.loginUser(loginData, (error) => {
-                if (error) {
-                    alert(error)
-                } else {
-
+            logics.users.loginUser(loginData)
+                .then(() => {
                     onSuccess()
                     setRefreshHeader(Date.now())
                     navigate('/')
-                }
-            })
+                })
+                .catch(error => {
+                    alert(error.message)
+                    console.error(error)
+                })
         } catch (error) {
             alert('Something went wrong, check your credentials')
             console.error(error)

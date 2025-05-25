@@ -3,7 +3,7 @@ import logics from "../../../logics/index.js";
 
 const toggleLike = (req, res, next) => {
     const userId = req.userId
-    const postId = Number(req.params.postId)
+    const postId = (req.params.postId)
 
     try {
         validator.id(userId)

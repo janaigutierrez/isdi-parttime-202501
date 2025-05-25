@@ -1,11 +1,10 @@
 const isUserLoggedIn = () => {
-    if (localStorage.id) {
+    if (localStorage.getItem('id')) {
         return true
     }
-    if (sessionStorage.id) {
+    if (sessionStorage.getItem('id')) {
         return true
     }
-
     return false
 }
 

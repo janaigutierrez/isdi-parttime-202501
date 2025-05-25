@@ -1,9 +1,7 @@
-import data from "../../data";
 import { errors, validator } from "common"
-import getLoggedUserId from "../helpers/getLoggedUserId";
+import getLoggedUserId from "../helpers/getLoggedUserId"
 
-const publishPost = (postInfo, callback) => {
-
+const publishPost = (postInfo) => {
     const { title, description, img } = postInfo
 
     validator.text(title, 40, 1, 'Post-Title')
@@ -11,26 +9,24 @@ const publishPost = (postInfo, callback) => {
 
     const postData = { title, description, img }
 
-    const xhr = new XMLHttpRequest()
-
-    xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/posts`, true)
-
-    xhr.setRequestHeader('Content-Type', 'application/json')
-    xhr.setRequestHeader('Authorization', `Basic ${getLoggedUserId()}`)
-
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 201) {
-                callback(null)
+    return fetch(`${import.meta.env.VITE_NEST_APP}/posts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${getLoggedUserId()}`
+        },
+        body: JSON.stringify(postData)
+    })
+        .catch(error => { throw new errors.ConnectionError(error.message) })
+        .then((response) => {
+            if (response.status === 201) {
+                return
             } else {
-                const response = JSON.parse(xhr.response)
-                if (errors[response.name]) callback(new errors[response.name](response.message))
-                else callback(new Error(`${response.name}: ${response.message}`))
+                return response.json().then(body => {
+                    throw new errors[body.name](body.message)
+                })
             }
-        }
-    }
-
-    xhr.send(JSON.stringify(postData))
+        })
 }
 
 export default publishPost

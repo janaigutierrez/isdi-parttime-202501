@@ -7,7 +7,7 @@ import { errors, validator } from "common"
 import NotFound from "../NotFound"
 
 const UserProfile = () => {
-    const [posts, setPosts] = useState()
+    const [posts, setPosts] = useState([])
     const [userId, setUserId] = useState()
     const [loading, setLoading] = useState(true)
     const [refreshPosts, setRefreshPosts] = useState(Date.now())
@@ -16,28 +16,27 @@ const UserProfile = () => {
     useEffect(() => {
         setLoading(true)
 
-        logics.users.getUserIdByUsername(username, (error, retrievedId) => {
-            if (error) {
+        logics.users.getUserIdByUsername(username)
+            .then(retrievedId => {
+                console.log('✅ User ID obtenido:', retrievedId)
+                setUserId(retrievedId)
+                return logics.posts.getPostsByAuthor(retrievedId)
+            })
+            .then(retrievedPosts => {
+                console.log('✅ Posts del usuario cargados:', retrievedPosts?.length || 0)
+                setPosts(retrievedPosts || [])
+                setLoading(false)
+            })
+            .catch(error => {
+                console.error('❌ Error en UserProfile:', error)
                 if (error instanceof errors.ExistenceError) {
                     setUserId('not-found')
                 } else {
                     alert('ups, something is not working!')
-                    console.error(error)
-                }
-                setLoading(false)
-                return
-            }
-            setUserId(retrievedId)
-            logics.posts.getPostsByAuthor(retrievedId, (postsError, retrievedPosts) => {
-                if (postsError) {
-                    console.error('Error retrieving posts:', postsError)
                     setPosts([])
-                } else {
-                    setPosts(retrievedPosts || [])
                 }
                 setLoading(false)
             })
-        })
 
     }, [username, refreshPosts])
 
@@ -58,5 +57,4 @@ const UserProfile = () => {
         }
     </>
 }
-
 export default UserProfile

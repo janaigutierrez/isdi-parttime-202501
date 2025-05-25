@@ -1,40 +1,39 @@
 import { errors, validator } from "common"
 
-const loginUser = (loginData, callback) => {
+const loginUser = (loginData) => {
+    validator.password(loginData.password)
+    validator.email(loginData.email)
 
-    try {
-        validator.password(loginData['password'])
-        validator.email(loginData['email'])
-    } catch (error) {
-        return callback(error)
+    const user = {
+        email: loginData.email,
+        password: loginData.password
     }
 
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', `${import.meta.env.VITE_NEST_APP}/users/auth`, true)
-    xhr.setRequestHeader('Content-Type', 'application/json')
-
-    const user = { email: loginData.email, password: loginData.password }
-
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                if (loginData['remember']) {
-                    localStorage.id = xhr.response
-                } else {
-                    sessionStorage.id = xhr.response
-                }
-                return callback(null)
+    return fetch(`${import.meta.env.VITE_NEST_APP}/users/auth`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    })
+        .catch(error => { throw new errors.ConnectionError(error.message) })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.text().then(userId => {
+                    // Lógica de storage según remember
+                    if (loginData.remember) {
+                        localStorage.setItem('id', userId)
+                    } else {
+                        sessionStorage.setItem('id', userId)
+                    }
+                    return userId
+                })
             } else {
-                const response = JSON.parse(xhr.response)
-                if (errors[response.name]) {
-                    return callback(new errors[response.name](response.message))
-                }
-                return callback(new Error(`${response.name}: ${response.message}`))
+                return response.json().then(body => {
+                    throw new errors[body.name](body.message)
+                })
             }
-        }
-    }
-    xhr.send(JSON.stringify(user))
-
+        })
 }
 
 export default loginUser

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import logics from "./logic/users/index"
 import Header from "./components/Header"
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom"
-import isUserLoggedIn from "./logic/users/isUserLoggedIn"
 import Private from "./pages/Private"
 import Public from "./pages/Public"
 import './index.css'
@@ -30,7 +29,7 @@ const App = () => {
             refreshHeader={refreshHeader}
             logout={onLogoutClick}
         />
-        {isUserLoggedIn() ? <Private setRefreshHeader={setRefreshHeader} /> : <Public setRefreshHeader={setRefreshHeader} />}
+        {isUserLogged ? <Private setRefreshHeader={setRefreshHeader} /> : <Public setRefreshHeader={setRefreshHeader} />}
     </>
 }
 

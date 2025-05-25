@@ -17,22 +17,22 @@ const MyProfile = ({ updateHeader }) => {
     const avatarObject = { label: 'Avatar', inputType: 'file', inputPlaceholder: 'https/new.com/avatar.png', inputId: 'avatar', isRequired: true }
     const bioObject = { label: 'Bio', inputType: 'text-area', inputPlaceholder: 'More about me here!', inputId: 'bio', isRequired: true }
 
-    const onUpdateUsername = (formData) => {
-
-        logics.users.updateUsername(formData['username'], (error) => {
-            if (error) {
-                alert('ups! try again!')
-                console.error(error)
-            } else {
+    const onUpdateUsername = (formData, onSuccess) => {
+        logics.users.updateUsername(formData['username'])
+            .then(() => {
+                console.log('✅ Username actualizado')
                 updateHeader(Date.now())
                 setRefreshUserCard(Date.now())
                 setShowUsernameForm(false)
-            }
-        })
+                onSuccess()
+            })
+            .catch(error => {
+                console.error('❌ Error actualizando username:', error)
+                alert('ups! try again!')
+            })
     }
 
-
-    const onUpdateAvatar = (formData) => {
+    const onUpdateAvatar = (formData, onSuccess) => {
         try {
             const newAvatar = formData['avatar']
 
@@ -47,63 +47,62 @@ const MyProfile = ({ updateHeader }) => {
                 const base64 = image.result;
                 setTempAvatar(base64)
 
-                logics.users.updateAvatar(base64, (error) => {
-                    if (error) {
-                        alert('ups! try again!')
-                        console.error(error)
-                    } else {
+                logics.users.updateAvatar(base64)
+                    .then(() => {
+                        console.log('✅ Avatar actualizado')
                         updateHeader(Date.now())
                         setRefreshUserCard(Date.now())
                         setShowAvatarForm(false)
-                    }
-                })
+                        onSuccess()
+                    })
+                    .catch(error => {
+                        console.error('❌ Error actualizando avatar:', error)
+                        alert('ups! try again!')
+                    })
             };
 
             image.readAsDataURL(newAvatar)
         } catch (error) {
+            console.error('❌ Error procesando avatar:', error)
             alert('ups! try again!')
-            console.error(error)
         }
     }
 
-    const onUpdateBio = (formData) => {
-        logics.users.updateBio(formData['bio'], (error) => {
-            if (error) {
-                alert('ups! try again!')
-                console.error(error)
-            } else {
+    const onUpdateBio = (formData, onSuccess) => {
+        logics.users.updateBio(formData['bio'])
+            .then(() => {
+                console.log('✅ Bio actualizada')
                 updateHeader(Date.now())
                 setRefreshUserCard(Date.now())
                 setShowBioForm(false)
-            }
-        })
-    }
-
-    const saveRandomBio = (error, newBio) => {
-        if (error) alert(error)
-        else {
-            logics.users.updateBio(newBio, (updateError) => {
-                if (updateError) {
-                    alert('Error updating bio')
-                    console.error(updateError)
-                } else {
-                    setRefreshUserCard(Date.now())
-                }
+                onSuccess()
             })
-
-        }
+            .catch(error => {
+                console.error('❌ Error actualizando bio:', error)
+                alert('ups! try again!')
+            })
     }
-
 
     const onRandomBioClick = () => {
         try {
-            logics.users.getRandomBio(saveRandomBio)
+            logics.users.getRandomBio()
+                .then(newBio => {
+                    console.log('✅ Bio random obtenida:', newBio)
+                    return logics.users.updateBio(newBio)
+                })
+                .then(() => {
+                    console.log('✅ Bio random guardada')
+                    setRefreshUserCard(Date.now())
+                })
+                .catch(error => {
+                    console.error('❌ Error con bio random:', error)
+                    alert('ups, something went wrong')
+                })
         } catch (error) {
+            console.error('❌ Error en randomBio:', error)
             alert('ups, something went wrong')
-            console.error(error)
         }
     }
-
 
     return <div className="main-container">
         <UserCard userId={getLoggedUserId()} refreshSelf={refreshUserCard} tempAvatar={tempAvatar} />

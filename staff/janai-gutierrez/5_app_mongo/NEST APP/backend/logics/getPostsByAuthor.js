@@ -1,8 +1,8 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-const getAllPosts = (userId) => {
-    return data.users.findOne({ _id: new data.ObjectId(userId) })
+const getPostsByAuthor = (loggedUserId, authorId) => {
+    return data.users.findOne({ _id: new data.ObjectId(loggedUserId) })
         .catch((error) => { throw new errors.ServerError(error.message) })
         .then((user) => {
             if (!user) {
@@ -10,6 +10,9 @@ const getAllPosts = (userId) => {
             }
 
             return data.posts.aggregate([
+                {
+                    $match: { author: new data.ObjectId(authorId) }  // Filtrar por autor
+                },
                 {
                     $lookup: {
                         from: "users",
@@ -43,16 +46,13 @@ const getAllPosts = (userId) => {
             ]).toArray()
                 .catch((error) => { throw new errors.ServerError(error.message) })
                 .then(posts => {
-                    return posts.map((post) => {
-                        const date = new Date(post.createdOn)
-                        return {
-                            ...post,
-                            createdOn: date.toLocaleString(),
-                            isLiked: post.likes && post.likes.includes(userId)
-                        }
-                    })
+                    return posts.map((post) => ({
+                        ...post,
+                        createdOn: new Date(post.createdOn).toLocaleString(),
+                        isLiked: post.likes && post.likes.includes(loggedUserId)
+                    }))
                 })
         })
 }
 
-export default getAllPosts
+export default getPostsByAuthor

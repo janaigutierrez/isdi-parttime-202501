@@ -1,8 +1,4 @@
-import deleteUserById from "./deleteUserById";
-import getUserAvatarById from "./getUserAvatarById";
-import getUserBioById from "./getUserBioById";
 import getUserIdByUsername from "./getUserIdByUsername";
-import getUserUsernameById from "./getUserUsernameById";
 import isUserLoggedIn from "./isUserLoggedIn";
 import loginUser from "./loginUser";
 import logoutUser from "./logoutUser";
@@ -13,10 +9,15 @@ import updateEmail from "./updateEmail";
 import updatePassword from "./updatePassword";
 import updateUsername from "./updateUsername";
 import getRandomBio from "./getRandomBio";
+import deleteUser from "./deleteUser";
+import getAvatar from "./getUserAvatar";
+import getBio from "./getBio";
+import getUserUsername from "./getUserUsername";
+import getUserMainInfo from "./getUserMainInfo";
 
 
 const users = {
-    getUserUsernameById,
+    getUserUsername,
     isUserLoggedIn,
     loginUser,
     logoutUser,
@@ -24,13 +25,14 @@ const users = {
     updateAvatar,
     updateBio,
     updateUsername,
-    getUserAvatarById,
-    getUserBioById,
+    getAvatar,
+    getBio,
     getUserIdByUsername,
     updatePassword,
     updateEmail,
-    deleteUserById,
-    getRandomBio
+    deleteUser,
+    getRandomBio,
+    getUserMainInfo,
 }
 
 export default users

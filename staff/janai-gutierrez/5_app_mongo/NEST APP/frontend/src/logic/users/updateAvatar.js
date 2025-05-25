@@ -1,58 +1,38 @@
-// frontend/logic/users/updateAvatar.js
 import { errors } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId"
 
-const updateAvatar = (newAvatar, callback) => {
-    try {
-        const userId = getLoggedUserId()
+const updateAvatar = (newAvatar) => {
+    const userId = getLoggedUserId()
 
-        if (!userId) {
-            callback(new errors.AuthenticationError('user not logged in'))
-            return
-        }
-
-        if (newAvatar && typeof newAvatar !== 'string') {
-            callback(new errors.ContentError('avatar must be a string'))
-            return
-        }
-
-        const xhr = new XMLHttpRequest()
-
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-                console.log(`[FRONTEND] updateAvatar - Status: ${xhr.status}`)
-
-                if (xhr.status === 200) {
-                    console.log('[FRONTEND] Avatar actualizado correctamente')
-                    callback(null)
-                } else if (xhr.status === 400) {
-                    try {
-                        const response = JSON.parse(xhr.responseText)
-                        if (errors[response.name]) {
-                            callback(new errors[response.name](response.message))
-                        } else {
-                            callback(new Error(response.message || `Error ${xhr.status}`))
-                        }
-                    } catch (e) {
-                        callback(new Error(`Error ${xhr.status}: ${xhr.statusText}`))
-                    }
-                } else if (xhr.status === 401) {
-                    callback(new errors.AuthenticationError('user not authenticated'))
-                } else if (xhr.status === 404) {
-                    callback(new errors.ExistenceError('user not found'))
-                } else {
-                    callback(new Error(`Error ${xhr.status}: ${xhr.statusText}`))
-                }
-            }
-        }
-
-        xhr.open('PATCH', `${import.meta.env.VITE_NEST_APP}/users/avatar`)
-        xhr.setRequestHeader('Content-Type', 'application/json')
-        xhr.setRequestHeader('Authorization', `Bearer ${userId}`)
-        xhr.send(JSON.stringify({ avatar: newAvatar }))
-    } catch (error) {
-        callback(error)
+    if (!userId) {
+        throw new errors.AuthError('user not logged in')
     }
+
+    if (newAvatar && typeof newAvatar !== 'string') {
+        throw new errors.ContentError('avatar must be a string')
+    }
+
+    return fetch(`${import.meta.env.VITE_NEST_APP}/users/avatar`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userId}`
+        },
+        body: JSON.stringify({ avatar: newAvatar })
+    })
+        .catch(error => { throw new errors.ConnectionError(error.message) })
+        .then((response) => {
+            console.log(`[FRONTEND] updateAvatar - Status: ${response.status}`)
+
+            if (response.status === 200) {
+                console.log('[FRONTEND] Avatar actualizado correctamente')
+                return
+            } else {
+                return response.json().then(body => {
+                    throw new errors[body.name](body.message)
+                })
+            }
+        })
 }
 
 export default updateAvatar

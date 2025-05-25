@@ -12,18 +12,14 @@ import "./Header.css"
 const Header = ({ refreshHeader, logout, isUserLogged }) => {
     const location = useLocation()
     const navigate = useNavigate()
-
     const [username, setUsername] = useState("")
     const [avatar, setAvatar] = useState("")
     const [isUserMenuOpen, setUserMenuOpen] = useState(false)
     const [justifyItems, setJustifyItems] = useState("")
 
     useEffect(() => {
-
         const path = location.pathname
-
         setJustifyItems(
-
             logics.users.isUserLoggedIn()
                 ? "between"
                 : path === "/login" || path === "/register"
@@ -36,37 +32,40 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
         if (!logics.users.isUserLoggedIn()) return
 
         const id = getLoggedUserId()
-        if (typeof id !== "number") {
+
+        if (!id || typeof id !== "string") {
             console.error("Invalid user id:", id)
             return
         }
 
-        // 1) Obtenir username
-        logics.users.getUserUsernameById(id, (err, name) => {
-            if (err) {
-                console.error(err)
-                return
-            } else {
-                setUsername(name)
-                console.log("Username:", name)
-            }
-            // 2) Obtenir avatar
-            logics.users.getUserAvatarById(id, (err2, avatarUrl) => {
-                if (err2) {
-                    console.error(err2)
-                    return
-                } else {
+        try {
+            // 1) Obtener username
+            logics.users.getUserUsername(id)
+                .then(name => {
+                    setUsername(name)
+                    console.log("Username:", name)
+
+                    // 2) Obtener avatar después del username
+                    return logics.users.getAvatar(id)
+                })
+                .then(avatarUrl => {
                     setAvatar(avatarUrl)
-                }
-            })
-        })
+                })
+                .catch(error => {
+                    console.error("Error getting user data:", error)
+                })
+        } catch (error) {
+            console.error("Error in header useEffect:", error)
+        }
     }, [refreshHeader, location])
 
     const onLogoutClick = () => {
         setUserMenuOpen(false)
         logout()
     }
+
     const onLogoClick = () => navigate("/")
+
     const onMenuRouteClick = (p) => {
         if (p) navigate(p)
         setUserMenuOpen(false)
@@ -74,7 +73,7 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
 
     return (
         <header className={`header ${justifyItems}`}>
-            {/* Logo sempre visible a register/login/not-found o quan l’usuari estigui loggejat */}
+            {/* Logo sempre visible a register/login/not-found o quan l'usuari estigui loggejat */}
             {((justifyItems === "not-found" || isUserLogged) && (
                 <Logo onClick={onLogoClick} size="sm" />
             )) ||
@@ -87,7 +86,7 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
                 <p className="header__welcome-text">Welcome, {username}</p>
             )}
 
-            {/* Botó “Join in!” si no està loggejat */}
+            {/* Botó "Join in!" si no està loggejat */}
             {!isUserLogged && justifyItems === "end" && (
                 <Btn
                     btnClassnames="header__join-button"
@@ -101,10 +100,11 @@ const Header = ({ refreshHeader, logout, isUserLogged }) => {
                 <UserAvatar
                     size="sm"
                     avatar={avatar}
-                    letter={username[0]}
+                    letter={username?.[0]}
                     buttonCallback={() => setUserMenuOpen((o) => !o)}
                 />
             )}
+
             {isUserMenuOpen && (
                 <aside className="header__user-menu">
                     <Btn
