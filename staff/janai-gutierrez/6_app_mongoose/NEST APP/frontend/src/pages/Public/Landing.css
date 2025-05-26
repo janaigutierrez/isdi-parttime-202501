@@ -1,0 +1,37 @@
+.landing__title {
+    text-align: center;
+}
+
+.landing__subtitle {
+    text-align: center;
+}
+
+.logo {
+    height: 20rem;
+    scroll-behavior: smooth;
+}
+
+.header.end {
+    height: 40px;
+    background-image: url('../../assets/brick-texture.png'); /* substitueix per la teva ruta */
+    background-repeat: repeat;
+    background-size: auto;
+    border-bottom: 2px solid black;
+
+}
+
+.landing__content.landing {
+    height: 100vh;
+    background-image: url('../../assets/pixel-background.gif'); /* substitueix per la teva ruta */
+    
+
+
+}
+
+.header__join-button {
+    background-color: rgb(59, 59, 148);
+}
+
+.header__join-button:hover {
+    background-color: rgba(31, 31, 228, 0.801);
+}
