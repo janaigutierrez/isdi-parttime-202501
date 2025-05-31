@@ -1,0 +1,8 @@
+{
+  "name": "callbacks-challenge",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  }
+}
