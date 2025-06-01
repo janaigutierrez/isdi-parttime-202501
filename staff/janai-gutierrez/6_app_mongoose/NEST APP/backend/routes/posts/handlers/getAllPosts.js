@@ -1,15 +1,14 @@
 import { validator } from "common"
 import logic from "../../../logics/index.js"
 
-const getAllPosts = (req, res, next) => {
-    const id = req.userId
-
+const getAllPosts = async (req, res, next) => {
     try {
+        const id = req.userId
+
         validator.id(id)
 
-        return logic.getAllPosts(id)
-            .then((posts) => res.status(200).send(JSON.stringify({ posts })))
-            .catch((error) => next(error))
+        const posts = await logic.getAllPosts(id)
+        res.status(200).send(JSON.stringify({ posts }))
 
     } catch (error) {
         next(error)

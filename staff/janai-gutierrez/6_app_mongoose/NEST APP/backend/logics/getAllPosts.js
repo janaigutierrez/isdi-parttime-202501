@@ -1,58 +1,43 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-const getAllPosts = (userId) => {
-    return data.users.findOne({ _id: new data.ObjectId(userId) })
-        .catch((error) => { throw new errors.ServerError(error.message) })
-        .then((user) => {
-            if (!user) {
-                throw new errors.ExistenceError('user not found')
+const getAllPosts = async (userId) => {
+    try {
+        // Verificar que el usuario existe
+        const user = await data.users.findById(userId)
+        if (!user) {
+            throw new errors.ExistenceError('user not found')
+        }
+
+        // Obtener posts con populate
+        const posts = await data.posts.find({})
+            .populate('author', 'username avatar')  // Solo estos campos del autor
+            .sort({ createdAt: -1 })                 // Ordenar por más recientes
+            .lean()                                  // Para mejor performance
+
+        // Mapear y añadir isLiked
+        return posts.map((post) => {
+            const likesAsStrings = post.likes ? post.likes.map(id => id.toString()) : []
+
+            const isLiked = post.likes && likesAsStrings.includes(userId)
+
+            return {
+                ...post,
+                createdOn: post.createdAt.toLocaleString(),
+                isLiked: isLiked
             }
 
-            return data.posts.aggregate([
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "author",
-                        foreignField: "_id",
-                        as: "author"
-                    }
-                },
-                {
-                    $unwind: "$author"
-                },
-                {
-                    $addFields: {
-                        "id": "$_id",
-                        "author.id": "$author._id"
-                    }
-                },
-                {
-                    $sort: { createdOn: -1 }
-                },
-                {
-                    $project: {
-                        "_id": 0,
-                        "author.password": 0,
-                        "author.email": 0,
-                        "author._id": 0,
-                        "author.following": 0,
-                        "author.followers": 0
-                    }
-                }
-            ]).toArray()
-                .catch((error) => { throw new errors.ServerError(error.message) })
-                .then(posts => {
-                    return posts.map((post) => {
-                        const date = new Date(post.createdOn)
-                        return {
-                            ...post,
-                            createdOn: date.toLocaleString(),
-                            isLiked: post.likes && post.likes.includes(userId)
-                        }
-                    })
-                })
         })
+
+    } catch (error) {
+        if (error.name === 'ExistenceError') {
+            throw error
+        }
+        if (error.name === 'CastError') {
+            throw new errors.ContentError('Invalid user ID format')
+        }
+        throw new errors.ServerError(error.message)
+    }
 }
 
 export default getAllPosts

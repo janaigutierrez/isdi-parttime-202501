@@ -23,9 +23,9 @@ const userSchema = new Schema({
         type: String,
         required: false
     },
-}, Timestamp)
+}, { timestamps: true })
 
-export const User = mongoose.model('User', userSchema)
+export const User = model('User', userSchema)
 
 const postSchema = new Schema({
     author: {
@@ -46,7 +46,7 @@ const postSchema = new Schema({
         type: String,
         required: false
     }
-}, Timestamp)
+}, { timestamps: true })
 
-export const Post = mongoose.model('Post', postSchema)
+export const Post = model('Post', postSchema)
 

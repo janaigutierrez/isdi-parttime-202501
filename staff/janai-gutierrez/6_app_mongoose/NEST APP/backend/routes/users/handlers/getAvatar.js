@@ -1,15 +1,18 @@
 import { validator } from "common"
 import logics from "../../../logics/index.js"
 
-const getAvatar = (req, res, next) => {
-    const id = req.userId
+const getAvatar = async (req, res, next) => {
     try {
+        const id = req.userId
+
         validator.id(id)
-        return logics.getAvatar(id)
-            .then(avatar => res.status(200).send(avatar))
-            .catch(error => next(error))
+
+        const avatar = await logics.getAvatar(id)
+        res.status(200).send(avatar)
+
     } catch (error) {
         next(error)
     }
 }
+
 export default getAvatar
