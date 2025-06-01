@@ -1,58 +1,41 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-const getPostsByAuthor = (loggedUserId, authorId) => {
-    return data.users.findOne({ _id: new data.ObjectId(loggedUserId) })
-        .catch((error) => { throw new errors.ServerError(error.message) })
-        .then((user) => {
-            if (!user) {
-                throw new errors.ExistenceError('user not found')
-            }
+const getPostsByAuthor = async (authorId) => {
+    try {
+        // Verificar que el autor existe
+        const author = await data.users.findById(authorId)
+        if (!author) {
+            throw new errors.ExistenceError('author not found')
+        }
 
-            return data.posts.aggregate([
-                {
-                    $match: { author: new data.ObjectId(authorId) }  // Filtrar por autor
-                },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "author",
-                        foreignField: "_id",
-                        as: "author"
-                    }
-                },
-                {
-                    $unwind: "$author"
-                },
-                {
-                    $addFields: {
-                        "id": "$_id",
-                        "author.id": "$author._id"
-                    }
-                },
-                {
-                    $sort: { createdOn: -1 }
-                },
-                {
-                    $project: {
-                        "_id": 0,
-                        "author.password": 0,
-                        "author.email": 0,
-                        "author._id": 0,
-                        "author.following": 0,
-                        "author.followers": 0
-                    }
-                }
-            ]).toArray()
-                .catch((error) => { throw new errors.ServerError(error.message) })
-                .then(posts => {
-                    return posts.map((post) => ({
-                        ...post,
-                        createdOn: new Date(post.createdOn).toLocaleString(),
-                        isLiked: post.likes && post.likes.includes(loggedUserId)
-                    }))
-                })
+        // Obtener posts del autor con populate
+        const posts = await data.posts.find({ author: authorId })
+            .populate('author', 'username avatar bio')  // Datos del autor
+            .sort({ createdAt: -1 })                    // Más recientes primero
+            .lean()
+
+        // Mapear y añadir isLiked + formatear fecha
+        return posts.map((post) => {
+            const likesAsStrings = post.likes ? post.likes.map(id => id.toString()) : []
+            const isLiked = likesAsStrings.includes(authorId)
+
+            return {
+                ...post,
+                createdOn: post.createdAt.toLocaleString(),
+                isLiked: isLiked
+            }
         })
+
+    } catch (error) {
+        if (error.name === 'ExistenceError') {
+            throw error
+        }
+        if (error.name === 'CastError') {
+            throw new errors.ContentError('Invalid ID format')
+        }
+        throw new errors.ServerError(error.message)
+    }
 }
 
 export default getPostsByAuthor

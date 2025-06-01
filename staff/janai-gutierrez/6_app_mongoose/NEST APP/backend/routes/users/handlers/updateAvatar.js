@@ -1,14 +1,15 @@
-import { validator } from "common";
-import logics from "../../../logics/index.js";
+import { validator } from "common"
+import logics from "../../../logics/index.js"
 
-const updateAvatar = (req, res, next) => {
-    const id = req.userId
-    const { avatar } = req.body
+const updateAvatar = async (req, res, next) => {
     try {
+        const id = req.userId
+        const { avatar } = req.body
+
         validator.id(id)
-        return logics.updateAvatar(id, avatar)
-            .then(() => res.status(200).send())
-            .catch(error => next(error))
+
+        await logics.updateAvatar(id, avatar)
+        res.status(200).send()
     } catch (error) {
         next(error)
     }

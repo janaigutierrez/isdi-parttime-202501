@@ -1,13 +1,13 @@
 import { validator } from "common"
 import logics from "../../../logics/index.js"
 
-const getUsername = (req, res, next) => {
-    const id = req.userId
+const getUsername = async (req, res, next) => {
     try {
+        const id = req.userId
         validator.id(id)
-        return logics.getUsername(id)
-            .then(username => res.status(200).send(username))
-            .catch(error => next(error))
+
+        const username = await logics.getUsername(id)
+        res.status(200).send(username)
     } catch (error) {
         next(error)
     }

@@ -1,19 +1,16 @@
 import { validator } from "common"
 import logic from "../../../logics/index.js"
 
-const updateEmail = (req, res, next) => {
-    const userId = req.userId
-    const { email } = req.body
-
+const updateEmail = async (req, res, next) => {
     try {
+        const userId = req.userId
+        const { email } = req.body
+
         validator.id(userId)
         validator.email(email)
 
-        logic.updateEmail(userId, email)
-            .then(() => {
-                res.status(200).send()
-            })
-            .catch((error) => next(error))
+        await logic.updateEmail(userId, email)
+        res.status(200).send()
     } catch (error) {
         next(error)
     }

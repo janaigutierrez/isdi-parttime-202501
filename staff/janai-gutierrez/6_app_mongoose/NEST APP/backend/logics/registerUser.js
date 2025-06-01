@@ -1,20 +1,28 @@
 import { data } from '../data/index.js'
 import { errors } from 'common'
 
-const registerUser = (email, password, username) => {
+const registerUser = async (email, password, username) => {
+    try {
+        // Verificar si el usuario ya existe
+        const existingUser = await data.users.findOne({ email: email })
+        if (existingUser) {
+            throw new errors.DuplicityError('user already exists')
+        }
 
-    return data.users.findOne({ email: email })
-        .catch(error => { throw new errors.ServerError(error.message) })
-        .then((user) => {
-            if (user) { throw new errors.DuplicityError('user already exists') }
-
-            return data.users.insertOne({ email, password, username })
-                .catch(error => { throw new errors.ServerError(error.message) })
-                .then((result) => {
-                    const userId = result.insertedId.toString()
-                    return userId
-                })
+        // Crear nuevo usuario
+        const newUser = await data.users.create({
+            email,
+            password,
+            username
         })
+
+        return newUser._id.toString()
+    } catch (error) {
+        if (error.name === 'DuplicityError') {
+            throw error
+        }
+        throw new errors.ServerError(error.message)
+    }
 }
 
 export default registerUser

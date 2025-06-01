@@ -7,15 +7,16 @@
     "start": "node .",
     "inspect": "node --inspect-brk .",
     "test": "mocha logics/*.test.js",
-    "test:coverage": "c8 --all mocha logics/*.test.js",
-    "test:coverage-html": "c8 --all --reporter=html mocha logics/*.test.js"
+    "test:coverage": "c8 mocha logics/*.test.js",
+    "test:coverage-html": "c8 --reporter=html mocha logics/*.test.js"
   },
   "c8": {
-    "all": true,
     "include": [
       "logics/*.js"
     ],
-    "exclude": [],
+    "exclude": [
+      "logics/*.test.js"
+    ],
     "reporter": [
       "text",
       "html"

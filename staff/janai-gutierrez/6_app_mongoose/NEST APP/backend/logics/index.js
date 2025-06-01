@@ -12,7 +12,6 @@ import updateEmail from "./updateEmail.js"
 import updatePassword from "./updatePassword.js"
 import deleteUserById from "./deleteUserById.js"
 import toggleLike from "./toggleLike.js"
-import getHomePosts from "./getHomePosts.js"
 import getPostsByAuthor from "./getPostsByAuthor.js"
 
 
@@ -31,6 +30,5 @@ export default {
     updatePassword,
     deleteUserById,
     toggleLike,
-    getHomePosts,
     getPostsByAuthor
 }

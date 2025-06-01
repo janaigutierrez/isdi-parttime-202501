@@ -1,14 +1,28 @@
 import { errors } from "common"
 import { data } from "../data/index.js"
 
-const updateAvatar = (id, newAvatar) => {
+const updateAvatar = async (id, newAvatar) => {
+    try {
+        const user = await data.users.findByIdAndUpdate(
+            id,
+            { avatar: newAvatar },
+            { new: false } // Devuelve el documento original (antes del update)
+        )
 
-    return data.users.findOneAndUpdate({ _id: new data.ObjectId(id) }, { $set: { avatar: newAvatar } })
-        .catch(error => { throw new errors.ServerError(error.message) })
-        .then((oldAvatar) => {
-            if (!oldAvatar) throw new errors.ExistenceError('user not found')
-            return
-        })
+        if (!user) {
+            throw new errors.ExistenceError('user not found')
+        }
+
+        return
+    } catch (error) {
+        if (error.name === 'ExistenceError') {
+            throw error
+        }
+        if (error.name === 'CastError') {
+            throw new errors.ContentError('Invalid user ID format')
+        }
+        throw new errors.ServerError(error.message)
+    }
 }
 
 export default updateAvatar

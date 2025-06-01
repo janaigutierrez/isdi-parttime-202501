@@ -1,15 +1,14 @@
 import logics from "../../../logics/index.js"
 import { validator } from "common"
 
-const getBio = (req, res, next) => {
-    const id = req.userId
-
+const getBio = async (req, res, next) => {
     try {
+        const id = req.userId
+
         validator.id(id)
 
-        return logics.getBio(id)
-            .catch((error) => next(error))
-            .then((retrievedBio) => { res.status(200).send(retrievedBio || '') })
+        const retrievedBio = await logics.getBio(id)
+        res.status(200).send(retrievedBio || '')
 
     } catch (error) {
         next(error)

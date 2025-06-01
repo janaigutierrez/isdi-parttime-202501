@@ -1,19 +1,15 @@
 import { validator } from "common"
 import logics from "../../../logics/index.js"
 
-const updateBio = (req, res, next) => {
-    const userId = req.userId
-    const { bio } = req.body
-
+const updateBio = async (req, res, next) => {
     try {
+        const userId = req.userId
+        const { bio } = req.body
+
         validator.text(bio, 200, 0, 'bio')
 
-        return logics.updateBio(userId, bio)
-            .then(() => {
-                res.status(200).send()
-            })
-            .catch(error => next(error))
-
+        await logics.updateBio(userId, bio)
+        res.status(200).send()
     } catch (error) {
         next(error)
     }
