@@ -1,334 +1,431 @@
 export const XP_RULES = {
-
-    // XP required for each level (until level 20)
-    LEVELS: [
-        0,
-        100,    // Level 1
-        250,    // Level 2
-        450,    // Level 3
-        700,    // Level 4
-        1000,   // Level 5
-        1400,   // Level 6
-        1900,   // Level 7
-        2500,   // Level 8
-        3200,   // Level 9
-        4000,   // Level 10
-        4900,   // Level 11
-        5900,   // Level 12
-        7000,   // Level 13
-        8200,   // Level 14
-        9500,   // Level 15
-        11000,   // Level 16
-        12600,   // Level 17
-        14300,   // Level 18
-        16100,   // Level 19
-        18000    // Level 20
+    BASE_LEVELS: [
+        0,     // Level 0 (placeholder)
+        0,     // Level 1
+        100,   // Level 2
+        250,   // Level 3
+        450,   // Level 4
+        700,   // Level 5
+        1000,  // Level 6
+        1350,  // Level 7
+        1750,  // Level 8
+        2200,  // Level 9
+        2700,  // Level 10
+        3250,  // Level 11
+        3850,  // Level 12
+        4500,  // Level 13
+        5200,  // Level 14
+        6000,  // Level 15
+        6850,  // Level 16
+        7750,  // Level 17
+        8700,  // Level 18
+        9700,  // Level 19
+        10750  // Level 20
     ],
 
-    // Function to calculate XP required for any level
+    INFINITE_PROGRESSION: {
+        START_LEVEL: 20,
+        BASE_INCREMENT: 1200,
+        INCREMENT_GROWTH: 100
+    },
+
     getXPForLevel(level) {
         if (level <= 20) {
-            return this.LEVELS[level] || 0
+            return this.BASE_LEVELS[level] || 0
         }
-        // After level 20: 2000 Xp per level
 
-        return 18000 + ((level - 20) * 2000)
+        let totalXP = this.BASE_LEVELS[20]
+
+        for (let currentLevel = 21; currentLevel <= level; currentLevel++) {
+            const levelDiff = currentLevel - this.INFINITE_PROGRESSION.START_LEVEL
+            const xpForThisLevel = this.INFINITE_PROGRESSION.BASE_INCREMENT +
+                (levelDiff * this.INFINITE_PROGRESSION.INCREMENT_GROWTH)
+            totalXP += xpForThisLevel
+        }
+
+        return totalXP
     },
 
-    // Function to calculate current level based on XP
-    getLevelFromXP(totalXP) {// Searching pn first 20 levels
-        for (let i = this.LEVELS.length - 1; i >= 0; i--) {
-            if (totalXP >= this.LEVELS[i]) {
-                return i;
+    getLevelFromXP(xp) {
+        for (let i = this.BASE_LEVELS.length - 1; i >= 1; i--) {
+            if (xp >= this.BASE_LEVELS[i]) {
+                if (i === 20) {
+                    return this.calculateInfiniteLevel(xp)
+                }
+                return i
             }
         }
-
-        // If XP is higher than level 20
-        if (totalXP >= 18000) {
-            return 20 + Math.floor((totalXP - 18000) / 2000)
-        }
-        return 0
+        return 1
     },
 
-    // XP required for next level
-    getXPToNextLevel(currentXP) {
-        const currentLevel = this.getLevelFromXP(currentXP)
-        const nextLevelXP = this.getXPForLevel(currentLevel + 1)
-        return nextLevelXP - currentXP
+    calculateInfiniteLevel(xp) {
+        let currentLevel = 20
+        let currentXP = this.BASE_LEVELS[20]
+
+        while (currentXP < xp) {
+            currentLevel++
+            const levelDiff = currentLevel - this.INFINITE_PROGRESSION.START_LEVEL
+            const xpForNextLevel = this.INFINITE_PROGRESSION.BASE_INCREMENT +
+                (levelDiff * this.INFINITE_PROGRESSION.INCREMENT_GROWTH)
+
+            if (currentXP + xpForNextLevel > xp) {
+                return currentLevel - 1
+            }
+
+            currentXP += xpForNextLevel
+        }
+
+        return currentLevel
+    },
+
+    getXPToNextLevel(xp) {
+        const currentLevel = this.getLevelFromXP(xp)
+        const nextLevel = currentLevel + 1
+        const xpForNextLevel = this.getXPForLevel(nextLevel)
+
+        return xpForNextLevel - xp
+    },
+
+    getXPForLevelUp(currentLevel) {
+        if (currentLevel < 20) {
+            return this.BASE_LEVELS[currentLevel + 1] - this.BASE_LEVELS[currentLevel]
+        } else {
+            const levelDiff = (currentLevel + 1) - this.INFINITE_PROGRESSION.START_LEVEL
+            return this.INFINITE_PROGRESSION.BASE_INCREMENT +
+                (levelDiff * this.INFINITE_PROGRESSION.INCREMENT_GROWTH)
+        }
     }
-};
+}
 
 export const QUEST_REWARDS = {
-    // Base XP for type of task
     BASE_XP: {
-        QUICK: 25,  //<30min (reading, meditating)
-        STANDARD: 50,   // 30min-2h (gym, studying)
-        LONG: 100,  //<2h (project or long hike)
-        EPIC: 200   //Multi-day (learning new skill)
+        QUICK: 25,      // <30 min
+        STANDARD: 50,   // 30min-2h
+        LONG: 100,      // 2+ hours
+        EPIC: 200       // Multi-day
     },
 
-    // Multiplier per type
-    TYPE_MULTIPLIERS: {
-        CASUAL: 1.2,    // Unique events
-        DAILY: 1.0      // Daily tasks
-    },
+    DAILY_MULTIPLIER: 1.2,  // +20% for daily quests
+    STAT_BONUS: 10,          // +10 XP for specific stat
 
-    // Bonus per specific stat
-    STAT_BONUS: 10, // +10 XP for certain stat
+    calculateQuestXP(baseXP, isDaily = false, targetStat = null) {
+        let totalXP = baseXP
 
-    //Function to calculate total XP for a quest
-    calculateQuestXP(baseXP, isDaily, targetStat) {
-        let totalXP = baseXP;
-
-        //Apply multiplier type
         if (isDaily) {
-            totalXP *= this.TYPE_MULTIPLIERS.DAILY
+            totalXP = Math.floor(totalXP * this.DAILY_MULTIPLIER)
         }
 
-        // Add bonus stat
         if (targetStat) {
             totalXP += this.STAT_BONUS
         }
 
-        return Math.floor(totalXP)
+        return totalXP
     }
-};
+}
 
+// ===== STAT RULES =====
 export const STAT_RULES = {
-    // Added emojis for debugging and visual representation
+    STAT_POINTS_PER_QUEST: 25,
+
     STATS: {
         STRENGTH: {
             name: 'Strength',
             emoji: '💪',
-            icon: 'Zap',
-            description: 'Physical power and endurance',
-            color: '#ef4444', //red
-            keywords: ['gym', 'ejercicio', 'deporte', 'entrenar', 'correr', 'fitness', 'nadar', 'yoga', 'boxeo', 'fuerza', 'pesas']
+            color: 'red',
+            keywords: [
+                'gym', 'exercise', 'workout', 'fitness', 'run', 'running', 'jog', 'jogging',
+                'lift', 'lifting', 'weights', 'cardio', 'sport', 'sports', 'train', 'training',
+                'muscle', 'strength', 'strong', 'physical', 'body', 'health', 'healthy'
+            ]
         },
         DEXTERITY: {
             name: 'Dexterity',
             emoji: '🎯',
-            icon: 'Target',
-            description: 'Skill, precision and creativity',
-            color: '#10b981', // emerald
-            keywords: ['dibujar', 'tocar', 'cocinar', 'arte', 'manualidades', 'precisión', 'música', 'piano', 'guitarra', 'bailar', 'pintar', 'escribir']
+            color: 'green',
+            keywords: [
+                'art', 'draw', 'drawing', 'paint', 'painting', 'craft', 'crafting', 'create',
+                'music', 'instrument', 'play', 'guitar', 'piano', 'sing', 'singing',
+                'cook', 'cooking', 'recipe', 'kitchen', 'bake', 'baking', 'skill', 'practice',
+                'hand', 'finger', 'precise', 'precision', 'fine', 'motor', 'dexterity'
+            ]
         },
         WISDOM: {
             name: 'Wisdom',
             emoji: '🧠',
-            icon: 'Brain',
-            description: 'Knowledge and learning',
-            color: '#3b82f6', // blue
-            keywords: ['pensar', 'estudiar', 'leer', 'aprender', 'investigar', 'libro', 'documental', 'idiomas', 'programar', 'ciencia', 'filosofia', 'historia']
+            color: 'blue',
+            keywords: [
+                'study', 'learn', 'learning', 'read', 'reading', 'book', 'books', 'research',
+                'school', 'university', 'course', 'class', 'lesson', 'education', 'knowledge',
+                'think', 'thinking', 'analyze', 'understand', 'memory', 'brain', 'mind',
+                'code', 'coding', 'program', 'programming', 'develop', 'software', 'tech'
+            ]
         },
         CHARISMA: {
             name: 'Charisma',
             emoji: '✨',
-            icon: 'Star',
-            description: 'Social skills and communication',
-            color: '#8b5cf6', // purple
-            keywords: ['hablar', 'conversar', 'escuchar', 'relaciones', 'amistad', 'comunicación', 'social', 'público', 'entrevista', 'amigos']
+            color: 'purple',
+            keywords: [
+                'talk', 'talking', 'speak', 'speaking', 'conversation', 'social', 'people',
+                'friend', 'friends', 'family', 'call', 'phone', 'meeting', 'presentation',
+                'lead', 'leadership', 'team', 'group', 'communicate', 'network', 'networking',
+                'charisma', 'charm', 'influence', 'persuade', 'connect', 'relationship'
+            ]
         }
     },
 
-    // Initial stats for new users
-    INITIAL_STATS: {
-        STRENGTH: 0,
-        DEXTERITY: 0,
-        WISDOM: 0,
-        CHARISMA: 0
-    },
+    detectStatFromDescription(text) {
+        const words = text.toLowerCase().split(/\s+/)
+        const statCounts = {}
 
-    // Levels system per stat
-    STAT_LEVELS: [
-        0, 50, 150, 300, 500, 750, 1050, 1400, 1800, 2250, 2750, // Levels 0-10
-        3300, 3900, 4550, 5250, 6000, 6800, 7650, 8550, 9500, 10500 // Levels 11-20
-    ],
-    STAT_POINTS_PER_QUEST: 25,
-
-    // Function to calculate stat level based on XP
-    getStatLevel(statPoints) {
-        for (let i = this.STAT_LEVELS.length - 1; i >= 0; i--) {
-            if (statPoints >= this.STAT_LEVELS[i]) {
-                return i
-            }
-        }
-        return 0
-    },
-
-    //Function to calculate next stat level
-    getPointsToNextStatLevel(currentPoints) {
-        const currentLevel = this.getStatLevel(currentPoints)
-        if (currentLevel >= this.STAT_LEVELS.length - 1) {
-            return 0    // Max level reached
-        }
-        const nextLevelPoints = this.STAT_LEVELS[currentLevel + 1]
-        return nextLevelPoints - currentPoints
-    },
-
-    // Detect stat automatically from keywords
-    detectStatFromDescription(description) {
-        const text = description.toLowerCase()
-
-        for (const [statName, statData] of Object.entries(this.STATS)) {
-            for (const keyword of statData.keywords) {
-                if (text.includes(keyword)) {
-                    return statName
+        for (const [stat, config] of Object.entries(this.STATS)) {
+            statCounts[stat] = 0
+            for (const keyword of config.keywords) {
+                if (words.some(word => word.includes(keyword) || keyword.includes(word))) {
+                    statCounts[stat]++
                 }
             }
         }
-        return null // No stat detected
-    }
-};
 
-export const UNLOCK_RULES = {
+        const maxCount = Math.max(...Object.values(statCounts))
+        if (maxCount === 0) return null
 
-    // Global unlocks per XP
-    GLOBAL_UNLOCKS: {
-
-        DARK_MODE: 1,                    // Theme
-        MOTIVATIONAL_QUOTES: 2,          // Feature
-        AI_QUEST_GENERATION: 3,          // Feature
-        LIBRARY_THEME: 4,                // Theme
-        STREAK_COUNTER: 5,               // Feature
-        MYSTIC_THEME: 6,                 // Theme
-        WEEKLY_CHALLENGES: 7,            // Feature
-        MEDIEVAL_THEME: 8,               // Theme
-        QUICK_ADD: 9,                    // Feature
-        WARRIOR_THEME: 10,               // Theme
-        RANDOM_QUEST_GENERATOR: 11,      // Feature
-        ACADEMY_THEME: 12                // Theme
+        return Object.keys(statCounts).find(stat => statCounts[stat] === maxCount)
     },
 
-    // Unlocks per stat level
+    getStatLevel(statPoints) {
+        return Math.floor(statPoints / this.STAT_POINTS_PER_QUEST) + 1
+    }
+}
+
+// ===== UNLOCK RULES =====
+export const UNLOCK_RULES = {
+    GLOBAL_UNLOCKS: {
+        1: ['DARK_MODE', 'LIBRARY_THEME'],
+        2: ['STREAK_COUNTER', 'MYSTIC_THEME'],
+        3: ['AI_QUEST_GENERATION', 'MOTIVATIONAL_QUOTES'],
+        4: ['BASIC_ANALYTICS', 'CALENDAR_VIEW'],
+        5: ['VOICE_TO_TEXT', 'ADVANCED_FILTERS'],
+        6: ['QUEST_TEMPLATES', 'MEDIEVAL_THEME'],
+        7: ['QUICK_ADD_BUTTONS', 'BASIC_AVATAR'],
+        8: ['RANDOM_GENERATOR', 'DAILY_NOTIFICATIONS'],
+        9: ['ADVANCED_ANALYTICS', 'ACHIEVEMENT_SYSTEM'],
+        10: ['WEEKLY_CHALLENGES', 'WARRIOR_THEME'],
+        11: ['FULL_AVATAR_SYSTEM', 'ACADEMY_THEME'],
+        12: ['EXPORT_DATA', 'SOCIAL_FEATURES']
+    },
+
+    FEATURE_INFO: {
+        DARK_MODE: {
+            name: 'Dark Mode',
+            emoji: '🌙',
+            description: 'Switch to dark theme for comfortable viewing'
+        },
+        LIBRARY_THEME: {
+            name: 'Library Theme',
+            emoji: '📚',
+            description: 'Scholarly theme with warm, bookish aesthetics'
+        },
+        STREAK_COUNTER: {
+            name: 'Streak Counter',
+            emoji: '🔥',
+            description: 'Track your daily quest completion streaks'
+        },
+        MYSTIC_THEME: {
+            name: 'Mystic Theme',
+            emoji: '🌙',
+            description: 'Mystical theme with magical, ethereal design'
+        },
+        AI_QUEST_GENERATION: {
+            name: 'AI Quest Generation',
+            emoji: '🤖',
+            description: 'Let AI transform your tasks into epic quests'
+        },
+        MOTIVATIONAL_QUOTES: {
+            name: 'Motivational Quotes',
+            emoji: '💬',
+            description: 'Daily inspiring quotes to keep you motivated'
+        },
+        BASIC_ANALYTICS: {
+            name: 'Basic Analytics',
+            emoji: '📊',
+            description: 'View your quest completion statistics'
+        },
+        CALENDAR_VIEW: {
+            name: 'Calendar View',
+            emoji: '📅',
+            description: 'Organize quests in a visual calendar layout'
+        },
+        VOICE_TO_TEXT: {
+            name: 'Voice Input',
+            emoji: '🎵',
+            description: 'Create quests using voice commands'
+        },
+        ADVANCED_FILTERS: {
+            name: 'Advanced Filters',
+            emoji: '🎯',
+            description: 'Filter and sort quests with advanced options'
+        },
+        QUEST_TEMPLATES: {
+            name: 'Quest Templates',
+            emoji: '📝',
+            description: 'Use pre-made templates for common quest types'
+        },
+        MEDIEVAL_THEME: {
+            name: 'Medieval Theme',
+            emoji: '🏰',
+            description: 'Medieval fantasy theme with castle aesthetics'
+        },
+        QUICK_ADD_BUTTONS: {
+            name: 'Quick Add',
+            emoji: '⚡',
+            description: 'Quickly add quests with predefined buttons'
+        },
+        BASIC_AVATAR: {
+            name: 'Basic Avatar',
+            emoji: '👤',
+            description: 'Customize your basic avatar appearance'
+        },
+        RANDOM_GENERATOR: {
+            name: 'Random Quest Generator',
+            emoji: '🎲',
+            description: 'Generate random quest suggestions'
+        },
+        DAILY_NOTIFICATIONS: {
+            name: 'Daily Notifications',
+            emoji: '📱',
+            description: 'Get reminders for your daily quests'
+        },
+        ADVANCED_ANALYTICS: {
+            name: 'Advanced Analytics',
+            emoji: '📈',
+            description: 'Detailed charts and progress analysis'
+        },
+        ACHIEVEMENT_SYSTEM: {
+            name: 'Achievement Badges',
+            emoji: '🏆',
+            description: 'Earn badges for completing milestones'
+        },
+        WEEKLY_CHALLENGES: {
+            name: 'Weekly Challenges',
+            emoji: '📊',
+            description: 'Participate in weekly quest challenges'
+        },
+        WARRIOR_THEME: {
+            name: 'Warrior Theme',
+            emoji: '⚔️',
+            description: 'Battle-ready theme for true warriors'
+        },
+        FULL_AVATAR_SYSTEM: {
+            name: 'Full Avatar System',
+            emoji: '👤',
+            description: 'Complete avatar customization with items'
+        },
+        ACADEMY_THEME: {
+            name: 'Academy Theme',
+            emoji: '🏛️',
+            description: 'Academic theme for scholarly adventurers'
+        },
+        EXPORT_DATA: {
+            name: 'Export Data',
+            emoji: '📤',
+            description: 'Export your quest data and statistics'
+        },
+        SOCIAL_FEATURES: {
+            name: 'Social Features',
+            emoji: '🎮',
+            description: 'Share achievements and compete with friends'
+        }
+    },
+
     STAT_UNLOCKS: {
         STRENGTH: {
-            // Title
-            ATHLETE: { level: 3, type: 'title', name: 'Athlete' },
-            WARRIOR: { level: 7, type: 'title', name: 'Warrior' },
-            CHAMPION: { level: 12, type: 'title', name: 'Champion' },
-            LEGEND: { level: 18, type: 'title', name: 'Muscle Legend' },
-
-            // Avatar items
-            BOXING_GLOVES: { level: 5, type: 'accessory', name: 'Boxing Gloves' },
-            WARRIOR_ARMOR: { level: 10, type: 'outfit', name: 'Warrior Armor' },
-            CHAMPION_BELT: { level: 15, type: 'accessory', name: 'Champion Belt' },
-            LEGENDARY_SWORD: { level: 20, type: 'weapon', name: 'Legendary Sword' }
+            3: { type: 'title', value: 'Athlete', emoji: '🏃' },
+            7: { type: 'head', value: 'fitness_headband', emoji: '💪' },
+            12: { type: 'body', value: 'gym_outfit', emoji: '🏋️' },
+            18: { type: 'weapon', value: 'dumbbells', emoji: '🏋️‍♂️' }
         },
-
         DEXTERITY: {
-            // Title
-            ARTIST: { level: 3, type: 'title', name: 'Artist' },
-            CRAFTSMAN: { level: 7, type: 'title', name: 'Craftsman' },
-            MASTER_CREATOR: { level: 12, type: 'title', name: 'Master Creator' },
-            VIRTUOSO: { level: 18, type: 'title', name: 'Virtuoso' },
-
-            // Avatar items
-            ARTIST_PALETTE: { level: 5, type: 'accessory', name: 'Artist Palette' },
-            CRAFTSMAN_TOOLS: { level: 10, type: 'accessory', name: 'Craftsman Tools' },
-            MAGIC_BRUSH: { level: 15, type: 'weapon', name: 'Magic Brush' },
-            CREATORS_CLOAK: { level: 20, type: 'outfit', name: 'Creators Cloak' }
+            3: { type: 'title', value: 'Artisan', emoji: '🎨' },
+            7: { type: 'head', value: 'artist_beret', emoji: '🎭' },
+            12: { type: 'accessory', value: 'paint_palette', emoji: '🎨' },
+            18: { type: 'weapon', value: 'magic_brush', emoji: '🖌️' }
         },
-
         WISDOM: {
-            // Title
-            SCHOLAR: { level: 3, type: 'title', name: 'Scholar' },
-            SAGE: { level: 7, type: 'title', name: 'Sage' },
-            PROFESSOR: { level: 12, type: 'title', name: 'Professor' },
-            GRAND_MASTER: { level: 18, type: 'title', name: 'Grand Master' },
-
-            // Avatar items
-            READING_GLASSES: { level: 5, type: 'accessory', name: 'Reading Glasses' },
-            SCHOLARS_ROBE: { level: 10, type: 'outfit', name: 'Scholars Robe' },
-            WISDOM_STAFF: { level: 15, type: 'weapon', name: 'Staff of Wisdom' },
-            PHOENIX_FEATHER: { level: 20, type: 'accessory', name: 'Phoenix Feather' }
+            3: { type: 'title', value: 'Scholar', emoji: '📚' },
+            7: { type: 'head', value: 'graduation_cap', emoji: '🎓' },
+            12: { type: 'accessory', value: 'ancient_tome', emoji: '📜' },
+            18: { type: 'weapon', value: 'staff_of_knowledge', emoji: '🔮' }
         },
-
         CHARISMA: {
-            // Title
-            SPEAKER: { level: 3, type: 'title', name: 'Public Speaker' },
-            LEADER: { level: 7, type: 'title', name: 'Natural Leader' },
-            INFLUENCER: { level: 12, type: 'title', name: 'Influencer' },
-            LEGEND: { level: 18, type: 'title', name: 'Social Legend' },
-
-            // Avatar items
-            GOLDEN_MICROPHONE: { level: 5, type: 'accessory', name: 'Golden Microphone' },
-            LEADERS_CAPE: { level: 10, type: 'outfit', name: 'Leaders Cape' },
-            CROWN_OF_INFLUENCE: { level: 15, type: 'accessory', name: 'Crown of Influence' },
-            GOLDEN_CROWN: { level: 20, type: 'head', name: 'Golden Crown' }
+            3: { type: 'title', value: 'Charmer', emoji: '✨' },
+            7: { type: 'head', value: 'crown', emoji: '👑' },
+            12: { type: 'body', value: 'royal_robes', emoji: '👗' },
+            18: { type: 'weapon', value: 'golden_scepter', emoji: '🪄' }
         }
     },
 
-    // Verify if unlock is available
-    isGlobalUnlocked(item, userLevel) {
-        const requiredLevel = this.GLOBAL_UNLOCKS[item]
-        return userLevel >= (requiredLevel || 0)
-    },
-
-    isStatUnlocked(stat, item, statLevel) {
-        const unlock = this.STAT_UNLOCKS[stat]?.[item]
-        return unlock && statLevel >= unlock.level
-    },
-
-    // Get next global unlocks
-    getNextGlobalUnlocks(userLevel) {
-        const nextUnlocks = []
-
-        for (const [item, requiredLevel] of Object.entries(this.GLOBAL_UNLOCKS)) {
-            if (requiredLevel > userLevel && requiredLevel <= userLevel + 5) {
-                nextUnlocks.push({
-                    item,
-                    requiredLevel,
-                    type: 'global',
-                    name: item.replace(/_/g, ' ').toLowerCase()
-                })
+    isGlobalUnlocked(featureName, userLevel) {
+        for (const [level, features] of Object.entries(this.GLOBAL_UNLOCKS)) {
+            if (features.includes(featureName)) {
+                return userLevel >= parseInt(level)
             }
         }
-
-        return nextUnlocks.sort((a, b) => a.requiredLevel - b.requiredLevel)
+        return false
     },
 
-    // Get next unlocks per stat
-    getNextStatUnlocks(stat, statLevel) {
-        const statUnlocks = this.STAT_UNLOCKS[stat] || {}
-        const nextUnlocks = []
-
-        for (const [item, unlock] of Object.entries(statUnlocks)) {
-            if (unlock.level > statLevel && unlock.level <= statLevel + 3) {
-                nextUnlocks.push({
-                    item,
-                    requiredLevel: unlock.level,
-                    type: unlock.type,
-                    name: unlock.name,
-                    stat: stat
-                });
-            }
-        }
-        return nextUnlocks.sort((a, b) => a.requiredLevel - b.requiredLevel)
-
+    getUnlocksForLevel(level) {
+        return this.GLOBAL_UNLOCKS[level] || []
     },
 
-    // Get all available stat unlocks
     getAllAvailableUnlocks(userLevel, userStats) {
-        const globalUnlocks = this.getNextGlobalUnlocks(userLevel)
-        const statUnlocks = []
-
-        for (const [statName, statPoints] of Object.entries(userStats)) {
-            const statLevel = STAT_RULES.getStatLevel(statPoints)
-            const unlocks = this.getNextStatUnlocks(statName, statLevel)
-            statUnlocks.push(...unlocks)
+        const availableUnlocks = {
+            global: [],
+            stats: {}
         }
 
-        return {
-            global: globalUnlocks,
-            stats: statUnlocks,
-            total: globalUnlocks.length + statUnlocks.length
+        for (const [level, features] of Object.entries(this.GLOBAL_UNLOCKS)) {
+            if (userLevel >= parseInt(level)) {
+                availableUnlocks.global.push(...features)
+            }
         }
+
+        for (const [stat, unlocks] of Object.entries(this.STAT_UNLOCKS)) {
+            const statLevel = STAT_RULES.getStatLevel(userStats[stat] || 0)
+            availableUnlocks.stats[stat] = []
+
+            for (const [requiredLevel, unlock] of Object.entries(unlocks)) {
+                if (statLevel >= parseInt(requiredLevel)) {
+                    availableUnlocks.stats[stat].push(unlock)
+                }
+            }
+        }
+
+        return availableUnlocks
+    },
+
+    getNextGlobalUnlocks(userLevel, count = 3) {
+        const nextUnlocks = []
+
+        for (const [level, features] of Object.entries(this.GLOBAL_UNLOCKS)) {
+            if (parseInt(level) > userLevel) {
+                nextUnlocks.push({
+                    level: parseInt(level),
+                    features: features.map(feature => ({
+                        name: feature,
+                        info: this.FEATURE_INFO[feature]
+                    }))
+                })
+
+                if (nextUnlocks.length >= count) break
+            }
+        }
+
+        return nextUnlocks
     }
-};
+}
 
+// ===== VALIDATION RULES =====
 export const VALIDATION_RULES = {
-
     QUEST: {
         TITLE_MIN_LENGTH: 3,
         TITLE_MAX_LENGTH: 100,
@@ -336,45 +433,17 @@ export const VALIDATION_RULES = {
         MIN_XP: 10,
         MAX_XP: 500
     },
-
     USER: {
         USERNAME_MIN_LENGTH: 3,
         USERNAME_MAX_LENGTH: 20,
-        PASSWORD_MIN_LENGTH: 6,
-        MAX_LEVEL: 100,
-        MAX_XP: 200000
+        PASSWORD_MIN_LENGTH: 6
     }
-};
+}
 
-// Function for testing
-
-export const GameUtils = {
-    // Simulate user progress
-    simulateUsersProgress(quests) {
-        let totalXP = 0
-        const stats = { ...STAT_RULES.INITIAL_STATS }
-
-        quests.forEach(quest => {
-            totalXP += quest.experienceReward
-            if (quest.targetStat) {
-                stats[quest.targetStat] += STAT_RULES.STAT_POINTS_PER_QUEST
-            }
-        });
-
-        const level = XP_RULES.getLevelFromXP(totalXP)
-        return { totalXP, level, stats }
-    },
-
-    // Generating example quest
-    generateSampleQuest(title, isDaily = false, difficulty = 'STANDARD') {
-        const baseXP = QUEST_REWARDS.BASE_XP[difficulty]
-        const experienceReward = QUEST_REWARDS.calculateQuestXP(baseXP, isDaily)
-
-        return {
-            title,
-            isDaily,
-            experienceReward,
-            difficulty
-        }
-    }
+export default {
+    XP_RULES,
+    QUEST_REWARDS,
+    STAT_RULES,
+    UNLOCK_RULES,
+    VALIDATION_RULES
 }
