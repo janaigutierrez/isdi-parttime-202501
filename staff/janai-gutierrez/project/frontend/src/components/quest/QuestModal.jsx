@@ -8,6 +8,7 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
     const [generatedQuest, setGeneratedQuest] = useState(null)
     const [error, setError] = useState('')
 
+    // Check if AI is available
     const aiAvailable = isFeatureUnlocked('AI_QUEST_GENERATION')
 
     const generateQuest = async () => {
@@ -48,36 +49,38 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
         }
     }
 
-    const createManualQuest = () => {
+    const createManualQuest = async () => {
         if (!userInput.trim()) {
             setError('Please describe your quest.')
             return
         }
 
-        fetch('http://localhost:4321/api/quests/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                title: userInput,
-                useAI: false,
-                difficulty: 'STANDARD'
+        try {
+            // Call the same endpoint with useAI: false
+            const response = await fetch('http://localhost:4321/api/quests/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: userInput,
+                    useAI: false,
+                    difficulty: 'STANDARD'
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    onAddQuest(data.quest)
-                    handleClose()
-                } else {
-                    setError(data.error || 'Error creating quest.')
-                }
-            })
-            .catch(err => {
-                console.error('Error creating manual quest:', err)
-                setError('Could not create quest.')
-            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                onAddQuest(data.quest)
+                handleClose()
+            } else {
+                setError(data.error || 'Error creating quest.')
+            }
+        } catch (err) {
+            console.error('Error creating manual quest:', err)
+            setError('Could not create quest.')
+        }
     }
 
     const acceptQuest = () => {
@@ -100,6 +103,7 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="w-full max-w-md bg-white rounded-xl shadow-2xl">
 
+                {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
                     <h2 className="text-xl font-bold">✨ Create Quest</h2>
                     <button
@@ -110,8 +114,10 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
                     </button>
                 </div>
 
+                {/* Content */}
                 <div className="p-6">
 
+                    {/* Input */}
                     {!generatedQuest && (
                         <div className="space-y-4">
                             <div>
@@ -127,20 +133,23 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
                                 />
                             </div>
 
+                            {/* Error */}
                             {error && (
                                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                                     {error}
                                 </div>
                             )}
 
+                            {/* Buttons */}
                             <div className="space-y-3">
+                                {/* AI Button */}
                                 {aiAvailable ? (
                                     <button
                                         onClick={generateQuest}
                                         disabled={isGenerating || !userInput.trim()}
                                         className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${isGenerating || !userInput.trim()
-                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            : 'bg-purple-600 hover:bg-purple-700 text-white'
+                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                : 'bg-purple-600 hover:bg-purple-700 text-white'
                                             }`}
                                     >
                                         {isGenerating ? (
@@ -158,12 +167,13 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
                                     </div>
                                 )}
 
+                                {/* Manual Button */}
                                 <button
                                     onClick={createManualQuest}
                                     disabled={!userInput.trim()}
                                     className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${!userInput.trim()
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-green-600 hover:bg-green-700 text-white'
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            : 'bg-green-600 hover:bg-green-700 text-white'
                                         }`}
                                 >
                                     📝 Create Manual Quest
@@ -172,6 +182,7 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
                         </div>
                     )}
 
+                    {/* Generated Quest */}
                     {generatedQuest && (
                         <div className="space-y-4">
                             <div className="p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
@@ -204,6 +215,7 @@ function QuestModal({ isOpen, onClose, onAddQuest }) {
                                 </div>
                             </div>
 
+                            {/* Action buttons */}
                             <div className="flex gap-3">
                                 <button
                                     onClick={acceptQuest}

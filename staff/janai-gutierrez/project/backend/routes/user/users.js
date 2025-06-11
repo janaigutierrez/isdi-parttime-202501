@@ -1,5 +1,6 @@
 import { json, Router } from "express"
 import handlers from './handlers/index.js'
+
 const jsonBodyParser = json()
 const userRouter = Router()
 

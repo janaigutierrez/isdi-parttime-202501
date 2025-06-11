@@ -1,7 +1,5 @@
-import createQuest from './createQuest.js'
-import getAllQuests from './getAllQuests.js'
+import { createQuest } from "./createQuest"
 
 export default {
-    createQuest,
-    getAllQuests
+    createQuest
 }

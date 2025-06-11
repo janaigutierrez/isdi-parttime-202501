@@ -13,7 +13,6 @@ function getGroqClient() {
     return groq
 }
 
-// ===== RPG LORE SYSTEM =====
 const RPG_LORE = {
     STRENGTH: {
         realm: "Forge of Titans",
@@ -163,7 +162,6 @@ RESPONSE FORMAT:
     }
 
     static processEpicQuestResponse(aiResponse, originalPrompt) {
-        // Validate response structure
         const requiredFields = ['title', 'targetStat', 'difficulty']
         for (const field of requiredFields) {
             if (!(field in aiResponse)) {
@@ -171,16 +169,12 @@ RESPONSE FORMAT:
             }
         }
 
-        // Calculate XP with epic bonuses
         const baseXP = QUEST_REWARDS.BASE_XP[aiResponse.difficulty] || QUEST_REWARDS.BASE_XP.STANDARD
         let experienceReward = QUEST_REWARDS.calculateQuestXP(
             baseXP,
             aiResponse.isDaily || false,
             aiResponse.targetStat
         )
-
-        // Epic bonus XP for AI-generated quests
-        experienceReward += 5
 
         return {
             title: aiResponse.title.substring(0, 120),
@@ -202,17 +196,14 @@ RESPONSE FORMAT:
     }
 
     static generateEpicQuestFallback(userPrompt, preferredStat, difficulty) {
-        console.log('Using EPIC fallback quest generation')
+        console.log('Using fallback quest generation')
 
-        // Detect stat or use preferred
         const detectedStat = preferredStat || STAT_RULES.detectStatFromDescription(userPrompt)
 
-        // Generate epic title using templates
         const epicTitle = this.generateEpicTitle(userPrompt, detectedStat, difficulty)
         const epicDescription = this.generateEpicDescription(userPrompt, detectedStat)
         const epicElements = this.generateEpicElements(detectedStat, difficulty)
 
-        // Calculate XP with epic bonus
         const baseXP = QUEST_REWARDS.BASE_XP[difficulty] || QUEST_REWARDS.BASE_XP.STANDARD
         const experienceReward = QUEST_REWARDS.calculateQuestXP(baseXP, false, detectedStat) + 5
 
@@ -310,7 +301,6 @@ RESPONSE FORMAT:
             baseTags.push(RPG_LORE[stat].realm.toLowerCase().replace(/\s+/g, '-'))
         }
 
-        // Add contextual tags
         const prompt = userPrompt.toLowerCase()
         const contextTags = {
             'gym': ['strength', 'warrior', 'combat'],
@@ -325,31 +315,24 @@ RESPONSE FORMAT:
             }
         }
 
-        return [...new Set(baseTags)] // Remove duplicates
+        return [...new Set(baseTags)]
     }
 
     // ===== STAT DETECTION SYSTEM =====
 
-    /**
-     * Enhanced stat detection using gameRules + context analysis
-     */
     static detectQuestStat(questTitle, questDescription = '') {
         const fullText = `${questTitle} ${questDescription}`.toLowerCase()
 
-        // Use gameRules detection first
         const gameRulesStat = STAT_RULES.detectStatFromDescription(fullText)
         if (gameRulesStat) {
             console.log(`📊 Stat detected by gameRules: ${gameRulesStat}`)
             return gameRulesStat
         }
 
-        // Fallback: Enhanced detection with context
         return this.detectStatByContext(fullText)
     }
 
-    /**
-     * Context-based stat detection for edge cases
-     */
+
     static detectStatByContext(text) {
         const contextPatterns = {
             STRENGTH: [
@@ -387,7 +370,6 @@ RESPONSE FORMAT:
             }
         }
 
-        // Find highest scoring stat
         const maxScore = Math.max(...Object.values(statScores))
         if (maxScore === 0) {
             return null
@@ -397,16 +379,12 @@ RESPONSE FORMAT:
         return detectedStat
     }
 
-    /**
-     * Auto-apply stat detection to manual quests
-     */
+
     static enhanceManualQuest(questData) {
-        // Detect stat if not already set
         if (!questData.targetStat) {
             questData.targetStat = this.detectQuestStat(questData.title, questData.description)
         }
 
-        // Recalculate XP with detected stat
         if (questData.targetStat) {
             const baseXP = QUEST_REWARDS.BASE_XP[questData.difficulty] || QUEST_REWARDS.BASE_XP.STANDARD
             questData.experienceReward = QUEST_REWARDS.calculateQuestXP(
@@ -419,27 +397,10 @@ RESPONSE FORMAT:
         return questData
     }
 
-    // Utility function for random selection
     static random(array) {
         return array[Math.floor(Math.random() * array.length)]
     }
 
-    /**
-     * Health check for AI service
-     */
-    static async healthCheck() {
-        try {
-            const groqClient = getGroqClient()
-            const completion = await groqClient.chat.completions.create({
-                messages: [{ role: "user", content: "Hello" }],
-                model: "llama-3.3-70b-versatile",
-                max_tokens: 10
-            })
-            return { status: 'healthy', model: completion.model }
-        } catch (error) {
-            return { status: 'error', error: error.message }
-        }
-    }
 }
 
 export default AIService
