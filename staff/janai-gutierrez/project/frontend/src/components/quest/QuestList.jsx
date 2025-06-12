@@ -1,16 +1,30 @@
 import { useQuests } from '../../context/QuestContext'
+import { rules } from 'common'
 
-function QuestList({ quests, onOpenModal }) {
-    const { completeQuest } = useQuests()
+function QuestList() {
+    const { quests, completeQuest, abandonQuest, openQuestModal, error, clearError } = useQuests()
 
     const getStatEmoji = (stat) => {
-        const emojis = {
-            'STRENGTH': '💪',
-            'DEXTERITY': '🎯',
-            'WISDOM': '🧠',
-            'CHARISMA': '✨'
+        if (!stat) return '❓'
+        return rules.STAT_RULES.STATS[stat]?.emoji || '❓'
+    }
+
+    const handleCompleteQuest = async (questId) => {
+        try {
+            await completeQuest(questId)
+        } catch (error) {
+            console.error('Error completing quest:', error)
         }
-        return emojis[stat] || '❓'
+    }
+
+    const handleAbandonQuest = async (questId) => {
+        if (window.confirm('Are you sure you want to abandon this quest?')) {
+            try {
+                await abandonQuest(questId)
+            } catch (error) {
+                console.error('Error abandoning quest:', error)
+            }
+        }
     }
 
     return (
@@ -18,12 +32,24 @@ function QuestList({ quests, onOpenModal }) {
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">My Quests</h2>
                 <button
-                    onClick={onOpenModal}
+                    onClick={openQuestModal}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                     🤖 Add Quest
                 </button>
             </div>
+
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                    <span className="block sm:inline">{error}</span>
+                    <button
+                        onClick={clearError}
+                        className="absolute top-0 bottom-0 right-0 px-4 py-3"
+                    >
+                        <span className="text-xl">&times;</span>
+                    </button>
+                </div>
+            )}
 
             <div className="space-y-3">
                 {quests.length === 0 ? (
@@ -32,9 +58,9 @@ function QuestList({ quests, onOpenModal }) {
                         <p>No quests yet. Create your first epic quest!</p>
                     </div>
                 ) : (
-                    quests.map((quest, index) => (
+                    quests.map((quest) => (
                         <div
-                            key={index}
+                            key={quest.id}
                             className={`p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow ${quest.isCompleted
                                 ? 'bg-gray-100 border-gray-300 opacity-75'
                                 : 'bg-white border-gray-200'
@@ -89,12 +115,28 @@ function QuestList({ quests, onOpenModal }) {
                                         +{quest.experienceReward} XP
                                     </span>
 
-                                    <button
-                                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors"
-                                        onClick={() => console.log('Complete quest:', quest.title)}
-                                    >
-                                        ✅
-                                    </button>
+                                    {!quest.isCompleted ? (
+                                        <div className="flex gap-1">
+                                            <button
+                                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                                                onClick={() => handleCompleteQuest(quest.id)}
+                                                title="Complete Quest"
+                                            >
+                                                ✅
+                                            </button>
+                                            <button
+                                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                                                onClick={() => handleAbandonQuest(quest.id)}
+                                                title="Abandon Quest"
+                                            >
+                                                ❌
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <span className="text-green-600 text-sm font-medium">
+                                            Completed ✨
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>

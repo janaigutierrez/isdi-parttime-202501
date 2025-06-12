@@ -1,7 +1,8 @@
 import validator from './validators.js'
 import errors from './errors.js'
+import gameRules from './constants/gameRules.js'
 
-export { validator, errors }
+const rules = gameRules
 
-export * from './constants/gameRules.js'
+export { validator, errors, rules }
 

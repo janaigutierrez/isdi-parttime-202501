@@ -1,99 +1,24 @@
 export const XP_RULES = {
-    BASE_LEVELS: [
-        0,     // Level 0 (placeholder)
-        0,     // Level 1
-        100,   // Level 2
-        250,   // Level 3
-        450,   // Level 4
-        700,   // Level 5
-        1000,  // Level 6
-        1350,  // Level 7
-        1750,  // Level 8
-        2200,  // Level 9
-        2700,  // Level 10
-        3250,  // Level 11
-        3850,  // Level 12
-        4500,  // Level 13
-        5200,  // Level 14
-        6000,  // Level 15
-        6850,  // Level 16
-        7750,  // Level 17
-        8700,  // Level 18
-        9700,  // Level 19
-        10750  // Level 20
-    ],
-
-    INFINITE_PROGRESSION: {
-        START_LEVEL: 20,
-        BASE_INCREMENT: 1200,
-        INCREMENT_GROWTH: 100
-    },
-
-    getXPForLevel(level) {
-        if (level <= 20) {
-            return this.BASE_LEVELS[level] || 0
-        }
-
-        let totalXP = this.BASE_LEVELS[20]
-
-        for (let currentLevel = 21; currentLevel <= level; currentLevel++) {
-            const levelDiff = currentLevel - this.INFINITE_PROGRESSION.START_LEVEL
-            const xpForThisLevel = this.INFINITE_PROGRESSION.BASE_INCREMENT +
-                (levelDiff * this.INFINITE_PROGRESSION.INCREMENT_GROWTH)
-            totalXP += xpForThisLevel
-        }
-
-        return totalXP
-    },
+    BASE_LEVELS: [0, 0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700],
+    MAX_LEVEL: 10,
 
     getLevelFromXP(xp) {
         for (let i = this.BASE_LEVELS.length - 1; i >= 1; i--) {
             if (xp >= this.BASE_LEVELS[i]) {
-                if (i === 20) {
-                    return this.calculateInfiniteLevel(xp)
-                }
                 return i
             }
         }
         return 1
     },
 
-    calculateInfiniteLevel(xp) {
-        let currentLevel = 20
-        let currentXP = this.BASE_LEVELS[20]
-
-        while (currentXP < xp) {
-            currentLevel++
-            const levelDiff = currentLevel - this.INFINITE_PROGRESSION.START_LEVEL
-            const xpForNextLevel = this.INFINITE_PROGRESSION.BASE_INCREMENT +
-                (levelDiff * this.INFINITE_PROGRESSION.INCREMENT_GROWTH)
-
-            if (currentXP + xpForNextLevel > xp) {
-                return currentLevel - 1
-            }
-
-            currentXP += xpForNextLevel
-        }
-
-        return currentLevel
-    },
-
     getXPToNextLevel(xp) {
         const currentLevel = this.getLevelFromXP(xp)
-        const nextLevel = currentLevel + 1
-        const xpForNextLevel = this.getXPForLevel(nextLevel)
-
-        return xpForNextLevel - xp
+        if (currentLevel >= this.MAX_LEVEL) return 0
+        return this.BASE_LEVELS[currentLevel + 1] - xp
     },
 
-    getXPForLevelUp(currentLevel) {
-        if (currentLevel < 20) {
-            return this.BASE_LEVELS[currentLevel + 1] - this.BASE_LEVELS[currentLevel]
-        } else {
-            const levelDiff = (currentLevel + 1) - this.INFINITE_PROGRESSION.START_LEVEL
-            return this.INFINITE_PROGRESSION.BASE_INCREMENT +
-                (levelDiff * this.INFINITE_PROGRESSION.INCREMENT_GROWTH)
-        }
+    isMaxLevel(level) {
+        return level >= this.MAX_LEVEL
     }
 }
 
@@ -103,73 +28,28 @@ export const QUEST_REWARDS = {
         STANDARD: 50,   // 30min-2h
         LONG: 100,      // 2+ hours
         EPIC: 200       // Multi-day
-    },
-
-    DAILY_MULTIPLIER: 1.2,  // +20% for daily quests
-    STAT_BONUS: 10,          // +10 XP for specific stat
-
-    calculateQuestXP(baseXP, isDaily = false, targetStat = null) {
-        let totalXP = baseXP
-
-        if (isDaily) {
-            totalXP = Math.floor(totalXP * this.DAILY_MULTIPLIER)
-        }
-
-        if (targetStat) {
-            totalXP += this.STAT_BONUS
-        }
-
-        return totalXP
     }
 }
 
-// ===== STAT RULES =====
 export const STAT_RULES = {
     STAT_POINTS_PER_QUEST: 25,
 
     STATS: {
         STRENGTH: {
-            name: 'Strength',
-            emoji: '💪',
-            color: 'red',
-            keywords: [
-                'gym', 'exercise', 'workout', 'fitness', 'run', 'running', 'jog', 'jogging',
-                'lift', 'lifting', 'weights', 'cardio', 'sport', 'sports', 'train', 'training',
-                'muscle', 'strength', 'strong', 'physical', 'body', 'health', 'healthy'
-            ]
+            name: 'Strength', emoji: '💪', color: 'red',
+            keywords: ['gym', 'exercise', 'workout', 'fitness', 'run', 'sport', 'train', 'muscle', 'physical']
         },
         DEXTERITY: {
-            name: 'Dexterity',
-            emoji: '🎯',
-            color: 'green',
-            keywords: [
-                'art', 'draw', 'drawing', 'paint', 'painting', 'craft', 'crafting', 'create',
-                'music', 'instrument', 'play', 'guitar', 'piano', 'sing', 'singing',
-                'cook', 'cooking', 'recipe', 'kitchen', 'bake', 'baking', 'skill', 'practice',
-                'hand', 'finger', 'precise', 'precision', 'fine', 'motor', 'dexterity'
-            ]
+            name: 'Dexterity', emoji: '🎯', color: 'green',
+            keywords: ['art', 'draw', 'paint', 'craft', 'music', 'instrument', 'cook', 'skill', 'creative']
         },
         WISDOM: {
-            name: 'Wisdom',
-            emoji: '🧠',
-            color: 'blue',
-            keywords: [
-                'study', 'learn', 'learning', 'read', 'reading', 'book', 'books', 'research',
-                'school', 'university', 'course', 'class', 'lesson', 'education', 'knowledge',
-                'think', 'thinking', 'analyze', 'understand', 'memory', 'brain', 'mind',
-                'code', 'coding', 'program', 'programming', 'develop', 'software', 'tech'
-            ]
+            name: 'Wisdom', emoji: '🧠', color: 'blue',
+            keywords: ['study', 'learn', 'read', 'book', 'research', 'education', 'think', 'code', 'program']
         },
         CHARISMA: {
-            name: 'Charisma',
-            emoji: '✨',
-            color: 'purple',
-            keywords: [
-                'talk', 'talking', 'speak', 'speaking', 'conversation', 'social', 'people',
-                'friend', 'friends', 'family', 'call', 'phone', 'meeting', 'presentation',
-                'lead', 'leadership', 'team', 'group', 'communicate', 'network', 'networking',
-                'charisma', 'charm', 'influence', 'persuade', 'connect', 'relationship'
-            ]
+            name: 'Charisma', emoji: '✨', color: 'purple',
+            keywords: ['talk', 'social', 'people', 'friend', 'call', 'meeting', 'presentation', 'leadership']
         }
     },
 
@@ -180,7 +60,7 @@ export const STAT_RULES = {
         for (const [stat, config] of Object.entries(this.STATS)) {
             statCounts[stat] = 0
             for (const keyword of config.keywords) {
-                if (words.some(word => word.includes(keyword) || keyword.includes(word))) {
+                if (words.some(word => word.includes(keyword))) {
                     statCounts[stat]++
                 }
             }
@@ -188,7 +68,6 @@ export const STAT_RULES = {
 
         const maxCount = Math.max(...Object.values(statCounts))
         if (maxCount === 0) return null
-
         return Object.keys(statCounts).find(stat => statCounts[stat] === maxCount)
     },
 
@@ -197,246 +76,89 @@ export const STAT_RULES = {
     }
 }
 
-// ===== UNLOCK RULES =====
 export const UNLOCK_RULES = {
     GLOBAL_UNLOCKS: {
-        1: ['DARK_MODE', 'LIBRARY_THEME'],
-        2: ['STREAK_COUNTER', 'MYSTIC_THEME'],
-        3: ['AI_QUEST_GENERATION', 'MOTIVATIONAL_QUOTES'],
-        4: ['BASIC_ANALYTICS', 'CALENDAR_VIEW'],
-        5: ['VOICE_TO_TEXT', 'ADVANCED_FILTERS'],
-        6: ['QUEST_TEMPLATES', 'MEDIEVAL_THEME'],
-        7: ['QUICK_ADD_BUTTONS', 'BASIC_AVATAR'],
-        8: ['RANDOM_GENERATOR', 'DAILY_NOTIFICATIONS'],
-        9: ['ADVANCED_ANALYTICS', 'ACHIEVEMENT_SYSTEM'],
-        10: ['WEEKLY_CHALLENGES', 'WARRIOR_THEME'],
-        11: ['FULL_AVATAR_SYSTEM', 'ACADEMY_THEME'],
-        12: ['EXPORT_DATA', 'SOCIAL_FEATURES']
+        2: ['DARK_MODE'],
+        3: ['AI_QUEST_GENERATION'],
+        5: ['LIBRARY_THEME'],
+        7: ['MYSTIC_THEME'],
+        10: ['AVATAR_SETS', 'FINAL_TITLES']
     },
 
-    FEATURE_INFO: {
-        DARK_MODE: {
-            name: 'Dark Mode',
-            emoji: '🌙',
-            description: 'Switch to dark theme for comfortable viewing'
-        },
-        LIBRARY_THEME: {
-            name: 'Library Theme',
-            emoji: '📚',
-            description: 'Scholarly theme with warm, bookish aesthetics'
-        },
-        STREAK_COUNTER: {
-            name: 'Streak Counter',
-            emoji: '🔥',
-            description: 'Track your daily quest completion streaks'
-        },
-        MYSTIC_THEME: {
-            name: 'Mystic Theme',
-            emoji: '🌙',
-            description: 'Mystical theme with magical, ethereal design'
-        },
-        AI_QUEST_GENERATION: {
-            name: 'AI Quest Generation',
-            emoji: '🤖',
-            description: 'Let AI transform your tasks into epic quests'
-        },
-        MOTIVATIONAL_QUOTES: {
-            name: 'Motivational Quotes',
-            emoji: '💬',
-            description: 'Daily inspiring quotes to keep you motivated'
-        },
-        BASIC_ANALYTICS: {
-            name: 'Basic Analytics',
-            emoji: '📊',
-            description: 'View your quest completion statistics'
-        },
-        CALENDAR_VIEW: {
-            name: 'Calendar View',
-            emoji: '📅',
-            description: 'Organize quests in a visual calendar layout'
-        },
-        VOICE_TO_TEXT: {
-            name: 'Voice Input',
-            emoji: '🎵',
-            description: 'Create quests using voice commands'
-        },
-        ADVANCED_FILTERS: {
-            name: 'Advanced Filters',
-            emoji: '🎯',
-            description: 'Filter and sort quests with advanced options'
-        },
-        QUEST_TEMPLATES: {
-            name: 'Quest Templates',
-            emoji: '📝',
-            description: 'Use pre-made templates for common quest types'
-        },
-        MEDIEVAL_THEME: {
-            name: 'Medieval Theme',
-            emoji: '🏰',
-            description: 'Medieval fantasy theme with castle aesthetics'
-        },
-        QUICK_ADD_BUTTONS: {
-            name: 'Quick Add',
-            emoji: '⚡',
-            description: 'Quickly add quests with predefined buttons'
-        },
-        BASIC_AVATAR: {
-            name: 'Basic Avatar',
-            emoji: '👤',
-            description: 'Customize your basic avatar appearance'
-        },
-        RANDOM_GENERATOR: {
-            name: 'Random Quest Generator',
-            emoji: '🎲',
-            description: 'Generate random quest suggestions'
-        },
-        DAILY_NOTIFICATIONS: {
-            name: 'Daily Notifications',
-            emoji: '📱',
-            description: 'Get reminders for your daily quests'
-        },
-        ADVANCED_ANALYTICS: {
-            name: 'Advanced Analytics',
-            emoji: '📈',
-            description: 'Detailed charts and progress analysis'
-        },
-        ACHIEVEMENT_SYSTEM: {
-            name: 'Achievement Badges',
-            emoji: '🏆',
-            description: 'Earn badges for completing milestones'
-        },
-        WEEKLY_CHALLENGES: {
-            name: 'Weekly Challenges',
-            emoji: '📊',
-            description: 'Participate in weekly quest challenges'
-        },
-        WARRIOR_THEME: {
-            name: 'Warrior Theme',
-            emoji: '⚔️',
-            description: 'Battle-ready theme for true warriors'
-        },
-        FULL_AVATAR_SYSTEM: {
-            name: 'Full Avatar System',
-            emoji: '👤',
-            description: 'Complete avatar customization with items'
-        },
-        ACADEMY_THEME: {
-            name: 'Academy Theme',
-            emoji: '🏛️',
-            description: 'Academic theme for scholarly adventurers'
-        },
-        EXPORT_DATA: {
-            name: 'Export Data',
-            emoji: '📤',
-            description: 'Export your quest data and statistics'
-        },
-        SOCIAL_FEATURES: {
-            name: 'Social Features',
-            emoji: '🎮',
-            description: 'Share achievements and compete with friends'
-        }
+    THEMES: ['default', 'dark', 'library', 'mystic'],
+
+    AVATAR_SETS: {
+        STRENGTH: { name: 'Legendary Warrior', title: 'Muscle Legend', emoji: '⚔️' },
+        DEXTERITY: { name: 'Master Artisan', title: 'Creative Genius', emoji: '🎨' },
+        WISDOM: { name: 'Grand Scholar', title: 'Wisdom Keeper', emoji: '📚' },
+        CHARISMA: { name: 'Supreme Leader', title: 'Social Master', emoji: '👑' }
     },
 
-    STAT_UNLOCKS: {
-        STRENGTH: {
-            3: { type: 'title', value: 'Athlete', emoji: '🏃' },
-            7: { type: 'head', value: 'fitness_headband', emoji: '💪' },
-            12: { type: 'body', value: 'gym_outfit', emoji: '🏋️' },
-            18: { type: 'weapon', value: 'dumbbells', emoji: '🏋️‍♂️' }
-        },
-        DEXTERITY: {
-            3: { type: 'title', value: 'Artisan', emoji: '🎨' },
-            7: { type: 'head', value: 'artist_beret', emoji: '🎭' },
-            12: { type: 'accessory', value: 'paint_palette', emoji: '🎨' },
-            18: { type: 'weapon', value: 'magic_brush', emoji: '🖌️' }
-        },
-        WISDOM: {
-            3: { type: 'title', value: 'Scholar', emoji: '📚' },
-            7: { type: 'head', value: 'graduation_cap', emoji: '🎓' },
-            12: { type: 'accessory', value: 'ancient_tome', emoji: '📜' },
-            18: { type: 'weapon', value: 'staff_of_knowledge', emoji: '🔮' }
-        },
-        CHARISMA: {
-            3: { type: 'title', value: 'Charmer', emoji: '✨' },
-            7: { type: 'head', value: 'crown', emoji: '👑' },
-            12: { type: 'body', value: 'royal_robes', emoji: '👗' },
-            18: { type: 'weapon', value: 'golden_scepter', emoji: '🪄' }
-        }
-    },
+    isUnlocked(featureName, userLevel) {
+        if (XP_RULES.isMaxLevel(userLevel)) return true
 
-    isGlobalUnlocked(featureName, userLevel) {
         for (const [level, features] of Object.entries(this.GLOBAL_UNLOCKS)) {
-            if (features.includes(featureName)) {
-                return userLevel >= parseInt(level)
+            if (features.includes(featureName) && userLevel >= parseInt(level)) {
+                return true
             }
         }
         return false
     },
 
-    getUnlocksForLevel(level) {
-        return this.GLOBAL_UNLOCKS[level] || []
-    },
-
-    getAllAvailableUnlocks(userLevel, userStats) {
-        const availableUnlocks = {
-            global: [],
-            stats: {}
+    getUnlockedFeatures(userLevel) {
+        if (XP_RULES.isMaxLevel(userLevel)) {
+            return ['DARK_MODE', 'AI_QUEST_GENERATION', 'LIBRARY_THEME', 'MYSTIC_THEME', 'AVATAR_SETS', 'FINAL_TITLES']
         }
 
+        const unlocked = []
         for (const [level, features] of Object.entries(this.GLOBAL_UNLOCKS)) {
             if (userLevel >= parseInt(level)) {
-                availableUnlocks.global.push(...features)
+                unlocked.push(...features)
             }
         }
-
-        for (const [stat, unlocks] of Object.entries(this.STAT_UNLOCKS)) {
-            const statLevel = STAT_RULES.getStatLevel(userStats[stat] || 0)
-            availableUnlocks.stats[stat] = []
-
-            for (const [requiredLevel, unlock] of Object.entries(unlocks)) {
-                if (statLevel >= parseInt(requiredLevel)) {
-                    availableUnlocks.stats[stat].push(unlock)
-                }
-            }
-        }
-
-        return availableUnlocks
+        return unlocked
     },
 
-    getNextGlobalUnlocks(userLevel, count = 3) {
-        const nextUnlocks = []
+    getAvailableThemes(userLevel) {
+        const themes = ['default']
+        if (this.isUnlocked('DARK_MODE', userLevel)) themes.push('dark')
+        if (this.isUnlocked('LIBRARY_THEME', userLevel)) themes.push('library')
+        if (this.isUnlocked('MYSTIC_THEME', userLevel)) themes.push('mystic')
+        return themes
+    },
+
+    getNextUnlock(userLevel) {
+        if (XP_RULES.isMaxLevel(userLevel)) return null
 
         for (const [level, features] of Object.entries(this.GLOBAL_UNLOCKS)) {
             if (parseInt(level) > userLevel) {
-                nextUnlocks.push({
-                    level: parseInt(level),
-                    features: features.map(feature => ({
-                        name: feature,
-                        info: this.FEATURE_INFO[feature]
-                    }))
-                })
-
-                if (nextUnlocks.length >= count) break
+                return { level: parseInt(level), features }
             }
         }
-
-        return nextUnlocks
-    }
-}
-
-// ===== VALIDATION RULES =====
-export const VALIDATION_RULES = {
-    QUEST: {
-        TITLE_MIN_LENGTH: 3,
-        TITLE_MAX_LENGTH: 100,
-        DESCRIPTION_MAX_LENGTH: 500,
-        MIN_XP: 10,
-        MAX_XP: 500
+        return null
     },
-    USER: {
-        USERNAME_MIN_LENGTH: 3,
-        USERNAME_MAX_LENGTH: 20,
-        PASSWORD_MIN_LENGTH: 6
+
+    getDominantStat(userStats) {
+        const stats = ['STRENGTH', 'DEXTERITY', 'WISDOM', 'CHARISMA']
+        let dominant = 'STRENGTH'
+        let maxPoints = userStats.STRENGTH || 0
+
+        stats.forEach(stat => {
+            const points = userStats[stat] || 0
+            if (points > maxPoints) {
+                maxPoints = points
+                dominant = stat
+            }
+        })
+        return dominant
+    },
+
+    getMaxLevelRewards(userStats) {
+        const dominantStat = this.getDominantStat(userStats)
+        return {
+            ...this.AVATAR_SETS[dominantStat],
+            allFeaturesUnlocked: true
+        }
     }
 }
 
@@ -444,6 +166,5 @@ export default {
     XP_RULES,
     QUEST_REWARDS,
     STAT_RULES,
-    UNLOCK_RULES,
-    VALIDATION_RULES
+    UNLOCK_RULES
 }

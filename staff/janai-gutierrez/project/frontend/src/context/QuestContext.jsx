@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { UNLOCK_RULES } from '../../../common/constants/gameRules'
+import { rules } from 'common'
 import logics from '../logic'
 import getLoggedUserId from '../logic/helpers/getLoggedUserId'
 
@@ -46,25 +46,7 @@ export const QuestProvider = ({ children }) => {
                 const userData = await logics.user.getProfile()
                 setUser(userData)
             } else {
-                setUser({
-                    id: 'mock-user-id',
-                    username: 'Adventurer',
-                    email: 'adventurer@nest.app',
-                    totalXP: 850,
-                    currentLevel: 5,
-                    stats: {
-                        STRENGTH: 75,
-                        DEXTERITY: 50,
-                        WISDOM: 125,
-                        CHARISMA: 25
-                    },
-                    preferences: {
-                        theme: 'default',
-                        notifications: true,
-                        motivationalQuotes: false,
-                        language: 'en'
-                    }
-                })
+                setUser(null)
             }
         } catch (error) {
             console.error('Error loading user data:', error)
@@ -84,12 +66,12 @@ export const QuestProvider = ({ children }) => {
 
     const isFeatureUnlocked = (featureName) => {
         if (!user) return false
-        return UNLOCK_RULES.isGlobalUnlocked(featureName, user.currentLevel)
+        return rules.UNLOCK_RULES.isUnlocked(featureName, user.currentLevel)
     }
 
-    const getNextUnlocks = (count = 2) => {
-        if (!user) return []
-        return UNLOCK_RULES.getNextGlobalUnlocks(user.currentLevel, count)
+    const getNextUnlock = () => {
+        if (!user) return null
+        return rules.UNLOCK_RULES.getNextUnlock(user.currentLevel)
     }
 
     const addQuest = async (questData) => {
@@ -122,7 +104,7 @@ export const QuestProvider = ({ children }) => {
 
             if (result.levelUp) {
                 console.log(`🎉 LEVEL UP! Welcome to Level ${result.updatedUser.currentLevel}!`)
-                // TODO: Trigger level up modal/notification
+                // TODO: Trigger level up modal when we implement it
             }
 
             console.log(`✅ Quest completed! +${result.xpGained} XP`)
@@ -224,49 +206,8 @@ export const QuestProvider = ({ children }) => {
         }
     }
 
-    // ==========================================
-    // MODAL CONTROLS
-    // ==========================================
-
     const openQuestModal = () => setIsQuestModalOpen(true)
     const closeQuestModal = () => setIsQuestModalOpen(false)
-
-    // ==========================================
-    // REFRESH FUNCTIONS
-    // ==========================================
-
-    const refreshQuests = async () => {
-        try {
-            setError(null)
-            await loadQuestsData()
-            console.log('✅ Quests refreshed successfully')
-        } catch (error) {
-            console.error('❌ Error refreshing quests:', error)
-            setError(error.message)
-        }
-    }
-
-    const refreshUser = async () => {
-        try {
-            setError(null)
-            await loadUserData()
-            console.log('✅ User data refreshed successfully')
-        } catch (error) {
-            console.error('❌ Error refreshing user:', error)
-            setError(error.message)
-        }
-    }
-
-    const refreshAll = async () => {
-        try {
-            setError(null)
-            await initializeData()
-            console.log('✅ All data refreshed successfully')
-        } catch (error) {
-            console.error('❌ Error refreshing all data:', error)
-            setError(error.message)
-        }
-    }
 
     const clearError = () => setError(null)
 
@@ -278,7 +219,7 @@ export const QuestProvider = ({ children }) => {
         isQuestModalOpen,
 
         isFeatureUnlocked,
-        getNextUnlocks,
+        getNextUnlock,
         addQuest,
         completeQuest,
         abandonQuest,
@@ -290,10 +231,6 @@ export const QuestProvider = ({ children }) => {
         getQuestsByStat,
         openQuestModal,
         closeQuestModal,
-        refreshQuests,
-        refreshUser,
-        refreshAll,
-
         clearError
     }
 
