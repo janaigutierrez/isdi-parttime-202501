@@ -1,7 +1,7 @@
 import { errors } from "common"
 import User from "../models/User.js"
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import * as auth from "../middleware/auth.js"
 
 const loginUser = async (email, password) => {
     const user = await User.findOne({ email })
@@ -14,11 +14,7 @@ const loginUser = async (email, password) => {
         throw new errors.AuthError('invalid credentials')
     }
 
-    const token = jwt.sign(
-        { userId: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-    )
+    const token = auth.generateToken(user._id)
 
     const userResponse = {
         id: user._id,

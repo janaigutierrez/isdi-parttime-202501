@@ -1,19 +1,18 @@
 import mongoose from 'mongoose'
-import { STAT_RULES, QUEST_REWARDS, VALIDATION_RULES } from '../../common/constants/gameRules.js'
 
 const questSchema = new mongoose.Schema({
     title: {
         type: String,
         required: [true, 'Quest title is required'],
         trim: true,
-        minlength: [VALIDATION_RULES.QUEST.TITLE_MIN_LENGTH, `Title must be at least ${VALIDATION_RULES.QUEST.TITLE_MIN_LENGTH} characters`],
-        maxlength: [VALIDATION_RULES.QUEST.TITLE_MAX_LENGTH, `Title must be less than ${VALIDATION_RULES.QUEST.TITLE_MAX_LENGTH} characters`]
+        minlength: [3, 'Title must be at least 3 characters'],
+        maxlength: [120, 'Title must be less than 120 characters']
     },
 
     description: {
         type: String,
         trim: true,
-        maxlength: [VALIDATION_RULES.QUEST.DESCRIPTION_MAX_LENGTH, `Description must be less than ${VALIDATION_RULES.QUEST.DESCRIPTION_MAX_LENGTH} characters`],
+        maxlength: [500, 'Description must be less than 500 characters'],
         default: ''
     },
 
@@ -33,8 +32,8 @@ const questSchema = new mongoose.Schema({
     experienceReward: {
         type: Number,
         required: [true, 'Experience reward is required'],
-        min: [VALIDATION_RULES.QUEST.MIN_XP, `XP must be at least ${VALIDATION_RULES.QUEST.MIN_XP}`],
-        max: [VALIDATION_RULES.QUEST.MAX_XP, `XP cannot exceed ${VALIDATION_RULES.QUEST.MAX_XP}`]
+        min: [10, 'XP must be at least 10'],
+        max: [1000, 'XP cannot exceed 1000']
     },
 
     targetStat: {
@@ -87,8 +86,24 @@ const questSchema = new mongoose.Schema({
 
 questSchema.pre('save', function (next) {
     if (this.isNew || this.isModified('difficulty') || this.isModified('isDaily') || this.isModified('targetStat')) {
-        const baseXP = QUEST_REWARDS.BASE_XP[this.difficulty]
-        this.experienceReward = QUEST_REWARDS.calculateQuestXP(baseXP, this.isDaily, this.targetStat)
+        const baseXP = {
+            QUICK: 25,      // <30 min
+            STANDARD: 50,   // 30min-2h
+            LONG: 100,      // 2+ hours
+            EPIC: 200       // Multi-day
+        }[this.difficulty] || 50
+
+        let totalXP = baseXP
+
+        if (this.isDaily) {
+            totalXP = Math.floor(totalXP * 1.2)
+        }
+
+        if (this.targetStat) {
+            totalXP += 10
+        }
+
+        this.experienceReward = totalXP
     }
     next()
 })
@@ -96,7 +111,29 @@ questSchema.pre('save', function (next) {
 questSchema.pre('save', function (next) {
     if (this.isNew && !this.targetStat) {
         const text = `${this.title} ${this.description}`.toLowerCase()
-        this.targetStat = STAT_RULES.detectStatFromDescription(text)
+        const words = text.split(/\s+/)
+
+        const statKeywords = {
+            STRENGTH: ['gym', 'exercise', 'workout', 'fitness', 'run', 'sport', 'train', 'muscle', 'physical'],
+            DEXTERITY: ['art', 'draw', 'paint', 'craft', 'music', 'instrument', 'cook', 'skill', 'creative'],
+            WISDOM: ['study', 'learn', 'read', 'book', 'research', 'education', 'think', 'code', 'program'],
+            CHARISMA: ['talk', 'social', 'people', 'friend', 'call', 'meeting', 'presentation', 'leadership']
+        }
+
+        const statCounts = {}
+        for (const [stat, keywords] of Object.entries(statKeywords)) {
+            statCounts[stat] = 0
+            for (const keyword of keywords) {
+                if (words.some(word => word.includes(keyword))) {
+                    statCounts[stat]++
+                }
+            }
+        }
+
+        const maxCount = Math.max(...Object.values(statCounts))
+        if (maxCount > 0) {
+            this.targetStat = Object.keys(statCounts).find(stat => statCounts[stat] === maxCount)
+        }
     }
     next()
 })
@@ -110,19 +147,36 @@ questSchema.pre('save', function (next) {
 
 questSchema.virtual('statInfo').get(function () {
     if (!this.targetStat) return null
-    return STAT_RULES.STATS[this.targetStat]
+
+    const statData = {
+        STRENGTH: { name: 'Strength', emoji: '💪', color: 'red' },
+        DEXTERITY: { name: 'Dexterity', emoji: '🎯', color: 'green' },
+        WISDOM: { name: 'Wisdom', emoji: '🧠', color: 'blue' },
+        CHARISMA: { name: 'Charisma', emoji: '✨', color: 'purple' }
+    }
+
+    return statData[this.targetStat]
 })
 
 questSchema.virtual('difficultyInfo').get(function () {
+    const timeEstimates = {
+        QUICK: '< 30 min',
+        STANDARD: '30 min - 2h',
+        LONG: '2+ hours',
+        EPIC: 'Multi-day'
+    }
+
+    const baseXP = {
+        QUICK: 25,
+        STANDARD: 50,
+        LONG: 100,
+        EPIC: 200
+    }
+
     return {
         name: this.difficulty,
-        baseXP: QUEST_REWARDS.BASE_XP[this.difficulty],
-        estimatedTime: {
-            QUICK: '< 30 min',
-            STANDARD: '30 min - 2h',
-            LONG: '2+ hours',
-            EPIC: 'Multi-day'
-        }[this.difficulty]
+        baseXP: baseXP[this.difficulty],
+        estimatedTime: timeEstimates[this.difficulty]
     }
 })
 
@@ -143,8 +197,8 @@ questSchema.methods.complete = async function () {
 }
 
 questSchema.methods.updateXP = function (newXP) {
-    if (newXP < VALIDATION_RULES.QUEST.MIN_XP || newXP > VALIDATION_RULES.QUEST.MAX_XP) {
-        throw new Error(`XP must be between ${VALIDATION_RULES.QUEST.MIN_XP} and ${VALIDATION_RULES.QUEST.MAX_XP}`)
+    if (newXP < 10 || newXP > 1000) {
+        throw new Error('XP must be between 10 and 1000')
     }
     this.experienceReward = newXP
     return this.save()

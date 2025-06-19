@@ -6,5 +6,6 @@ const userRouter = Router()
 
 userRouter.post('/login', jsonBodyParser, handlers.loginUser)
 userRouter.post('/register', jsonBodyParser, handlers.registerUser)
+userRouter.get('/profile/:userId', handlers.getUserProfile)
 
 export default userRouter 

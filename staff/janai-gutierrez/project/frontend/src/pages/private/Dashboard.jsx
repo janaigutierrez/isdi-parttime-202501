@@ -1,19 +1,28 @@
 import Header from '../../components/common/Header'
-import Avatar from '../../components/quest/character/Avatar'
+import Avatar from '../../components/common/Avatar'
 import { useQuests } from '../../context/QuestContext'
 import QuestModal from '../../components/quest/QuestModal'
 
 function Dashboard() {
-  const { user, openQuestModal, closeQuestModal, isQuestModalOpen, addQuest } = useQuests()
+  const { user, openQuestModal, closeQuestModal, isQuestModalOpen, addQuest, loading } = useQuests()
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your adventure...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-
         <div className="text-center mb-8">
-
           <div className="mb-6">
             <div className="w-52 h-52 mx-auto rounded-full bg-white border-4 border-purple-300 shadow-lg flex items-center justify-center">
               <Avatar user={user} size="large" />
@@ -46,7 +55,7 @@ function Dashboard() {
               <span>💪</span>
               <span className="font-medium">Strength</span>
             </div>
-            <div className="text-sm text-gray-600">{user.stats.STRENGTH} points</div>
+            <div className="text-sm text-gray-600">{user.stats?.STRENGTH || 0} points</div>
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow">
@@ -54,7 +63,7 @@ function Dashboard() {
               <span>🎯</span>
               <span className="font-medium">Dexterity</span>
             </div>
-            <div className="text-sm text-gray-600">{user.stats.DEXTERITY} points</div>
+            <div className="text-sm text-gray-600">{user.stats?.DEXTERITY || 0} points</div>
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow">
@@ -62,7 +71,7 @@ function Dashboard() {
               <span>🧠</span>
               <span className="font-medium">Wisdom</span>
             </div>
-            <div className="text-sm text-gray-600">{user.stats.WISDOM} points</div>
+            <div className="text-sm text-gray-600">{user.stats?.WISDOM || 0} points</div>
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow">
@@ -70,10 +79,9 @@ function Dashboard() {
               <span>✨</span>
               <span className="font-medium">Charisma</span>
             </div>
-            <div className="text-sm text-gray-600">{user.stats.CHARISMA} points</div>
+            <div className="text-sm text-gray-600">{user.stats?.CHARISMA || 0} points</div>
           </div>
         </div>
-
       </main>
 
       <button
@@ -83,6 +91,7 @@ function Dashboard() {
       >
         +
       </button>
+
       {isQuestModalOpen && (
         <QuestModal
           isOpen={isQuestModalOpen}
@@ -91,7 +100,6 @@ function Dashboard() {
         />
       )}
     </div>
-
   )
 }
 

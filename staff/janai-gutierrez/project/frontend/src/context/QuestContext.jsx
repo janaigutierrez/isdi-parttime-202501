@@ -43,7 +43,7 @@ export const QuestProvider = ({ children }) => {
         try {
             const userId = getLoggedUserId()
             if (userId) {
-                const userData = await logics.user.getProfile()
+                const userData = await logics.user.getUserProfile()
                 setUser(userData)
             } else {
                 setUser(null)

@@ -210,9 +210,7 @@ userSchema.methods.toJSON = function () {
     return userObject
 }
 
-userSchema.index({ email: 1 })
-userSchema.index({ username: 1 })
-userSchema.index({ totalXP: -1 })
+
 
 const User = mongoose.model('User', userSchema)
 

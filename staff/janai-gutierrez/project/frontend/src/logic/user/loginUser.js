@@ -1,4 +1,4 @@
-import { errors, validator } from "../../../../common"
+import { errors, validator } from "common"
 
 const login = ({ email, password }) => {
     validator.email(email, 'email')

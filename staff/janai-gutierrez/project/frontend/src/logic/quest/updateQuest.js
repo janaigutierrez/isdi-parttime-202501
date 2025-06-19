@@ -1,4 +1,4 @@
-import { errors, validator } from "../../../../common"
+import { errors, validator } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId"
 
 const updateQuest = (questId, updateData) => {

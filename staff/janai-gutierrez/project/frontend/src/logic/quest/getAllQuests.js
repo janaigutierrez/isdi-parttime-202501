@@ -1,5 +1,4 @@
-// logic/quest/getAllQuests.js
-import { errors } from "../../../../common"
+import { errors } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId"
 
 const getAllQuests = () => {

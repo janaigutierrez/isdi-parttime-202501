@@ -1,4 +1,4 @@
-import { createQuest } from "./createQuest"
+import { createQuest } from "./createQuest.js"
 
 export default {
     createQuest

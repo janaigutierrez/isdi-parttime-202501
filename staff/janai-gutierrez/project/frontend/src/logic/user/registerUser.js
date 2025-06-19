@@ -1,4 +1,4 @@
-import { errors, validator } from "../../../../common"
+import { errors, validator } from "common"
 
 const register = ({ username, email, password, confirmPassword }) => {
     validator.username(username, 'username')

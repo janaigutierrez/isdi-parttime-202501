@@ -1,5 +1,5 @@
 import Header from '../../components/common/Header'
-import Avatar from '../../components/quest/character/Avatar'
+import Avatar from '../../components/common/Avatar'
 import { useQuests } from '../../context/QuestContext'
 
 function Profile() {

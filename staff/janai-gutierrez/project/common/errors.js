@@ -49,6 +49,12 @@ class RateLimitError extends AppError {
     }
 }
 
+class ContentError extends AppError {
+    constructor(message = 'Invalid content') {
+        super(message, 400)
+    }
+}
+
 const errors = {
     AppError,
     AuthError,
@@ -57,7 +63,8 @@ const errors = {
     ValidationError,
     DuplicateError,
     ServerError,
-    RateLimitError
+    RateLimitError,
+    ContentError
 }
 
 export default errors

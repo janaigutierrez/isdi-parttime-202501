@@ -1,17 +1,18 @@
-import { errors } from "../../../../common"
+import { errors } from "common"
 import getLoggedUserId from "../helpers/getLoggedUserId"
 
-const getProfile = () => {
-    const id = getLoggedUserId()
-
-    if (!id) {
+const getUserProfile = () => {
+    const token = getLoggedUserId()
+    if (!token) {
         throw new errors.AuthError('user not logged in')
     }
 
-    return fetch(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const userId = payload.userId
+    console.log('🔍 Frontend userId:', userId, typeof userId)
+    return fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/${userId}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${id}`,
             'Content-Type': 'application/json'
         }
     })
@@ -27,4 +28,4 @@ const getProfile = () => {
         })
 }
 
-export default getProfile
+export default getUserProfile
