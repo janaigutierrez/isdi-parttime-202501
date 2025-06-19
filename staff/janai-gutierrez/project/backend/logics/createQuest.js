@@ -1,5 +1,5 @@
 import Quest from '../models/quest.js'
-import { AIService } from '../utils/aiService.js'
+import { AIService } from '../utils/aiService/index.js'
 import { QUEST_REWARDS } from '../../common/constants/gameRules.js'
 
 /**
@@ -52,7 +52,6 @@ export const createQuest = async (userId, questData) => {
     try {
         await quest.save()
         return quest
-
     } catch (error) {
         throw new Error('Failed to save quest to database')
     }
