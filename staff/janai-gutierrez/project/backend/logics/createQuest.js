@@ -1,4 +1,4 @@
-import Quest from '../models/quest.js'
+import Quest from '../models/Quest.js'
 import { AIService } from '../utils/aiService/index.js'
 import { QUEST_REWARDS } from '../../common/constants/gameRules.js'
 

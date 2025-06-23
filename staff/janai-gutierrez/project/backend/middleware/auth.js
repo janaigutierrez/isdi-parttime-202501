@@ -8,6 +8,7 @@ export const generateToken = (userId) => {
 }
 
 export const protect = async (req, res, next) => {
+    console.log('🛡️ Protect middleware called for:', req.url)
     try {
         let token
 

@@ -274,4 +274,4 @@ questSchema.index({ targetStat: 1 })
 
 const Quest = mongoose.model('Quest', questSchema)
 
-export default Quest
+export default mongoose.models.Quest || mongoose.model('Quest', questSchema)
