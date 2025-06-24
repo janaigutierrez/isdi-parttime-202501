@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { rules } from 'common'
 import logics from '../logic'
-import getLoggedUserId from '../logic/helpers/getLoggedUserId'
+import { useAuth } from './AuthContext'
 
 const QuestContext = createContext()
 
@@ -16,9 +16,10 @@ export const useQuests = () => {
 export const QuestProvider = ({ children }) => {
     const [isQuestModalOpen, setIsQuestModalOpen] = useState(false)
     const [quests, setQuests] = useState([])
-    const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+
+    const { user, refreshUserData } = useAuth()
 
     useEffect(() => {
         initializeData()
@@ -29,7 +30,6 @@ export const QuestProvider = ({ children }) => {
             setLoading(true)
             setError(null)
 
-            await loadUserData()
             await loadQuestsData()
         } catch (error) {
             console.error('Error initializing data:', error)
@@ -39,27 +39,15 @@ export const QuestProvider = ({ children }) => {
         }
     }
 
-    const loadUserData = async () => {
-        try {
-            const userId = getLoggedUserId()
-            if (userId) {
-                const userData = await logics.user.getUserProfile()
-                setUser(userData)
-            } else {
-                setUser(null)
-            }
-        } catch (error) {
-            console.error('Error loading user data:', error)
-            throw error
-        }
-    }
 
     const loadQuestsData = async () => {
         try {
-            const allQuests = await logics.quest.getAllQuests()
-            setQuests(allQuests)
+            const response = await logics.quest.getAllQuests()
+            const questsArray = response.quests || response
+            setQuests(questsArray)
         } catch (error) {
             console.error('Error loading quests:', error)
+            setQuests([])
             throw error
         }
     }
@@ -77,12 +65,15 @@ export const QuestProvider = ({ children }) => {
     const addQuest = async (questData) => {
         try {
             setError(null)
-            const createdQuest = await logics.quest.createQuest(questData)
+            const response = await logics.quest.createQuest(questData)
+            const createdQuest = response.quest
 
-            setQuests(prev => [createdQuest, ...prev])
+            setQuests(prev => {
+                const prevArray = Array.isArray(prev) ? prev : (prev?.quests || [])
+                return [createdQuest, ...prevArray]
+            })
+
             setIsQuestModalOpen(false)
-
-            console.log('✅ Quest created successfully:', createdQuest.title)
             return createdQuest
         } catch (error) {
             console.error('❌ Error creating quest:', error)
@@ -94,17 +85,19 @@ export const QuestProvider = ({ children }) => {
     const completeQuest = async (questId) => {
         try {
             setError(null)
+            console.log('🔍 COMPLETING QUEST ID:', questId)
             const result = await logics.quest.completeQuest(questId)
+            console.log('🔍 BACKEND RESPONSE:', result)
 
             setQuests(prev => prev.map(q =>
-                q.id === questId ? result.updatedQuest : q
+                q._id === questId ? result.updatedQuest : q
             ))
 
-            setUser(result.updatedUser)
+            await refreshUserData()
 
             if (result.levelUp) {
-                console.log(`🎉 LEVEL UP! Welcome to Level ${result.updatedUser.currentLevel}!`)
-                // TODO: Trigger level up modal when we implement it
+                console.log(`🎉 LEVEL UP! Welcome to Level ${result.updatedUser.level}!`)
+                // TODO: level up modal 
             }
 
             console.log(`✅ Quest completed! +${result.xpGained} XP`)
@@ -121,9 +114,8 @@ export const QuestProvider = ({ children }) => {
             setError(null)
             const deleted = await logics.quest.deleteQuest(questId)
 
-            setQuests(prev => prev.filter(quest => quest.id !== questId))
+            setQuests(prev => prev.filter(quest => quest._id !== questId))
 
-            console.log('✅ Quest abandoned successfully')
             return deleted
         } catch (error) {
             console.error('❌ Error abandoning quest:', error)
@@ -138,10 +130,9 @@ export const QuestProvider = ({ children }) => {
             const updatedQuest = await logics.quest.updateQuest(questId, updates)
 
             setQuests(prev => prev.map(q =>
-                q.id === questId ? updatedQuest : q
+                q._id === questId ? updatedQuest : q
             ))
 
-            console.log('✅ Quest updated successfully')
             return updatedQuest
         } catch (error) {
             console.error('❌ Error updating quest:', error)
@@ -156,12 +147,11 @@ export const QuestProvider = ({ children }) => {
             const result = await logics.quest.uncompleteQuest(questId)
 
             setQuests(prev => prev.map(q =>
-                q.id === questId ? result.updatedQuest : q
+                q._id === questId ? result.updatedQuest : q
             ))
 
-            setUser(result.updatedUser)
+            await refreshUserData()
 
-            console.log('✅ Quest uncompleted successfully')
             return result
         } catch (error) {
             console.error('❌ Error uncompleting quest:', error)
@@ -212,7 +202,6 @@ export const QuestProvider = ({ children }) => {
     const clearError = () => setError(null)
 
     const value = {
-        user,
         quests,
         loading,
         error,
@@ -240,5 +229,3 @@ export const QuestProvider = ({ children }) => {
         </QuestContext.Provider>
     )
 }
-
-export default QuestContext

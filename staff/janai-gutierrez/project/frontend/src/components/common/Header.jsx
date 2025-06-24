@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useQuests } from '../../context/QuestContext'
+import { useAuth } from '../../context/AuthContext'
 import Avatar from './Avatar'
+import { getStaticAvatarSprite } from '../../assets/avatars'
 
 function Header() {
-    const { user, loading } = useQuests()
+    const { user, loading } = useAuth()
     const location = useLocation()
 
     if (loading || !user) {
@@ -25,18 +26,16 @@ function Header() {
         <header className="bg-white shadow-sm border-b border-gray-200">
             <div className="container mx-auto px-4 py-4">
                 <div className="flex items-center justify-between">
-                    {/* Logo */}
                     <Link to="/" className="text-2xl font-bold text-purple-600 hover:text-purple-700">
                         🏠 Nest
                     </Link>
 
-                    {/* Navigation */}
                     <nav className="hidden md:flex items-center space-x-6">
                         <Link
                             to="/"
                             className={`font-medium transition-colors ${isActive('/')
-                                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
-                                    : 'text-gray-600 hover:text-purple-600'
+                                ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
+                                : 'text-gray-600 hover:text-purple-600'
                                 }`}
                         >
                             🏠 Dashboard
@@ -44,8 +43,8 @@ function Header() {
                         <Link
                             to="/my-quests"
                             className={`font-medium transition-colors ${isActive('/my-quests')
-                                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
-                                    : 'text-gray-600 hover:text-purple-600'
+                                ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
+                                : 'text-gray-600 hover:text-purple-600'
                                 }`}
                         >
                             📜 My Quests
@@ -53,8 +52,8 @@ function Header() {
                         <Link
                             to="/stats"
                             className={`font-medium transition-colors ${isActive('/stats')
-                                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
-                                    : 'text-gray-600 hover:text-purple-600'
+                                ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
+                                : 'text-gray-600 hover:text-purple-600'
                                 }`}
                         >
                             📊 Stats
@@ -62,33 +61,39 @@ function Header() {
                         <Link
                             to="/profile"
                             className={`font-medium transition-colors ${isActive('/profile')
-                                    ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
-                                    : 'text-gray-600 hover:text-purple-600'
+                                ? 'text-purple-600 border-b-2 border-purple-600 pb-1'
+                                : 'text-gray-600 hover:text-purple-600'
                                 }`}
                         >
                             👤 Profile
                         </Link>
                     </nav>
 
-                    {/* User Info */}
                     <div className="flex items-center gap-3">
                         <div className="text-right hidden sm:block">
                             <div className="text-sm font-medium text-gray-900">{user.username}</div>
-                            <div className="text-xs text-gray-500">Level {user.currentLevel} • {user.totalXP} XP</div>
+                            <div className="text-xs text-gray-500">Level {user.currentLevel || 1} • {user.totalXP || 0} XP</div>
                         </div>
                         <div className="w-10 h-10">
-                            <Avatar user={user} size="small" />
+                            <img
+                                src={getStaticAvatarSprite(user)}
+                                alt={`${user.username} avatar`}
+                                className="w-full h-full object-cover rounded-full border-2 border-purple-200"
+                                style={{ imageRendering: 'pixelated' }}
+                                onError={(e) => {
+                                    e.target.src = '/character/sprite_80.png' // Fallback
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
 
-                {/* Mobile Navigation */}
                 <nav className="md:hidden mt-4 flex justify-center space-x-4">
                     <Link
                         to="/"
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/')
-                                ? 'bg-purple-100 text-purple-600'
-                                : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-purple-100 text-purple-600'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
                         🏠
@@ -96,8 +101,8 @@ function Header() {
                     <Link
                         to="/my-quests"
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/my-quests')
-                                ? 'bg-purple-100 text-purple-600'
-                                : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-purple-100 text-purple-600'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
                         📜
@@ -105,8 +110,8 @@ function Header() {
                     <Link
                         to="/stats"
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/stats')
-                                ? 'bg-purple-100 text-purple-600'
-                                : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-purple-100 text-purple-600'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
                         📊
@@ -114,8 +119,8 @@ function Header() {
                     <Link
                         to="/profile"
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/profile')
-                                ? 'bg-purple-100 text-purple-600'
-                                : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-purple-100 text-purple-600'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                     >
                         👤

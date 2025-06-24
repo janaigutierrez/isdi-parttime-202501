@@ -74,12 +74,6 @@ const Avatar = ({ user, size = 'large' }) => {
                     </span>
                 </div>
             )}
-
-            {size === 'small' && user && (
-                <div className="mt-1 text-xs text-gray-500">
-                    Lv.{user.currentLevel}
-                </div>
-            )}
         </div>
     )
 }

@@ -1,9 +1,17 @@
 import Header from '../../components/common/Header'
 import Avatar from '../../components/common/Avatar'
-import { useQuests } from '../../context/QuestContext'
+import { useAuth } from '../../context/AuthContext'
 
 function Profile() {
-    const { user } = useQuests()
+    const { user } = useAuth()
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-pulse">Loading profile...</div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -23,10 +31,9 @@ function Profile() {
                             <Avatar user={user} size="large" />
                         </div>
                         <h2 className="text-2xl font-bold mb-2">{user.username}</h2>
-                        <p className="text-gray-600">Level {user.currentLevel} Adventurer</p>
-                        <p className="text-sm text-gray-500">{user.totalXP} XP total</p>
+                        <p className="text-gray-600">Level {user.currentLevel || 1} Adventurer</p>
+                        <p className="text-sm text-gray-500">{user.totalXP || 0} XP total</p>
                     </div>
-
 
                     <div className="mt-8 text-center">
                         <button

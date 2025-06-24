@@ -1,10 +1,13 @@
 import Header from '../../components/common/Header'
 import Avatar from '../../components/common/Avatar'
+import { useAuth } from '../../context/AuthContext'
 import { useQuests } from '../../context/QuestContext'
 import QuestModal from '../../components/quest/QuestModal'
+import { rules } from 'common' // 👈 IMPORT PARA CALCULAR PROGRESO
 
 function Dashboard() {
-  const { user, openQuestModal, closeQuestModal, isQuestModalOpen, addQuest, loading } = useQuests()
+  const { user, loading } = useAuth()
+  const { openQuestModal, closeQuestModal, isQuestModalOpen, addQuest } = useQuests()
 
   if (loading || !user) {
     return (
@@ -15,6 +18,49 @@ function Dashboard() {
         </div>
       </div>
     )
+  }
+
+  // 👈 DEBUG TEMPORAL - VER QUÉ DATOS RECIBE DASHBOARD
+  console.log('🔍 DASHBOARD USER DATA:', user)
+  console.log('🔍 USER CURRENT LEVEL:', user.currentLevel)
+  console.log('🔍 USER TOTAL XP:', user.totalXP)
+
+  // 👈 CALCULAR PROGRESO REAL - FIX FIELD NAME CORRECTO
+  const currentLevel = user.currentLevel || 1  // ✅ USAR currentLevel
+  const currentXP = user.totalXP || 0
+  const xpToNext = rules.XP_RULES.getXPToNextLevel(currentXP)
+  const isMaxLevel = rules.XP_RULES.isMaxLevel(currentLevel)
+
+  // 👈 FIX: Calcular porcentaje de progreso correctamente
+  let progressPercentage = 0
+  if (!isMaxLevel && currentLevel < rules.XP_RULES.BASE_LEVELS.length - 1) {
+    // XP requerido para el nivel actual
+    const currentLevelXP = rules.XP_RULES.BASE_LEVELS[currentLevel] || 0
+    // XP requerido para el siguiente nivel
+    const nextLevelXP = rules.XP_RULES.BASE_LEVELS[currentLevel + 1] || 0
+
+    // XP que ya tienes dentro del nivel actual
+    const xpInCurrentLevel = currentXP - currentLevelXP
+    // XP total necesario para completar este nivel
+    const xpNeededForLevel = nextLevelXP - currentLevelXP
+
+    // Calcular porcentaje
+    if (xpNeededForLevel > 0) {
+      progressPercentage = Math.max(0, Math.min(100, (xpInCurrentLevel / xpNeededForLevel) * 100))
+    }
+
+    // Debug temporal - QUITAR DESPUÉS
+    console.log('🔍 LEVEL CALC:', {
+      currentLevel,
+      currentXP,
+      currentLevelXP,
+      nextLevelXP,
+      xpInCurrentLevel,
+      xpNeededForLevel,
+      progressPercentage
+    })
+  } else {
+    progressPercentage = 100
   }
 
   return (
@@ -28,23 +74,32 @@ function Dashboard() {
               <Avatar user={user} size="large" />
             </div>
             <h2 className="text-2xl font-bold mt-4 mb-2">{user.username}</h2>
-            <p className="text-gray-600">Level {user.currentLevel} Adventurer</p>
+            <p className="text-gray-600">Level {user.currentLevel || user.level || 1} Adventurer</p>
           </div>
 
           <div className="max-w-md mx-auto mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm">Level {user.currentLevel}</span>
-              <span className="text-sm">Level {user.currentLevel + 1}</span>
+              <span className="text-sm">Level {currentLevel}</span>
+              {/* 👈 MOSTRAR NEXT LEVEL REAL O MAX */}
+              <span className="text-sm">
+                {isMaxLevel ? 'MAX LEVEL' : `Level ${currentLevel + 1}`}
+              </span>
             </div>
+
+            {/* 👈 BARRA DE PROGRESO REAL */}
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className="bg-purple-500 h-3 rounded-full"
-                style={{ width: '60%' }}
+                className="bg-purple-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(progressPercentage, 100)}%` }}
               ></div>
             </div>
+
             <div className="flex justify-between items-center mt-2">
-              <span className="text-xs text-gray-500">{user.totalXP} XP</span>
-              <span className="text-xs text-gray-500">150 XP to go</span>
+              <span className="text-xs text-gray-500">{currentXP} XP</span>
+              {/* 👈 XP TO NEXT LEVEL REAL */}
+              <span className="text-xs text-gray-500">
+                {isMaxLevel ? 'Max Level Reached!' : `${xpToNext} XP to go`}
+              </span>
             </div>
           </div>
         </div>

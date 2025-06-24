@@ -29,7 +29,8 @@ const register = ({ username, email, password, confirmPassword }) => {
                 })
             } else {
                 return response.json().then(body => {
-                    throw new errors[body.name](body.message)
+                    const ErrorClass = errors[body.name] || errors.ServerError
+                    throw new ErrorClass(body.message)
                 })
             }
         })

@@ -10,10 +10,6 @@ import Profile from "../pages/private/Profile"
 const Private = ({ setRefreshHeader, logout }) => {
     return (
         <QuestProvider>
-            <Header
-                isUserLogged={true}
-                logout={logout}
-            />
             <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/my-quests" element={<MyQuests />} />

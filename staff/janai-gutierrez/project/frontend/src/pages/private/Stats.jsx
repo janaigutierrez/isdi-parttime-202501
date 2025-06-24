@@ -1,8 +1,18 @@
 import Header from '../../components/common/Header'
+import { useAuth } from '../../context/AuthContext'
 import { useQuests } from '../../context/QuestContext'
 
 function Stats() {
-    const { quests, user } = useQuests()
+    const { user } = useAuth()
+    const { quests } = useQuests()
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-pulse">Loading stats...</div>
+            </div>
+        )
+    }
 
     const totalQuests = quests.length
     const completedQuests = quests.filter(q => q.isCompleted).length
@@ -30,7 +40,7 @@ function Stats() {
                         <div className="text-sm text-gray-600">Completed</div>
                     </div>
                     <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                        <div className="text-3xl font-bold text-yellow-600 mb-2">{totalXP}</div>
+                        <div className="text-3xl font-bold text-yellow-600 mb-2">{user.totalXP || 0}</div>
                         <div className="text-sm text-gray-600">Total XP</div>
                     </div>
                     <div className="bg-white p-6 rounded-xl shadow-md text-center">
@@ -44,22 +54,22 @@ function Stats() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-3xl mb-2">💪</div>
-                            <div className="font-bold text-2xl text-red-600">{user.stats.STRENGTH}</div>
+                            <div className="font-bold text-2xl text-red-600">{user.stats?.STRENGTH || 0}</div>
                             <div className="text-sm text-gray-600">Strength</div>
                         </div>
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-3xl mb-2">🎯</div>
-                            <div className="font-bold text-2xl text-green-600">{user.stats.DEXTERITY}</div>
+                            <div className="font-bold text-2xl text-green-600">{user.stats?.DEXTERITY || 0}</div>
                             <div className="text-sm text-gray-600">Dexterity</div>
                         </div>
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-3xl mb-2">🧠</div>
-                            <div className="font-bold text-2xl text-blue-600">{user.stats.WISDOM}</div>
+                            <div className="font-bold text-2xl text-blue-600">{user.stats?.WISDOM || 0}</div>
                             <div className="text-sm text-gray-600">Wisdom</div>
                         </div>
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-3xl mb-2">✨</div>
-                            <div className="font-bold text-2xl text-purple-600">{user.stats.CHARISMA}</div>
+                            <div className="font-bold text-2xl text-purple-600">{user.stats?.CHARISMA || 0}</div>
                             <div className="text-sm text-gray-600">Charisma</div>
                         </div>
                     </div>

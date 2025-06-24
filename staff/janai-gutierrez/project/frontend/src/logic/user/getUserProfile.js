@@ -9,7 +9,6 @@ const getUserProfile = () => {
 
     const payload = JSON.parse(atob(token.split('.')[1]))
     const userId = payload.userId
-    console.log('🔍 Frontend userId:', userId, typeof userId)
     return fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/${userId}`, {
         method: 'GET',
         headers: {

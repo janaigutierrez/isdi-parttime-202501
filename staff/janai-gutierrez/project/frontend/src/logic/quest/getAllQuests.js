@@ -21,7 +21,9 @@ const getAllQuests = () => {
                 return response.json()
             } else {
                 return response.json().then(body => {
-                    throw new errors[body.name](body.message)
+                    const ErrorClass = errors[body.name] || errors.ServerError
+                    throw new ErrorClass(body.message)
+
                 })
             }
         })
