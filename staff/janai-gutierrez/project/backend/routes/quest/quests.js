@@ -5,6 +5,11 @@ import { protect } from "../../middleware/auth.js";
 const router = express.Router()
 
 router.get('/', protect, handlers.getAllQuests)
+
 router.post('/create', protect, handlers.createQuest)
+
+router.put('/:id/complete', protect, handlers.completeQuest)
+
+router.delete('/:id', protect, handlers.deleteQuest)
 
 export default router

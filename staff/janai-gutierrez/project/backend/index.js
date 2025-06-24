@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import connectDB from "./config/database.js"
 import userRoutes from "./routes/user/users.js"
 import questRoutes from "./routes/quest/quests.js"
+import errorHandler from "./middleware/errorHandler.js"
 
 dotenv.config()
 
@@ -17,13 +18,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/users', userRoutes)
 app.use('/api/quests', questRoutes)
 
-app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).json({
-        error: 'Something went wrong!',
-        message: err.message
-    })
-})
+app.use(errorHandler)
 
 app.use('*', (req, res) => {
     res.status(404).json({ error: 'Route not found' })

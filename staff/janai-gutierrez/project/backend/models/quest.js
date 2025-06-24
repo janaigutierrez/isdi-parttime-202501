@@ -272,6 +272,11 @@ questSchema.index({ userId: 1, createdAt: -1 })
 questSchema.index({ scheduledDate: 1 })
 questSchema.index({ targetStat: 1 })
 
-const Quest = mongoose.model('Quest', questSchema)
+let Quest
+try {
+    Quest = mongoose.model('Quest')
+} catch (error) {
+    Quest = mongoose.model('Quest', questSchema)
+}
 
-export default mongoose.models.Quest || mongoose.model('Quest', questSchema)
+export default Quest

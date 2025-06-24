@@ -1,4 +1,6 @@
+import completeQuest from './completeQuest.js'
 import createQuest from './createQuest.js'
+import deleteQuest from './deleteQuest.js'
 import getAllQuests from './getAllQuests.js'
 import getUserProfile from './getUserProfile.js'
 import loginUser from './loginUser.js'
@@ -9,7 +11,9 @@ const logic = {
     registerUser,
     createQuest,
     getUserProfile,
-    getAllQuests
+    getAllQuests,
+    completeQuest,
+    deleteQuest
 }
 
 export default logic

@@ -2,7 +2,7 @@ import { after, before, afterEach, describe, it } from "mocha"
 import { expect } from "chai"
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import Quest from "../../models/quest.js"
+import Quest from "../../models/Quest.js"
 import User from "../../models/User.js"
 import createQuest from "../../logics/createQuest.js"
 import { AIService } from "../../utils/aiService.js"
@@ -33,6 +33,7 @@ describe('createQuest', () => {
             .then(createdUser => {
                 userId = createdUser._id.toString()
 
+                // Mock AI services
                 originalGenerateQuest = AIService.generateQuest
                 originalEnhanceManualQuest = AIService.enhanceManualQuest
 
@@ -61,6 +62,7 @@ describe('createQuest', () => {
     })
 
     afterEach(() => {
+        // Restore original AI services
         if (originalGenerateQuest) {
             AIService.generateQuest = originalGenerateQuest
         }
@@ -109,11 +111,13 @@ describe('createQuest', () => {
                 expect(quest.title).to.equal('Read a book')
                 expect(quest.description).to.equal('')
                 expect(quest.difficulty).to.equal('QUICK')
-                expect(quest.experienceReward).to.equal(35)
+                expect(quest.experienceReward).to.equal(35) // QUICK (25) + targetStat bonus (10)
                 expect(quest.targetStat).to.equal('WISDOM')
                 expect(quest.generatedBy).to.equal('user')
                 expect(quest.userId.toString()).to.equal(userId)
                 expect(quest.isCompleted).to.equal(false)
+
+                // FIX: These tags are added by the mock enhanceManualQuest
                 expect(quest.tags).to.include('manual')
                 expect(quest.tags).to.include('enhanced')
             })
