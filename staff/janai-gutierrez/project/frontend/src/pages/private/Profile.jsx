@@ -1,52 +1,72 @@
-import Header from '../../components/common/Header'
-import Avatar from '../../components/common/Avatar'
-import { useAuth } from '../../context/AuthContext'
+import { useState, useEffect } from 'react'
+import { getAvatarSprites, getCurrentAvatarInfo } from '../../assets/avatars'
 
-function Profile() {
-    const { user } = useAuth()
+const Avatar = ({ user, size = 'large', showTitle = false }) => {
+    const [currentFrame, setCurrentFrame] = useState(0)
 
-    if (!user) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-pulse">Loading profile...</div>
-            </div>
-        )
+    const equippedSet = user?.avatar?.equippedSet || 'base'
+    const walkSprites = getAvatarSprites(equippedSet, 'style1', 'walk')
+
+    const avatarInfo = getCurrentAvatarInfo(user)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentFrame(prev => (prev + 1) % walkSprites.length)
+        }, 250)
+
+        return () => clearInterval(interval)
+    }, [walkSprites.length])
+
+    const sizes = {
+        large: { width: 80, height: 80 },
+        medium: { width: 60, height: 60 },
+        small: { width: 40, height: 40 }
     }
 
+    const currentSize = sizes[size] || sizes.large
+
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Header />
+        <div className="flex flex-col items-center justify-center h-full">
+            <div className="relative">
+                <img
+                    src={walkSprites[currentFrame]}
+                    alt={`${user?.username || 'User'} avatar`}
+                    style={{
+                        width: `${currentSize.width}px`,
+                        height: `${currentSize.height}px`,
+                        imageRendering: 'pixelated'
+                    }}
+                    onError={(e) => {
+                        e.target.style.display = 'none'
+                        e.target.nextSibling.style.display = 'block'
+                    }}
+                />
 
-            <main className="container mx-auto px-4 py-8 max-w-2xl">
-
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">👤 Profile</h1>
-                    <p className="text-gray-600">Your adventurer information</p>
+                <div
+                    style={{
+                        display: 'none',
+                        fontSize: `${currentSize.width * 0.6}px`
+                    }}
+                >
+                    {avatarInfo.emoji}
                 </div>
 
-                <div className="bg-white p-8 rounded-xl shadow-md">
-
-                    <div className="text-center mb-8">
-                        <div className="w-24 h-24 mx-auto mb-4">
-                            <Avatar user={user} size="large" />
-                        </div>
-                        <h2 className="text-2xl font-bold mb-2">{user.username}</h2>
-                        <p className="text-gray-600">Level {user.currentLevel || 1} Adventurer</p>
-                        <p className="text-sm text-gray-500">{user.totalXP || 0} XP total</p>
+                {equippedSet !== 'base' && (
+                    <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-1 py-0.5 rounded-full font-bold">
+                        👑
                     </div>
+                )}
+            </div>
 
-                    <div className="mt-8 text-center">
-                        <button
-                            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors"
-                            onClick={() => console.log('Edit profile - TODO')}
-                        >
-                            ✏️ Edit Profile
-                        </button>
-                    </div>
+            {showTitle && avatarInfo.title && (
+                <div className="mt-2 text-center">
+                    <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full">
+                        {avatarInfo.emoji} {avatarInfo.title}
+                    </span>
                 </div>
-            </main>
+            )}
         </div>
     )
 }
 
-export default Profile
+export default Avatar

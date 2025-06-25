@@ -2,6 +2,7 @@ import getUserProfile from './getUserProfile'
 import loginUser from './loginUser'
 import logoutUser from './logoutUser'
 import registerUser from './registerUser'
+import updateAvatar from './updateAvatar'
 import updateEmail from './updateEmail'
 import updatePassword from './updatePassword'
 import updateTheme from './updateTheme'
@@ -15,7 +16,8 @@ const user = {
     updateEmail,
     updatePassword,
     updateTheme,
-    updateUsername
+    updateUsername,
+    updateAvatar
 }
 
 export default user

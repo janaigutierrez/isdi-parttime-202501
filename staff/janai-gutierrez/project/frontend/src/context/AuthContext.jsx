@@ -1,4 +1,3 @@
-// frontend/src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react'
 import logics from '../logic'
 import getLoggedUserId from '../logic/helpers/getLoggedUserId'
@@ -21,17 +20,13 @@ export function AuthProvider({ children }) {
             if (userId) {
                 const userData = await logics.user.getUserProfile()
 
-                // FIX: Acceder al userProfile correcto
                 const userProfile = userData.userProfile || userData
                 setUser(userProfile)
-                console.log('✅ User data loaded:', userProfile)
             } else {
                 setUser(null)
-                console.log('ℹ️ No user logged in')
             }
         } catch (error) {
             if (error instanceof errors.AuthError) {
-                console.log('🔐 User not authenticated')
                 setUser(null)
             } else if (error instanceof errors.ExistenceError) {
                 console.error('❌ User not found:', error.message)
@@ -53,14 +48,11 @@ export function AuthProvider({ children }) {
             if (userId) {
                 const userData = await logics.user.getUserProfile()
 
-                // FIX: Acceder al userProfile correcto también en refresh
                 const userProfile = userData.userProfile || userData
                 setUser(userProfile)
-                console.log('🔄 User data refreshed:', userProfile)
             }
         } catch (error) {
             if (error instanceof errors.AuthError) {
-                console.log('🔐 User session expired')
                 setUser(null)
             } else {
                 console.error('❌ Error refreshing user data:', error.message)
@@ -76,11 +68,31 @@ export function AuthProvider({ children }) {
         }))
     }
 
+    const updateUserAvatar = async (equippedSet) => {
+        try {
+            const response = await logics.user.updateAvatar(equippedSet)
+
+            setUser(prev => ({
+                ...prev,
+                avatar: {
+                    ...prev.avatar,
+                    equippedSet
+                }
+            }))
+
+            return response
+        } catch (error) {
+            console.error('❌ Error updating avatar:', error)
+            throw error
+        }
+    }
+
     const value = {
         user,
         loading,
         refreshUserData,
-        updateUserStats
+        updateUserStats,
+        updateUserAvatar
     }
 
     if (loading) {

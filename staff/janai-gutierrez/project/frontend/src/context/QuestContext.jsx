@@ -85,9 +85,7 @@ export const QuestProvider = ({ children }) => {
     const completeQuest = async (questId) => {
         try {
             setError(null)
-            console.log('🔍 COMPLETING QUEST ID:', questId)
             const result = await logics.quest.completeQuest(questId)
-            console.log('🔍 BACKEND RESPONSE:', result)
 
             setQuests(prev => prev.map(q =>
                 q._id === questId ? result.updatedQuest : q
@@ -100,7 +98,6 @@ export const QuestProvider = ({ children }) => {
                 // TODO: level up modal 
             }
 
-            console.log(`✅ Quest completed! +${result.xpGained} XP`)
             return result
         } catch (error) {
             console.error('❌ Error completing quest:', error)

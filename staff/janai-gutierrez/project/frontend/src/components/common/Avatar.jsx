@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react'
-import { rules } from 'common'
+import { getAvatarSprites, getCurrentAvatarInfo } from '../../assets/avatars'
 
-const Avatar = ({ user, size = 'large' }) => {
-    const walkSprites = [
-        '/character/sprite_80.png',
-        '/character/sprite_81.png',
-        '/character/sprite_82.png',
-        '/character/sprite_83.png',
-        '/character/sprite_84.png',
-        '/character/sprite_82.png'
-    ]
-
+const Avatar = ({ user, size = 'large', showTitle = false }) => {
     const [currentFrame, setCurrentFrame] = useState(0)
+
+    const equippedSet = user?.avatar?.equippedSet || 'base'
+    const walkSprites = getAvatarSprites(equippedSet, 'style1', 'walk')
+
+    const avatarInfo = getCurrentAvatarInfo(user)
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -28,11 +24,6 @@ const Avatar = ({ user, size = 'large' }) => {
     }
 
     const currentSize = sizes[size] || sizes.large
-
-    const hasUnlockedAvatar = user && rules.XP_RULES.isMaxLevel(user.currentLevel)
-    const avatarSet = hasUnlockedAvatar ? rules.UNLOCK_RULES.getMaxLevelRewards(user.stats) : null
-
-    const avatarTitle = avatarSet?.title || null
 
     return (
         <div className="flex flex-col items-center justify-center h-full">
@@ -57,20 +48,20 @@ const Avatar = ({ user, size = 'large' }) => {
                         fontSize: `${currentSize.width * 0.6}px`
                     }}
                 >
-                    🧙‍♂️
+                    {avatarInfo.emoji}
                 </div>
 
-                {hasUnlockedAvatar && (
+                {equippedSet !== 'base' && (
                     <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-1 py-0.5 rounded-full font-bold">
                         👑
                     </div>
                 )}
             </div>
 
-            {avatarTitle && (
+            {showTitle && avatarInfo.title && (
                 <div className="mt-2 text-center">
                     <span className="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full">
-                        {avatarSet.emoji} {avatarTitle}
+                        {avatarInfo.emoji} {avatarInfo.title}
                     </span>
                 </div>
             )}
