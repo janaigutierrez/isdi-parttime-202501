@@ -24,15 +24,18 @@ export const XP_RULES = {
 
 export const QUEST_REWARDS = {
     BASE_XP: {
-        QUICK: 25,      // <30 min
-        STANDARD: 50,   // 30min-2h
-        LONG: 100,      // 2+ hours
-        EPIC: 200       // Multi-day
+        QUICK: 25,
+        STANDARD: 50,
+        LONG: 100,
+        EPIC: 200
     }
 }
 
 export const STAT_RULES = {
     STAT_POINTS_PER_QUEST: 25,
+
+    STAT_LEVELS: [0, 25, 60, 120, 200, 300, 430, 590, 780, 1000, 1250],
+    MAX_STAT_LEVEL: 10,
 
     STATS: {
         STRENGTH: {
@@ -72,7 +75,34 @@ export const STAT_RULES = {
     },
 
     getStatLevel(statPoints) {
-        return Math.floor(statPoints / this.STAT_POINTS_PER_QUEST) + 1
+        for (let index = this.STAT_LEVELS.length - 1; index >= 0; index--) {
+            if (statPoints >= this.STAT_LEVELS[index]) {
+                return Math.max(1, index + 1)
+            }
+        }
+        return 1
+    },
+
+    getPointsToNextStatLevel(statPoints) {
+        const currentLevel = this.getStatLevel(statPoints)
+        if (currentLevel >= this.MAX_STAT_LEVEL) return 0
+        return this.STAT_LEVELS[currentLevel + 1] - statPoints
+    },
+
+    getStatLevelProgress(statPoints) {
+        const currentLevel = this.getStatLevel(statPoints)
+        if (currentLevel >= this.MAX_STAT_LEVEL) return 100
+
+        const currentLevelPoints = this.STAT_LEVELS[currentLevel]
+        const nextLevelPoints = this.STAT_LEVELS[currentLevel + 1]
+        const pointsInCurrentLevel = statPoints - currentLevelPoints
+        const pointsNeededForLevel = nextLevelPoints - currentLevelPoints
+
+        return Math.max(0, Math.min(100, (pointsInCurrentLevel / pointsNeededForLevel) * 100))
+    },
+
+    isMaxStatLevel(level) {
+        return level >= this.MAX_STAT_LEVEL
     }
 }
 

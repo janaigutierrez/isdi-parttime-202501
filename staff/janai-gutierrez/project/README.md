@@ -7,13 +7,14 @@ Agenda Gamificada
 
 ## Functional Description
 
-- crear usuarios
-- registrar
-- crear misiones
-- marcar como completadas
-- editarlas
-- eliminarlas
-- ver mis skills
+- Crear usuarios
+- Registrar
+- Crear misiones
+- Marcar como completadas
+- Eliminarlas
+- Subir de nivel
+- Desbloquear features
+- Ver mis skills
 
 ## UX/UI Design
 
@@ -26,12 +27,14 @@ Agenda Gamificada
 - React
 - Vite
 - Tailwind
-- react-router
+- React-Router
 - Express
 - Node
 - Mongo+Mongoose
 - Mocha Chai
-- Bcrypt / Token Library (jose, jwt, etc)
+- Bcrypt 
+- JWT
+- Groq AI API
 
 ### Data Models
 
