@@ -7,6 +7,7 @@ const getAllQuests = async (userId) => {
             .sort({ createdAt: -1 })
 
         return quests.map(quest => ({
+            _id: quest._id.toString(),
             id: quest._id.toString(),
             title: quest.title,
             description: quest.description,
@@ -16,7 +17,9 @@ const getAllQuests = async (userId) => {
             isDaily: quest.isDaily,
             isCompleted: quest.isCompleted,
             generatedBy: quest.generatedBy,
-            createdAt: quest.createdAt
+            aiMetadata: quest.aiMetadata,
+            createdAt: quest.createdAt,
+            completedAt: quest.completedAt
         }))
     } catch (error) {
         throw new errors.ServerError(error.message)

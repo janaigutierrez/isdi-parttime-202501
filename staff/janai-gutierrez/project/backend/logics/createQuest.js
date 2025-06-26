@@ -1,6 +1,6 @@
 import Quest from '../models/Quest.js'
 import { AIService } from '../utils/aiService/index.js'
-import { QUEST_REWARDS } from '../../common/constants/gameRules.js'
+import { rules } from 'common'
 
 /**
  * Create a new quest for a user (AI or Manual)
@@ -23,36 +23,57 @@ export const createQuest = async (userId, questData) => {
     let questInfo
 
     if (useAI) {
-        questInfo = await AIService.generateQuest(title, null, difficulty)
+        try {
+            questInfo = await AIService.generateQuest(title, null, difficulty)
+        } catch (error) {
+            console.error('AI generation failed, using fallback:', error)
+            const detectedStat = rules.STAT_RULES.detectStatFromDescription(title)
+            const baseXP = rules.QUEST_REWARDS.BASE_XP[difficulty] || 50
+            const bonusXP = detectedStat ? 10 : 0
+
+            questInfo = {
+                title: title.trim(),
+                description: 'Quest created with epic fallback system',
+                difficulty,
+                experienceReward: baseXP + bonusXP,
+                targetStat: detectedStat,
+                generatedBy: 'epic_fallback',
+                tags: ['fallback'],
+                epicElements: null,
+                aiMetadata: { prompt: title.trim() }
+            }
+        }
     } else {
+        const detectedStat = rules.STAT_RULES.detectStatFromDescription(title)
+        const baseXP = rules.QUEST_REWARDS.BASE_XP[difficulty] || 50
+        const bonusXP = detectedStat ? 10 : 0
+
         questInfo = {
             title: title.trim(),
             description: '',
             difficulty,
-            experienceReward: QUEST_REWARDS.BASE_XP[difficulty] || 50,
-            targetStat: null,
+            experienceReward: baseXP + bonusXP,
+            targetStat: detectedStat,
             generatedBy: 'user',
-            tags: [],
+            tags: ['manual'],
             epicElements: null,
             aiMetadata: null
         }
-
-        questInfo = AIService.enhanceManualQuest(questInfo)
     }
-
     const quest = new Quest({
         ...questInfo,
         userId,
         isCompleted: false,
         completedAt: null,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        isDaily: false
     })
 
     try {
-        await quest.save()
-        return quest
+        const savedQuest = await quest.save()
+        console.log('✅ Quest saved to MongoDB:', savedQuest._id)
+        return savedQuest
     } catch (error) {
+        console.error('❌ Error saving quest to MongoDB:', error)
         throw new Error('Failed to save quest to database')
     }
 }
