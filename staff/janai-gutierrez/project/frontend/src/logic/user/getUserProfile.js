@@ -12,7 +12,8 @@ const getUserProfile = () => {
     return fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/${userId}`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         }
     })
         .catch(error => { throw new errors.ConnectionError(error.message) })

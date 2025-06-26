@@ -29,7 +29,11 @@ const createQuest = ({ title, useAI = false, difficulty = 'STANDARD' }) => {
                 return response.json()
             } else {
                 return response.json().then(body => {
-                    throw new errors[body.name](body.message)
+                    console.log('🔍 Backend error response:', body) // Debug
+
+                    // ✅ FIX: Manejar errores desconocidos
+                    const ErrorClass = errors[body.name] || errors.ServerError
+                    throw new ErrorClass(body.message || 'Unknown error occurred')
                 })
             }
         })
