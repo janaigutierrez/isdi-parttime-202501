@@ -66,12 +66,11 @@ const userSchema = new mongoose.Schema({
     }],
 
     avatar: {
-        visualStyle: {
+        equippedSet: {
             type: String,
-            enum: ['style1', 'style2', 'style3', 'style4'],
-            default: 'style1'
+            enum: ['base', 'warrior', 'scholar', 'leader', 'artisan'],
+            default: 'base'
         },
-
         equippedItems: {
             head: {
                 type: String,
@@ -209,8 +208,6 @@ userSchema.methods.toJSON = function () {
     delete userObject.password
     return userObject
 }
-
-
 
 const User = mongoose.model('User', userSchema)
 
