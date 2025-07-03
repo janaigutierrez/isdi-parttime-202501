@@ -1,4 +1,3 @@
-import { validator } from "common"
 import logic from "../../../logics/index.js"
 
 const getAllQuests = async (req, res, next) => {

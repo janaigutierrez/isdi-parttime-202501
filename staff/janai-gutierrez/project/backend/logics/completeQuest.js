@@ -30,17 +30,15 @@ const completeQuest = async (userId, questId) => {
     const xpGained = quest.experienceReward
     const statGained = rules.STAT_RULES.STAT_POINTS_PER_QUEST
 
-    // Update user stats and XP - FIX: Use totalXP not totalExperience
     const oldLevel = rules.XP_RULES.getLevelFromXP(user.totalXP)
-    user.totalXP += xpGained  // FIX: totalXP not totalExperience
+    user.totalXP += xpGained
 
     if (quest.targetStat) {
         user.stats[quest.targetStat] += statGained
     }
 
-    const newLevel = rules.XP_RULES.getLevelFromXP(user.totalXP)  // FIX: totalXP
+    const newLevel = rules.XP_RULES.getLevelFromXP(user.totalXP)
     const levelUp = newLevel > oldLevel
-    // Note: currentLevel is a virtual field, so we don't set it directly
 
     // Mark quest as completed
     quest.isCompleted = true

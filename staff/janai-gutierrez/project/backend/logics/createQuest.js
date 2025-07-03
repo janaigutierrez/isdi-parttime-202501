@@ -70,7 +70,6 @@ export const createQuest = async (userId, questData) => {
 
     try {
         const savedQuest = await quest.save()
-        console.log('✅ Quest saved to MongoDB:', savedQuest._id)
         return savedQuest
     } catch (error) {
         console.error('❌ Error saving quest to MongoDB:', error)
