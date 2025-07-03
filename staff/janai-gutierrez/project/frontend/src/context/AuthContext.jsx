@@ -14,18 +14,22 @@ export function AuthProvider({ children }) {
     }, [])
 
     const loadUserData = async () => {
+
         try {
             const userId = getLoggedUserId()
 
             if (userId) {
+
                 const userData = await logics.user.getUserProfile()
 
                 const userProfile = userData.userProfile || userData
+
                 setUser(userProfile)
             } else {
                 setUser(null)
             }
         } catch (error) {
+
             if (error instanceof errors.AuthError) {
                 setUser(null)
             } else if (error instanceof errors.ExistenceError) {
@@ -40,6 +44,12 @@ export function AuthProvider({ children }) {
         } finally {
             setLoading(false)
         }
+    }
+
+    const logout = async () => {
+        await logics.user.logoutUser()
+        setUser(null)
+        window.location.href = '/'
     }
 
     const refreshUserData = async () => {
@@ -90,6 +100,7 @@ export function AuthProvider({ children }) {
     const value = {
         user,
         loading,
+        logout,
         refreshUserData,
         updateUserStats,
         updateUserAvatar

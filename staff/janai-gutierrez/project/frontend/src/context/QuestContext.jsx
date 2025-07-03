@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { rules } from 'common'
 import logics from '../logic'
 import { useAuth } from './AuthContext'
+import getLoggedUserId from '../logic/helpers/getLoggedUserId'
 
 const QuestContext = createContext()
 
@@ -39,16 +40,33 @@ export const QuestProvider = ({ children }) => {
         }
     }
 
-
     const loadQuestsData = async () => {
         try {
+            // ✅ FIX: Verificar si hay usuario antes de cargar
+            const userId = getLoggedUserId()
+            if (!userId) {
+                console.log('🔍 No user logged in, skipping quest load')
+                setQuests([])
+                return
+            }
+
             const response = await logics.quest.getAllQuests()
             const questsArray = response.quests || response
             setQuests(questsArray)
         } catch (error) {
-            console.error('Error loading quests:', error)
+            // ✅ FIX: Solo mostrar error si hay usuario logueado
+            const userId = getLoggedUserId()
+            if (userId) {
+                console.error('Error loading quests:', error)
+            } else {
+                console.log('🔍 Quest load failed - user not logged in (expected after logout)')
+            }
             setQuests([])
-            throw error
+
+            // ✅ FIX: Solo throw error si hay usuario (error inesperado)
+            if (userId) {
+                throw error
+            }
         }
     }
 
