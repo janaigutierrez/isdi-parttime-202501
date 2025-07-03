@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { validator, errors } from 'common'
 import logics from '../../logic'
+import { useAuth } from '../../context/AuthContext'
 
 function Login() {
     const navigate = useNavigate()
+    const { refreshUserData } = useAuth()
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -34,7 +36,7 @@ function Login() {
 
 
             console.log('✅ Login successful:', result.user.username)
-
+            await refreshUserData()
             navigate('/')
 
         } catch (error) {
@@ -48,14 +50,13 @@ function Login() {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
-                {/* Header */}
+
                 <div className="text-center">
                     <div className="text-6xl mb-4">🏠</div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
-                    <p className="text-gray-600">Sign in to continue your adventure</p>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Return to the Village</h2>
+                    <p className="text-gray-600">Log in to continue your adventure</p>
                 </div>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {error && (
                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
@@ -111,7 +112,7 @@ function Login() {
                                 Signing in...
                             </span>
                         ) : (
-                            '🚀 Sign In'
+                            'Enter'
                         )}
                     </button>
 
@@ -124,15 +125,6 @@ function Login() {
                         </p>
                     </div>
                 </form>
-
-                {/* Demo credentials */}
-                <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h3 className="text-sm font-medium text-blue-800 mb-2">Demo Credentials</h3>
-                    <div className="text-xs text-blue-700 space-y-1">
-                        <p><strong>Email:</strong> demo@nest.com</p>
-                        <p><strong>Password:</strong> demo123</p>
-                    </div>
-                </div>
             </div>
         </div>
     )

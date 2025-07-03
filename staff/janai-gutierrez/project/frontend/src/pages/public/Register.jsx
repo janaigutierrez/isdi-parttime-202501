@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { validator, errors } from 'common'
 import logics from '../../logic'
+import { useAuth } from '../../context/AuthContext'
 
 function Register() {
     const navigate = useNavigate()
+    const { refreshUserData } = useAuth()
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -19,7 +21,6 @@ function Register() {
             ...formData,
             [e.target.name]: e.target.value
         })
-        // Clear error when user starts typing
         if (error) setError('')
     }
 
@@ -30,7 +31,6 @@ function Register() {
             setLoading(true)
             setError('')
 
-            // Validate form data
             validator.username(formData.username, 'username')
             validator.email(formData.email, 'email')
             validator.password(formData.password, 'password')
@@ -39,12 +39,12 @@ function Register() {
                 throw new Error('Passwords do not match')
             }
 
-            // Attempt registration
             const result = await logics.user.registerUser(formData)
 
             console.log('✅ Registration successful:', result.user.username)
 
-            // Redirect to dashboard
+            await refreshUserData()
+
             navigate('/')
 
         } catch (error) {
@@ -61,8 +61,8 @@ function Register() {
                 {/* Header */}
                 <div className="text-center">
                     <div className="text-6xl mb-4">🏠</div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Join Nest</h2>
-                    <p className="text-gray-600">Create your account to start your adventure</p>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Begin Your Quest</h2>
+                    <p className="text-gray-600">Begin your journey in the realm of Nest</p>
                 </div>
 
                 {/* Form */}
@@ -144,8 +144,8 @@ function Register() {
                         type="submit"
                         disabled={loading}
                         className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${loading
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-purple-600 hover:bg-purple-700 text-white'
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-purple-600 hover:bg-purple-700 text-white'
                             }`}
                     >
                         {loading ? (
@@ -154,7 +154,7 @@ function Register() {
                                 Creating account...
                             </span>
                         ) : (
-                            '✨ Create Account'
+                            'Enter the Village'
                         )}
                     </button>
 
@@ -162,22 +162,13 @@ function Register() {
                         <p className="text-sm text-gray-600">
                             Already have an account?{' '}
                             <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
-                                Sign in
+                                Log in
                             </Link>
                         </p>
                     </div>
                 </form>
 
-                {/* Features preview */}
-                <div className="mt-8 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                    <h3 className="text-sm font-medium text-purple-800 mb-2">What you'll get:</h3>
-                    <div className="text-xs text-purple-700 space-y-1">
-                        <p>🤖 AI-powered quest generation</p>
-                        <p>🎯 Gamified task management</p>
-                        <p>📊 Progress tracking and stats</p>
-                        <p>🏆 Unlockable themes and features</p>
-                    </div>
-                </div>
+
             </div>
         </div>
     )
