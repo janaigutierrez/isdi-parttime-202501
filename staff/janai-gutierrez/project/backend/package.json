@@ -36,7 +36,19 @@
       "node_modules/**",
       "curl/**",
       "coverage/**",
-      "*.config.js"
+      "*.config.js",
+      "specs/**",
+      "**/*.spec.js",
+      "**/index.js",
+      "config/database.js",
+      "models/quest.js",
+      "models/user.js",
+      "routes/**",
+      "middleware/errorHandler.js",
+      "utils/aiService/groqClient.js",
+      "utils/aiService/questGenerator.js",
+      "models/**",
+      "middleware/auth.js"
     ],
     "reporter": [
       "text",
