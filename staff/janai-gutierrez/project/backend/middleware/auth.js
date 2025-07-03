@@ -8,7 +8,6 @@ export const generateToken = (userId) => {
 }
 
 export const protect = async (req, res, next) => {
-    console.log('🛡️ Protect middleware called for:', req.url)
     try {
         let token
 
@@ -58,24 +57,5 @@ export const protect = async (req, res, next) => {
             success: false,
             message: 'Server error in authentication'
         })
-    }
-}
-
-export const optionalAuth = async (req, res, next) => {
-    try {
-        let token
-
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1]
-
-            if (token) {
-                const decoded = jwt.verify(token, process.env.JWT_SECRET)
-                req.user = await User.findById(decoded.userId).select('-password')
-            }
-        }
-
-        next()
-    } catch (error) {
-        next()
     }
 }
