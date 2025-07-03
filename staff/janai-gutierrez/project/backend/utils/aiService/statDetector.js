@@ -1,4 +1,5 @@
-import { STAT_RULES } from '../../../common/constants/gameRules.js'
+import { rules } from 'common'
+const STAT_RULES = rules
 
 export class StatDetector {
     static detectQuestStat(text) {
