@@ -42,7 +42,6 @@ export const QuestProvider = ({ children }) => {
 
     const loadQuestsData = async () => {
         try {
-            // ✅ FIX: Verificar si hay usuario antes de cargar
             const userId = getLoggedUserId()
             if (!userId) {
                 console.log('🔍 No user logged in, skipping quest load')
@@ -54,16 +53,13 @@ export const QuestProvider = ({ children }) => {
             const questsArray = response.quests || response
             setQuests(questsArray)
         } catch (error) {
-            // ✅ FIX: Solo mostrar error si hay usuario logueado
             const userId = getLoggedUserId()
             if (userId) {
                 console.error('Error loading quests:', error)
             } else {
-                console.log('🔍 Quest load failed - user not logged in (expected after logout)')
             }
             setQuests([])
 
-            // ✅ FIX: Solo throw error si hay usuario (error inesperado)
             if (userId) {
                 throw error
             }

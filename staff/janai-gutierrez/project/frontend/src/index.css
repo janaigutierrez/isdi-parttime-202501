@@ -10,13 +10,11 @@ body {
   min-height: 100vh;
 }
 
-/* Root div override - IMPORTANT */
 #root {
   background: transparent !important;
   min-height: 100vh;
 }
 
-/* Modal z-index fixes */
 .fixed.inset-0.bg-black {
   backdrop-filter: none !important;
   z-index: 9999 !important;
@@ -27,7 +25,6 @@ body {
   z-index: 9999 !important;
 }
 
-/* HTML theme backgrounds */
 html[data-theme="library"] {
   background-image: url('/themes/library-desktop.webp') !important;
   background-size: cover !important;
