@@ -77,15 +77,15 @@ export const avatarSets = {
 export const avatarSetInfo = {
     base: {
         name: 'Adventurer',
-        title: 'Adventurer',
+        title: 'Wanderer of the Wild Paths',
         description: 'A humble beginning for every hero',
         unlockLevel: 0,
         stat: null,
-        emoji: '🧑‍🦱'
+        emoji: '🧑'
     },
     warrior: {
         name: 'Legendary Warrior',
-        title: 'Legendary Warrior',
+        title: 'Guard of the Stone Bastion',
         description: 'Golden armor of the mighty',
         unlockLevel: 10,
         stat: 'STRENGTH',
@@ -93,7 +93,7 @@ export const avatarSetInfo = {
     },
     scholar: {
         name: 'Grand Scholar',
-        title: 'Grand Scholar',
+        title: 'Hermit of the Shattered Peak',
         description: 'Robes of ancient wisdom',
         unlockLevel: 10,
         stat: 'WISDOM',
@@ -101,7 +101,7 @@ export const avatarSetInfo = {
     },
     artisan: {
         name: 'Master Artisan',
-        title: 'Master Artisan',
+        title: 'Forgemaster of the Iron Valley',
         description: 'Tools of the skilled craftsman',
         unlockLevel: 10,
         stat: 'DEXTERITY',
@@ -109,7 +109,7 @@ export const avatarSetInfo = {
     },
     leader: {
         name: 'Supreme Leader',
-        title: 'Supreme Leader',
+        title: 'Guide of the Elder Council',
         description: 'Regalia of true leadership',
         unlockLevel: 10,
         stat: 'CHARISMA',

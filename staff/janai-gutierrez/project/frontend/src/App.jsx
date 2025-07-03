@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import logics from "./logic"
-import Header from "./components/common/Header"
 import { useLocation, useNavigate } from "react-router-dom"
 import Private from "./routes/Private"
 import Public from "./routes/Public"
 import { isAuthenticated } from "./logic/helpers/getLoggedUserId"
+import { NotificationProvider } from './context/NotificationContext'
 import './index.css'
+import { ThemeProvider } from './context/ThemeContext'
+import './styles/themes.css'
 
 const App = () => {
     const [refreshHeader, setRefreshHeader] = useState(Date.now())
@@ -29,18 +31,21 @@ const App = () => {
     }, [location.pathname, refreshHeader])
 
     return (
-        <>
-            {isUserLogged ? (
-                <Private
-                    setRefreshHeader={setRefreshHeader}
-                    logout={onLogoutClick}
-                />
-            ) : (
-                <>
-                    <Public setRefreshHeader={setRefreshHeader} />
-                </>
-            )}
-        </>
+        <ThemeProvider>
+            <NotificationProvider>
+                {isUserLogged ? (
+                    <Private
+                        setRefreshHeader={setRefreshHeader}
+                        logout={onLogoutClick}
+                    />
+                ) : (
+                    <>
+                        <Public setRefreshHeader={setRefreshHeader} />
+                    </>
+                )}
+            </NotificationProvider>
+        </ThemeProvider>
+
     )
 }
 

@@ -5,13 +5,16 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { QuestProvider } from './context/QuestContext'
+import { ThemeProvider } from './context/ThemeContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <QuestProvider>
-          <App />
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
         </QuestProvider>
       </AuthProvider>
     </BrowserRouter>
