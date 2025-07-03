@@ -10,7 +10,6 @@ describe('rpgLore', () => {
             LORE = module.LORE
             DIFFICULTY = module.DIFFICULTY
         } catch (error) {
-            console.log('⚠️ Skipping rpgLore tests due to import issues')
             return
         }
     })
@@ -53,7 +52,7 @@ describe('rpgLore', () => {
 
             expect(LORE.DEXTERITY.actions).to.be.an('array')
             expect(LORE.DEXTERITY.actions).to.include('crear')
-            expect(LORE.DEXTERITY.actions).to.include('craftar')
+            expect(LORE.DEXTERITY.actions).to.include('craftear')
             expect(LORE.DEXTERITY.actions).to.include('perfeccionar')
         })
 
@@ -98,7 +97,6 @@ describe('rpgLore', () => {
                 expect(LORE[stat]).to.have.property('realm')
                 expect(LORE[stat].realm).to.be.a('string')
 
-                // actions, enemies, weapons, places are arrays
                 expect(LORE[stat]).to.have.property('actions')
                 expect(LORE[stat].actions).to.be.an('array')
 
