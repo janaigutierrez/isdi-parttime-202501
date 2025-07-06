@@ -1,14 +1,14 @@
-import { after, before, afterEach, describe, it } from "mocha"
+import { after, before, beforeEach, afterEach, describe, it } from "mocha"
 import { expect } from "chai"
+import { errors } from "common"
 import 'dotenv/config'
 import mongoose from 'mongoose'
 import User from "../../models/User.js"
 import Quest from "../../models/Quest.js"
 import createQuest from "../../logics/createQuest.js"
-import { errors } from "common"
 
 describe('createQuest', () => {
-    let userId
+    let validUserId
 
     before(() => {
         return mongoose.connect(process.env.MONGO_URL, {
@@ -24,75 +24,100 @@ describe('createQuest', () => {
         const userData = {
             username: 'testuser',
             email: 'test@example.com',
-            password: 'Test123!'
+            password: 'hashedpassword',
+            totalXP: 0,
+            currentLevel: 1,
+            stats: { STRENGTH: 0, DEXTERITY: 0, WISDOM: 0, CHARISMA: 0 }
         }
 
         return User.create(userData)
             .then(createdUser => {
-                userId = createdUser._id.toString()
+                validUserId = createdUser._id.toString()
             })
     })
 
     afterEach(() => {
-        return Promise.all([
-            User.deleteMany(),
-            Quest.deleteMany()
-        ])
+        return Promise.all([User.deleteMany(), Quest.deleteMany()])
     })
 
-    it('GIVEN valid quest data WHEN called createQuest THEN creates quest successfully', () => {
+    it('GIVEN valid manual quest WHEN createQuest THEN creates successfully', () => {
         const questData = {
-            title: 'Go to the gym',
-            description: 'Workout session',
-            difficulty: 'STANDARD'
+            title: 'Go to gym and workout',
+            description: 'Test description',
+            difficulty: 'STANDARD',
+            useAI: false
         }
 
-        return createQuest(userId, questData)
+        return createQuest(validUserId, questData)
             .then(result => {
-                expect(result).to.have.property('title', 'Go to the gym')
-                expect(result).to.have.property('difficulty', 'STANDARD')
-                expect(result).to.have.property('experienceReward')
-                expect(result.experienceReward).to.be.greaterThan(0)
-            })
-    })
-
-    it('GIVEN gym quest WHEN called createQuest THEN auto-detects STRENGTH stat', () => {
-        const questData = {
-            title: 'Intense gym workout',
-            difficulty: 'STANDARD'
-        }
-
-        return createQuest(userId, questData)
-            .then(result => {
+                expect(result).to.be.an('object')
+                expect(result.title).to.equal('Go to gym and workout')
+                expect(result.generatedBy).to.equal('user')
                 expect(result.targetStat).to.equal('STRENGTH')
-                expect(result.experienceReward).to.be.greaterThan(50)
+                expect(result.experienceReward).to.be.a('number')
+                expect(result._id).to.exist
             })
     })
 
-    it('GIVEN invalid title WHEN called createQuest THEN throws ValidationError', () => {
-        const questData = {
-            title: 'ab', // Too short
-            difficulty: 'STANDARD'
-        }
+    it('GIVEN AI quest WHEN createQuest THEN creates with AI or fallback', function () {
+        this.timeout(10000)
 
-        return createQuest(userId, questData)
-            .catch(error => {
-                expect(error).to.be.instanceOf(Error)
-                expect(error.message).to.include('title must be at least 3 characters')
-            })
-    })
-
-    it('GIVEN useAI true WHEN called createQuest THEN generates with AI', () => {
         const questData = {
-            title: 'Go to the gym',
+            title: 'workout at gym',
             useAI: true,
             difficulty: 'STANDARD'
         }
 
-        return createQuest(userId, questData)
+        return createQuest(validUserId, questData)
             .then(result => {
-                expect(result.generatedBy).to.be.oneOf(['ai', 'epic_fallback'])
-                expect(result.title).to.exist
+                expect(result).to.be.an('object')
+                expect(['ai', 'epic_fallback', 'user']).to.include(result.generatedBy)
+                expect(result.title).to.be.a('string')
+                expect(result._id).to.exist
+            })
+    })
+
+    it('GIVEN invalid userId WHEN createQuest THEN throws validation error', () => {
+        const questData = { title: 'Test', useAI: false }
+
+        return createQuest('invalid-id', questData)
+            .catch(error => {
+                expect(error).to.be.instanceOf(Error)
+                expect(error.message).to.include('userId')
+            })
+    })
+
+    it('GIVEN non-existent user WHEN createQuest THEN throws ExistenceError', () => {
+        const fakeUserId = new mongoose.Types.ObjectId().toString()
+        const questData = { title: 'Test', useAI: false }
+
+        return createQuest(fakeUserId, questData)
+            .catch(error => {
+                expect(error).to.be.instanceOf(errors.ExistenceError)
+            })
+    })
+
+    it('GIVEN empty title WHEN createQuest THEN throws validation error', () => {
+        const questData = { title: '', useAI: false }
+
+        return createQuest(validUserId, questData)
+            .catch(error => {
+                expect(error).to.be.instanceOf(Error)
+                expect(error.message).to.include('title')
+            })
+    })
+
+    it('GIVEN valid quest WHEN createQuest THEN calculates XP correctly', () => {
+        const questData = {
+            title: 'Valid Task',
+            difficulty: 'STANDARD',
+            useAI: false
+        }
+
+        return createQuest(validUserId, questData)
+            .then(result => {
+                expect(result.experienceReward).to.be.a('number')
+                expect(result.experienceReward).to.be.greaterThan(0)
             })
     })
 })

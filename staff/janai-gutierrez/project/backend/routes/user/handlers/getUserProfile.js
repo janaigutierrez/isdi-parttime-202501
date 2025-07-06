@@ -8,10 +8,9 @@ const getUserProfile = async (req, res, next) => {
 
         const userProfile = await logic.getUserProfile(userId)
 
-        // ✅ FIX: Usar userProfile variable correctamente
         res.status(200).json({
             success: true,
-            data: { profile: userProfile }  // ✅ 'profile: userProfile'
+            data: { profile: userProfile }
         })
     } catch (error) {
         next(error)
