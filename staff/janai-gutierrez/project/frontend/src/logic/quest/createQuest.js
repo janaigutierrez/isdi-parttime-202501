@@ -26,7 +26,7 @@ const createQuest = ({ title, useAI = false, difficulty = 'STANDARD' }) => {
         .catch(error => { throw new errors.ConnectionError(error.message) })
         .then((response) => {
             if (response.status === 201) {
-                return response.json()
+                return response.json().then(data => data.data.quest)
             } else {
                 return response.json().then(body => {
                     const errorMessage = body.error || body.message || 'Unknown error occurred'
