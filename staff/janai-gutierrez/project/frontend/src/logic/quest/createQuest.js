@@ -29,8 +29,6 @@ const createQuest = ({ title, useAI = false, difficulty = 'STANDARD' }) => {
                 return response.json()
             } else {
                 return response.json().then(body => {
-                    console.log('🔍 Backend error response:', body)
-
                     const errorMessage = body.error || body.message || 'Unknown error occurred'
 
                     const ErrorClass = errors[body.name] || errors.ServerError
