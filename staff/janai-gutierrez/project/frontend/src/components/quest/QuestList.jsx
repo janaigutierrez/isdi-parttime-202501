@@ -49,10 +49,8 @@ const QuestList = () => {
     const handleComplete = async (questId) => {
         try {
             await completeQuest(questId)
-            showSuccess('🎉 Quest completed! XP earned!')
         } catch (error) {
             console.error('Error completing quest:', error)
-            showError('Failed to complete quest')
         }
     }
 
@@ -64,11 +62,9 @@ const QuestList = () => {
         if (!questToAbandon) return
         try {
             await abandonQuest(questToAbandon._id)
-            showSuccess('Quest abandoned')
             setQuestToAbandon(null)
         } catch (error) {
             console.error('Error abandoning quest:', error)
-            showError('Failed to abandon quest')
         }
     }
 
@@ -111,9 +107,7 @@ const QuestList = () => {
                 </div>
             </div>
 
-            {/* Filters and Sort */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                {/* Filter Buttons */}
                 <div className="flex gap-2">
                     <button
                         onClick={() => setFilter('all')}
@@ -135,7 +129,6 @@ const QuestList = () => {
                     </button>
                 </div>
 
-                {/* Sort Dropdown */}
                 <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
                     <select
@@ -177,7 +170,6 @@ const QuestList = () => {
                 )}
             </div>
 
-            {/* Abandon Modal */}
             <AbandonModal
                 quest={questToAbandon}
                 onConfirm={handleAbandon}

@@ -25,7 +25,7 @@ export const QuestProvider = ({ children }) => {
     const [levelUpData, setLevelUpData] = useState(null)
 
     const { user, refreshUserData } = useAuth()
-    const { showSuccess, showInfo, showError } = useNotifications()
+    const { showSuccess, showError } = useNotifications()
 
     useEffect(() => {
         initializeData()
@@ -54,8 +54,9 @@ export const QuestProvider = ({ children }) => {
 
         try {
             const response = await logics.quest.getAllQuests()
-            const questsArray = response.quests || response
-            setQuests(questsArray)
+            const questsArray = response || []
+            const validQuests = questsArray.filter(quest => quest && quest._id)
+            setQuests(validQuests)
         } catch (error) {
             setQuests([])
             throw error
@@ -95,7 +96,6 @@ export const QuestProvider = ({ children }) => {
             })
 
             setIsQuestModalOpen(false)
-            showSuccess('Quest created successfully!')
             return createdQuest
         } catch (error) {
             setError(error.message)
@@ -109,9 +109,13 @@ export const QuestProvider = ({ children }) => {
             setError(null)
             const result = await logics.quest.completeQuest(questId)
 
-            setQuests(prev => prev.map(q =>
-                q._id === questId ? result.updatedQuest : q
-            ))
+            setQuests(prev => {
+                if (!Array.isArray(prev)) return []
+                return prev.map(q => {
+                    if (!q || !q._id) return q
+                    return q._id === questId ? result.updatedQuest : q
+                }).filter(Boolean)
+            })
 
             await refreshUserData()
 
@@ -123,7 +127,6 @@ export const QuestProvider = ({ children }) => {
                 })
             }
 
-            showSuccess(`Quest completed! +${result.xpGained} XP`)
             return result
         } catch (error) {
             setError(error.message)
@@ -137,9 +140,11 @@ export const QuestProvider = ({ children }) => {
             setError(null)
             await logics.quest.deleteQuest(questId)
 
-            setQuests(prev => prev.filter(quest => quest._id !== questId))
+            setQuests(prev => {
+                if (!Array.isArray(prev)) return []
+                return prev.filter(quest => quest && quest._id !== questId)
+            })
 
-            showInfo('Quest abandoned')
         } catch (error) {
             setError(error.message)
             showError(error.message)
@@ -148,19 +153,23 @@ export const QuestProvider = ({ children }) => {
     }
 
     const getActiveQuests = () => {
-        return quests.filter(quest => !quest.isCompleted)
+        if (!Array.isArray(quests)) return []
+        return quests.filter(quest => quest && !quest.isCompleted)
     }
 
     const getCompletedQuests = () => {
-        return quests.filter(quest => quest.isCompleted)
+        if (!Array.isArray(quests)) return []
+        return quests.filter(quest => quest && quest.isCompleted)
     }
 
     const getQuestsByDifficulty = (difficulty) => {
-        return quests.filter(quest => quest.difficulty === difficulty)
+        if (!Array.isArray(quests)) return []
+        return quests.filter(quest => quest && quest.difficulty === difficulty)
     }
 
     const getQuestsByStat = (stat) => {
-        return quests.filter(quest => quest.targetStat === stat)
+        if (!Array.isArray(quests)) return []
+        return quests.filter(quest => quest && quest.targetStat === stat)
     }
 
     const openQuestModal = () => setIsQuestModalOpen(true)
@@ -204,4 +213,3 @@ export const QuestProvider = ({ children }) => {
         </QuestContext.Provider>
     )
 }
-
