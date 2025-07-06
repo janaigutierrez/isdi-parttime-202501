@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { rules } from 'common'
 import logics from '../logic'
 import { useAuth } from './AuthContext'
+import { useNotifications } from './NotificationContext'
 import getLoggedUserId from '../logic/helpers/getLoggedUserId'
 
 const QuestContext = createContext()
@@ -20,7 +21,11 @@ export const QuestProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    const [showLevelUpModal, setShowLevelUpModal] = useState(false)
+    const [levelUpData, setLevelUpData] = useState(null)
+
     const { user, refreshUserData } = useAuth()
+    const { showSuccess, showInfo, showError } = useNotifications()
 
     useEffect(() => {
         initializeData()
@@ -30,7 +35,6 @@ export const QuestProvider = ({ children }) => {
         try {
             setLoading(true)
             setError(null)
-
             await loadQuestsData()
         } catch (error) {
             console.error('Error initializing data:', error)
@@ -41,28 +45,20 @@ export const QuestProvider = ({ children }) => {
     }
 
     const loadQuestsData = async () => {
-        try {
-            const userId = getLoggedUserId()
-            if (!userId) {
-                console.log('🔍 No user logged in, skipping quest load')
-                setQuests([])
-                return
-            }
+        const userId = getLoggedUserId()
 
+        if (!userId) {
+            setQuests([])
+            return
+        }
+
+        try {
             const response = await logics.quest.getAllQuests()
             const questsArray = response.quests || response
             setQuests(questsArray)
         } catch (error) {
-            const userId = getLoggedUserId()
-            if (userId) {
-                console.error('Error loading quests:', error)
-            } else {
-            }
             setQuests([])
-
-            if (userId) {
-                throw error
-            }
+            throw error
         }
     }
 
@@ -76,6 +72,17 @@ export const QuestProvider = ({ children }) => {
         return rules.UNLOCK_RULES.getNextUnlock(user.currentLevel)
     }
 
+    const handleLevelUp = (levelUpInfo) => {
+        setLevelUpData(levelUpInfo)
+        setShowLevelUpModal(true)
+        showSuccess(`🎉 Level Up! Welcome to Level ${levelUpInfo.newLevel}!`)
+    }
+
+    const closeLevelUpModal = () => {
+        setShowLevelUpModal(false)
+        setLevelUpData(null)
+    }
+
     const addQuest = async (questData) => {
         try {
             setError(null)
@@ -83,15 +90,16 @@ export const QuestProvider = ({ children }) => {
             const createdQuest = response.quest
 
             setQuests(prev => {
-                const prevArray = Array.isArray(prev) ? prev : (prev?.quests || [])
+                const prevArray = Array.isArray(prev) ? prev : []
                 return [createdQuest, ...prevArray]
             })
 
             setIsQuestModalOpen(false)
+            showSuccess('Quest created successfully!')
             return createdQuest
         } catch (error) {
-            console.error('❌ Error creating quest:', error)
             setError(error.message)
+            showError(error.message)
             throw error
         }
     }
@@ -108,14 +116,18 @@ export const QuestProvider = ({ children }) => {
             await refreshUserData()
 
             if (result.levelUp) {
-                console.log(`🎉 LEVEL UP! Welcome to Level ${result.updatedUser.level}!`)
-                // TODO: level up modal 
+                handleLevelUp({
+                    oldLevel: result.oldLevel,
+                    newLevel: result.newLevel,
+                    newUnlocks: result.newUnlocks || []
+                })
             }
 
+            showSuccess(`Quest completed! +${result.xpGained} XP`)
             return result
         } catch (error) {
-            console.error('❌ Error completing quest:', error)
             setError(error.message)
+            showError(error.message)
             throw error
         }
     }
@@ -123,114 +135,66 @@ export const QuestProvider = ({ children }) => {
     const abandonQuest = async (questId) => {
         try {
             setError(null)
-            const deleted = await logics.quest.deleteQuest(questId)
+            await logics.quest.deleteQuest(questId)
 
             setQuests(prev => prev.filter(quest => quest._id !== questId))
 
-            return deleted
+            showInfo('Quest abandoned')
         } catch (error) {
-            console.error('❌ Error abandoning quest:', error)
             setError(error.message)
+            showError(error.message)
             throw error
         }
     }
 
-    const updateQuest = async (questId, updates) => {
-        try {
-            setError(null)
-            const updatedQuest = await logics.quest.updateQuest(questId, updates)
-
-            setQuests(prev => prev.map(q =>
-                q._id === questId ? updatedQuest : q
-            ))
-
-            return updatedQuest
-        } catch (error) {
-            console.error('❌ Error updating quest:', error)
-            setError(error.message)
-            throw error
-        }
+    const getActiveQuests = () => {
+        return quests.filter(quest => !quest.isCompleted)
     }
 
-    const uncompleteQuest = async (questId) => {
-        try {
-            setError(null)
-            const result = await logics.quest.uncompleteQuest(questId)
-
-            setQuests(prev => prev.map(q =>
-                q._id === questId ? result.updatedQuest : q
-            ))
-
-            await refreshUserData()
-
-            return result
-        } catch (error) {
-            console.error('❌ Error uncompleting quest:', error)
-            setError(error.message)
-            throw error
-        }
+    const getCompletedQuests = () => {
+        return quests.filter(quest => quest.isCompleted)
     }
 
-    const getActiveQuests = async () => {
-        try {
-            return await logics.quest.getActiveQuests()
-        } catch (error) {
-            console.error('❌ Error getting active quests:', error)
-            return []
-        }
+    const getQuestsByDifficulty = (difficulty) => {
+        return quests.filter(quest => quest.difficulty === difficulty)
     }
 
-    const getCompletedQuests = async () => {
-        try {
-            return await logics.quest.getCompletedQuests()
-        } catch (error) {
-            console.error('❌ Error getting completed quests:', error)
-            return []
-        }
-    }
-
-    const getQuestsByDifficulty = async (difficulty) => {
-        try {
-            return await logics.quest.getQuestsByDifficulty(difficulty)
-        } catch (error) {
-            console.error('❌ Error getting quests by difficulty:', error)
-            return []
-        }
-    }
-
-    const getQuestsByStat = async (stat) => {
-        try {
-            return await logics.quest.getQuestsByStat(stat)
-        } catch (error) {
-            console.error('❌ Error getting quests by stat:', error)
-            return []
-        }
+    const getQuestsByStat = (stat) => {
+        return quests.filter(quest => quest.targetStat === stat)
     }
 
     const openQuestModal = () => setIsQuestModalOpen(true)
     const closeQuestModal = () => setIsQuestModalOpen(false)
-
     const clearError = () => setError(null)
+
+    const refreshQuests = async () => {
+        try {
+            await loadQuestsData()
+        } catch (error) {
+            console.error('Error refreshing quests:', error)
+        }
+    }
 
     const value = {
         quests,
         loading,
         error,
         isQuestModalOpen,
-
-        isFeatureUnlocked,
-        getNextUnlock,
+        showLevelUpModal,
+        levelUpData,
         addQuest,
         completeQuest,
         abandonQuest,
-        updateQuest,
-        uncompleteQuest,
+        refreshQuests,
         getActiveQuests,
         getCompletedQuests,
         getQuestsByDifficulty,
         getQuestsByStat,
+        isFeatureUnlocked,
+        getNextUnlock,
         openQuestModal,
         closeQuestModal,
+        closeLevelUpModal,
         clearError
     }
 
@@ -240,3 +204,4 @@ export const QuestProvider = ({ children }) => {
         </QuestContext.Provider>
     )
 }
+

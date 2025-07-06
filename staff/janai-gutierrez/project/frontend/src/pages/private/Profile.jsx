@@ -8,6 +8,7 @@ import { useState } from 'react'
 import updateEmail from '../../logic/user/updateEmail'
 import updatePassword from '../../logic/user/updatePassword'
 import updateUsername from '../../logic/user/updateUsername'
+import PasswordInput from '../../components/common/PasswordInput'
 
 function Profile() {
     const { user, updateUserAvatar, logout, refreshUserData } = useAuth()
@@ -126,28 +127,25 @@ function Profile() {
                     </form>
 
                     <form onSubmit={(e) => handleSubmit('password', e)} className="space-y-2">
-                        <input
-                            type="password"
+                        <PasswordInput
                             value={forms.currentPassword}
                             onChange={(e) => setForms({ ...forms, currentPassword: e.target.value })}
                             placeholder="Current password"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
+                            showRequirements={false}
                             required
                         />
-                        <input
-                            type="password"
+                        <PasswordInput
                             value={forms.newPassword}
                             onChange={(e) => setForms({ ...forms, newPassword: e.target.value })}
                             placeholder="New password"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
-                            minLength="6" required
+                            showRequirements={true}
+                            required
                         />
-                        <input
-                            type="password"
+                        <PasswordInput
                             value={forms.confirmPassword}
                             onChange={(e) => setForms({ ...forms, confirmPassword: e.target.value })}
                             placeholder="Confirm new password"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
+                            showRequirements={false}
                             required
                         />
                         <button

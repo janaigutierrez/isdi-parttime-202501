@@ -6,17 +6,20 @@ import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { QuestProvider } from './context/QuestContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { NotificationProvider } from './context/NotificationContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <QuestProvider>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-        </QuestProvider>
-      </AuthProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <QuestProvider>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </QuestProvider>
+        </AuthProvider>
+      </NotificationProvider>
     </BrowserRouter>
   </StrictMode>,
 )
