@@ -16,7 +16,7 @@ NEST App is a full-stack gamified agenda application that transforms daily tasks
 - Responsive design
 
 ### Use cases
-- Personal productivity
+- Login (añadir las logicas)
 - Skill development
 - Habit formation
 - Goal achievement
@@ -62,7 +62,7 @@ NEST App is a full-stack gamified agenda application that transforms daily tasks
 
 #### External APIs
 - **Groq AI API**
-- **Stat Detection Algorithm**
+
 
 
 ## Data Models
@@ -89,7 +89,7 @@ NEST App is a full-stack gamified agenda application that transforms daily tasks
 - PUT    /api/users/theme        - Update visual theme \
 - PUT    /api/users/avatar       - Update avatar configuration 
 
-### 👤 User Schema
+### User Schema
 ```javascript
 {
   _id: ObjectId,
@@ -112,8 +112,7 @@ NEST App is a full-stack gamified agenda application that transforms daily tasks
     equippedSet: String (default: 'default')
   },
   createdAt: Date,
-  updatedAt: Date
-}
+  }
 ```
 #### Quests
 ```js
@@ -133,13 +132,11 @@ NEST App is a full-stack gamified agenda application that transforms daily tasks
   epicElements: Object | null,
   aiMetadata: Object | null,
   createdAt: Date,
-  updatedAt: Date
 }
 ```
 ### Test Coverage
 
-Captura de pantalla (más del 80% en todo)
-
+![Coverage](./coverage-screenshot.jpg)
 ### Project
 
-app link here
+[Nest App](https://nest-app.surge.sh)
