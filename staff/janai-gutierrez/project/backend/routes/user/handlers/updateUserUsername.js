@@ -3,7 +3,7 @@ import logic from "../../../logics/index.js"
 
 const updateUserUsername = async (req, res, next) => {
     try {
-        const userId = req.user.id.toString()
+        const userId = req.user.id
         const { newUsername } = req.body
 
         validator.username(newUsername)

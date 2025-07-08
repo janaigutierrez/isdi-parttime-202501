@@ -43,12 +43,40 @@ const completeQuest = async (userId, questId) => {
     await Promise.all([user.save(), quest.save()])
 
     return {
-        updatedQuest: quest,
-        updatedUser: user,
+        updatedQuest: {
+            id: quest._id.toString(),
+            title: quest.title,
+            description: quest.description,
+            difficulty: quest.difficulty,
+            experienceReward: quest.experienceReward,
+            targetStat: quest.targetStat,
+            generatedBy: quest.generatedBy,
+            tags: quest.tags,
+            epicElements: quest.epicElements,
+            aiMetadata: quest.aiMetadata,
+            userId: quest.userId,
+            isCompleted: quest.isCompleted,
+            completedAt: quest.completedAt,
+            isDaily: quest.isDaily,
+            createdAt: quest.createdAt,
+            updatedAt: quest.updatedAt
+        },
+        updatedUser: {
+            id: user._id.toString(),
+            username: user.username,
+            email: user.email,
+            totalXP: user.totalXP,
+            currentLevel: user.currentLevel,
+            stats: user.stats,
+            theme: user.theme,
+            avatar: user.avatar,
+            xpToNextLevel: user.xpToNextLevel
+        },
         xpGained,
         statGained,
         levelUp,
-        newLevel
+        newLevel,
+        oldLevel
     }
 }
 
