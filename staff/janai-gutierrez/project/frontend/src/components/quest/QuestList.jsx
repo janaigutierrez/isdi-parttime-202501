@@ -5,7 +5,9 @@ import QuestCard from './QuestCard'
 import AbandonModal from './AbandonModal'
 
 const getSortedQuests = (quests, sortBy) => {
-    const sorted = [...quests]
+    const validQuests = quests.filter(quest => quest && quest.id)
+    const sorted = [...validQuests]
+
     switch (sortBy) {
         case 'stat':
             return sorted.sort((a, b) => {
