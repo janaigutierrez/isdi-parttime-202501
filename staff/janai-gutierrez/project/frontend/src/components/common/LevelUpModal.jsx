@@ -80,7 +80,7 @@ const LevelUpModal = () => {
                         onClick={closeLevelUpModal}
                         className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg"
                     >
-                        Continue Adventure! 🚀
+                        Continue Adventure!
                     </button>
                 </div>
             </div>

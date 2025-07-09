@@ -13,7 +13,7 @@ import PasswordInput from '../../components/common/PasswordInput'
 function Profile() {
     const { user, updateUserAvatar, logout, refreshUserData } = useAuth()
     const { theme, setTheme } = useTheme()
-    const { showSuccess, showError, showInfo } = useNotifications()
+    const { showSuccess, showError, showInfo, showConfirm } = useNotifications()
     const [forms, setForms] = useState({
         username: user?.username || '',
         email: user?.email || '',
@@ -73,6 +73,18 @@ function Profile() {
     const handleThemeChange = (themeId) => {
         setTheme(themeId)
         showSuccess(`🎨 ${themeId.charAt(0).toUpperCase() + themeId.slice(1)} theme activated!`)
+    }
+    const handleLogoutClick = () => {
+        showConfirm({
+            title: 'Log out?',
+            message: 'Are you sure you wanna logout? Your progress will be saved.',
+            icon: '🚪',
+            confirmText: 'Leave Realm',
+            cancelText: 'Cancel',
+            confirmStyle: 'red',
+            successMessage: '¡See you soon!👋',
+            onConfirm: logout,
+        })
     }
 
     return (
@@ -237,7 +249,6 @@ function Profile() {
                         })}
                     </div>
 
-                    {/* Info note */}
                     <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
                         <strong>Note:</strong> While using a visual theme, the dark/light mode toggle will be disabled.
                         Switch back to "Default" to use dark mode.
@@ -246,7 +257,7 @@ function Profile() {
 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 transition-colors">
                     <button
-                        onClick={() => confirm('¿Cerrar sesión?') && logout()}
+                        onClick={handleLogoutClick}
                         className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-lg font-medium transition-colors"
                     >
                         Log Out

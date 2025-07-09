@@ -50,11 +50,7 @@ function Landing() {
                 </div>
 
                 <div className="mt-8 text-white/60 text-sm">
-                    <div className="flex justify-center space-x-6">
-                        <span>🤖 AI Quests</span>
-                        <span>⭐ Level Up</span>
-                        <span>🎯 Achievements</span>
-                    </div>
+
                 </div>
             </div>
         </div>

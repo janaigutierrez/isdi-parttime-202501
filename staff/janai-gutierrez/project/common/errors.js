@@ -54,7 +54,11 @@ class ContentError extends AppError {
         super(message, 400)
     }
 }
-
+class ConnectionError extends AppError {
+    constructor(message = 'Connection failed') {
+        super(message, 503)
+    }
+}
 const errors = {
     AppError,
     AuthError,
@@ -64,7 +68,8 @@ const errors = {
     DuplicateError,
     ServerError,
     RateLimitError,
-    ContentError
+    ContentError,
+    ConnectionError
 }
 
 export default errors

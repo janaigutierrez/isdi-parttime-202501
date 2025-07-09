@@ -27,7 +27,7 @@ export class QuestGenerator {
     buildSystemPrompt() {
         return `Eres un Quest Master que transforma tareas diarias en aventuras épicas.
 
-OBJETIVO: Hacer las tareas aburridas épicas pero SIMPLES y CLARAS. Sobretodo, responde en el idioma en que te escriban.
+OBJETIVO: Hacer las tareas aburridas épicas pero SIMPLES y CLARAS.
 
 EJEMPLOS:
 "ir al gimnasio" → "Entrenar en el templo del hierro" 

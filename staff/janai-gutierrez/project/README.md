@@ -16,20 +16,16 @@ NEST App is a full-stack gamified agenda application that transforms daily tasks
 - Responsive design
 
 ### Use cases
-- Login (añadir las logicas)
-- Skill development
-- Habit formation
-- Goal achievement
-- Motivation enhancement
+- Login and Register
+- Create, complete and delete Quests
+- Update user data (username, mail and password)
+- Update avatar
+- Update visual themes
 
 ## UX/UI Design
 
 [My Figma](https://www.figma.com/design/L6Msy1Yl53H9ZR50ACgQU1/Nest-App?node-id=1-4&t=5zI5ZUyGC4XngijW-1)
-### Design Principles
-- **Minimalist aesthetic** - Clean, distraction-free interface
-- **Gamification elements** - Progress bars, level indicators, stat visualization
-- **Responsive layout** - Mobile-first design with desktop optimization
-- **Theme consistency** - Unified color palette and typography system
+
 
 ## Technical Description
 
